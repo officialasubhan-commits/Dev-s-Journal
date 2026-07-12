@@ -1,0 +1,61 @@
+import type { Metadata } from "next";
+import { Inter, Outfit } from "next/font/google";
+import "./globals.css";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
+import { AuthProvider } from "@/components/providers/AuthProvider";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { PageTracker } from "@/components/ui/PageTracker";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-heading" });
+
+import prisma from "@/lib/prisma";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await prisma.siteSettings.findUnique({
+    where: { id: "singleton" }
+  });
+
+  return {
+    title: {
+      template: `%s | ${settings?.siteTitle || "Boss Journal"}`,
+      default: settings?.seoTitle || settings?.siteTitle || "Boss Journal | Portfolio & Digital Home",
+    },
+    description: settings?.seoDescription || settings?.siteDescription || "My digital home, where I document my journey, learning, projects, and daily life.",
+    keywords: settings?.seoKeywords || undefined,
+    openGraph: settings?.ogImage ? {
+      images: [settings.ogImage]
+    } : undefined,
+    icons: settings?.siteFavicon ? {
+      icon: settings.siteFavicon
+    } : undefined
+  };
+}
+
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  const settings = await prisma.siteSettings.findUnique({
+    where: { id: "singleton" }
+  });
+  
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.variable} ${outfit.variable} flex flex-col min-h-screen bg-[var(--background)] font-sans antialiased text-[var(--text-main)]`}>
+        <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
+          <AuthProvider>
+            <PageTracker />
+            <Navbar siteTitle={settings?.siteTitle || "Boss Journal"} siteLogo={settings?.siteLogo || ""} />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer siteTitle={settings?.siteTitle || "Boss Journal"} />
+          </AuthProvider>
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}

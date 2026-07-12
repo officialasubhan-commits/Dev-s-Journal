@@ -1,0 +1,432 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  // previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  // extensions = [vector]
+}
+
+model User {
+  id                  String    @id @default(cuid())
+  name                String?
+  username            String?   @unique
+  email               String    @unique
+  emailVerified       DateTime?
+  password            String?
+  image               String?   @map("profilePicture")
+  biography           String?   @db.Text
+  role                String    @default("USER") // "GUEST", "USER", "ADMIN"
+  
+  // Profile Extended
+  displayName         String?
+  shortIntroduction   String?   @db.Text
+  country             String?
+  state               String?
+  city                String?
+  languages           String[]
+  technologies        String[]
+  spokenLanguages     String[]
+  occupation          String?
+  company             String?
+  college             String?
+  course              String?
+  skills              String[]
+  interests           String[]
+  customStats         Json?
+  
+  website             String?
+  githubProfile       String?
+  linkedinProfile     String?
+  twitterProfile      String?
+  instagramProfile    String?
+  
+  websiteThemePreference String @default("system")
+  profileCompleted    Boolean @default(false)
+  
+  // Security
+  lastLogin           DateTime?
+  failedLoginAttempts Int       @default(0)
+  lockedUntil         DateTime?
+  twoFactorEnabled    Boolean   @default(false)
+  twoFactorSecret     String?
+  
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  
+  accounts            Account[]
+  sessions            Session[]
+  resetTokens         PasswordResetToken[]
+  notifications       Notification[]
+  
+  posts               Post[]
+  projects            Project[]
+  galleryImages       GalleryImage[]
+  albums              Album[]
+  courses             Course[]
+  books               Book[]
+  certifications      Certification[]
+  activities          Activity[]
+  userAchievements    UserAchievement[]
+  comments            Comment[]
+  detailedSkills      Skill[]
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Post {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  content     String    @db.Text // Rich text or markdown
+  coverImage  String?
+  published   Boolean   @default(false)
+  readingTime Int       @default(5)
+  mood        String?
+  tags        String[]
+  likes       Int       @default(0)
+  scheduledFor DateTime?
+  pinned      Boolean   @default(false)
+  archived    Boolean   @default(false)
+  seoTitle    String?
+  seoDescription String?
+  
+  authorId    String?
+  author      User?     @relation(fields: [authorId], references: [id])
+  
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  
+  comments    Comment[]
+  
+  draftId     String?   @unique
+  draft       Draft?    @relation(fields: [draftId], references: [id])
+
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Category {
+  id    String @id @default(cuid())
+  name  String @unique
+  slug  String @unique
+  posts Post[]
+}
+
+model Comment {
+  id          String   @id @default(cuid())
+  authorName  String
+  authorEmail String?
+  content     String   @db.Text
+  approved    Boolean  @default(false) // For moderation
+  
+  authorId    String?
+  author      User?    @relation(fields: [authorId], references: [id])
+  
+  postId      String
+  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+}
+
+model Project {
+  id           String    @id @default(cuid())
+  title        String
+  slug         String    @unique
+  description  String    @db.Text
+  content      String?   @db.Text
+  features     String?   @db.Text
+  challenges   String?   @db.Text
+  lessonsLearned String? @db.Text
+  technologies String[]
+  githubUrl    String?
+  liveUrl      String?
+  coverImage   String?
+  images       String[]  // Screenshots gallery
+  
+  authorId     String?
+  author       User?     @relation(fields: [authorId], references: [id])
+  
+  startDate    DateTime?
+  endDate      DateTime?
+  published    Boolean   @default(true)
+  pinned       Boolean   @default(false)
+  demoVideo    String?
+  
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Skill {
+  id          String   @id @default(cuid())
+  name        String   
+  category    String   // e.g., "Frontend", "Backend", "Tools"
+  proficiency Int      // 0 - 100
+  icon        String?  // SVG or classname
+  
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  
+  // Make skill name unique per user if userId is set, otherwise global
+  // prisma does not support conditional unique constraints easily, so we remove the pure @unique
+}
+
+model Course {
+  id          String    @id @default(cuid())
+  title       String
+  platform    String
+  progress    Int       @default(0) // 0 - 100
+  status      String    @default("IN_PROGRESS") // "IN_PROGRESS", "COMPLETED"
+  completedAt DateTime?
+  
+  userId      String?
+  user        User?     @relation(fields: [userId], references: [id])
+  
+  createdAt   DateTime  @default(now())
+}
+
+model Book {
+  id          String   @id @default(cuid())
+  title       String
+  author      String
+  status      String   @default("READING") // "READING", "COMPLETED", "WANT_TO_READ"
+  coverImage  String?
+  rating      Int?     // 1 - 5
+  review      String?  @db.Text
+  
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  
+  createdAt   DateTime @default(now())
+}
+
+model Certification {
+  id          String   @id @default(cuid())
+  title       String
+  issuer      String
+  date        DateTime
+  url         String?
+  image       String?
+  
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  
+  createdAt   DateTime @default(now())
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  title       String   @unique
+  description String   @db.Text
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+  
+  userAchievements UserAchievement[]
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  unlockedAt    DateTime @default(now())
+
+  @@unique([userId, achievementId])
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // e.g. "REGISTERED", "COMPLETED_PROFILE", "PUBLISHED_JOURNAL", etc.
+  details   String?  @db.Text
+  createdAt DateTime @default(now())
+}
+
+model Album {
+  id          String         @id @default(cuid())
+  title       String
+  description String?
+  coverImage  String?
+  images      GalleryImage[]
+  
+  userId      String?
+  user        User?          @relation(fields: [userId], references: [id])
+  
+  createdAt   DateTime       @default(now())
+}
+
+model GalleryImage {
+  id          String   @id @default(cuid())
+  url         String
+  publicId    String?  // For Cloudinary
+  caption     String?
+  
+  authorId    String?
+  author      User?    @relation(fields: [authorId], references: [id])
+  
+  albumId     String?
+  album       Album?   @relation(fields: [albumId], references: [id], onDelete: SetNull)
+  
+  createdAt   DateTime @default(now())
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String?
+  message   String   @db.Text
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Draft {
+  id          String   @id @default(cuid())
+  title       String?
+  content     String   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  post        Post?
+}
+
+
+
+model Notification {
+  id        String   @id @default(cuid())
+  type      String   // "SYSTEM", "CONTRIBUTION", "COMMENT", "LIKE", "MODERATION"
+  title     String?
+  message   String
+  link      String?
+  read      Boolean  @default(false)
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+// A single-row settings model for the entire site
+model SiteSettings {
+  id                    String  @id @default("singleton")
+  
+  // General
+  siteTitle             String  @default("Boss Journal")
+  siteTagline           String  @default("My personal portfolio, journal, and digital headquarters.")
+  siteDescription       String  @default("My personal portfolio, journal, and digital headquarters.")
+  siteLogo              String  @default("")
+  siteFavicon           String  @default("")
+  siteUrl               String  @default("http://localhost:3000")
+  authorName            String  @default("")
+  authorEmail           String  @default("")
+  
+  // Appearance
+  themePrimary          String  @default("#F97316")
+  themeAccent           String  @default("#FB7185")
+  defaultTheme          String  @default("light") // "light" | "dark" | "system"
+  
+  // SEO
+  seoTitle              String  @default("Boss Journal | Portfolio & Digital Home")
+  seoDescription        String  @default("My digital home, where I document my journey, learning, projects, and daily life.")
+  seoKeywords           String  @default("")
+  ogImage               String  @default("")
+  
+  // Social Links
+  githubUrl             String  @default("")
+  linkedinUrl           String  @default("")
+  twitterUrl            String  @default("")
+  instagramUrl          String  @default("")
+  facebookUrl           String  @default("")
+  youtubeUrl            String  @default("")
+  discordUsername       String  @default("")
+  telegramUsername      String  @default("")
+  
+  // Contact & Location
+  contactHeading        String  @default("Get In Touch")
+  contactDescription    String  @default("Have a project in mind, want to collaborate, or just want to say hi? Send me a message!")
+  availabilityStatus    String  @default("Available")
+  contactEmail          String  @default("")
+  phoneNumber           String  @default("")
+  whatsappNumber        String  @default("")
+  country               String  @default("")
+  state                 String  @default("")
+  city                  String  @default("")
+  fullAddress           String  @default("")
+  googleMapsUrl         String  @default("")
+  resumePdf             String  @default("")
+  
+  // Features (feature flags)
+  enableComments        Boolean @default(true)
+  enableGallery         Boolean @default(true)
+  enableLearning        Boolean @default(true)
+  enableNotifications   Boolean @default(true)
+  
+  // Maintenance
+  maintenanceMode       Boolean @default(false)
+  maintenanceMessage    String  @default("We'll be back soon!")
+  
+  updatedAt             DateTime @updatedAt
+}
+
+model PageView {
+  id        String   @id @default(cuid())
+  path      String
+  referrer  String?
+  country   String?
+  device    String?  // "desktop" | "mobile" | "tablet"
+  createdAt DateTime @default(now())
+
+  @@index([path])
+  @@index([createdAt])
+}

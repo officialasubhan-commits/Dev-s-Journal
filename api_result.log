@@ -1,0 +1,816 @@
+200 data: {"type":"start"}
+
+data: {"type":"start-step"}
+
+data: {"type":"text-start","id":"0"}
+
+data: {"type":"text-delta","id":"0","delta":"```"}
+
+data: {"type":"text-delta","id":"0","delta":"mark"}
+
+data: {"type":"text-delta","id":"0","delta":"down"}
+
+data: {"type":"text-delta","id":"0","delta":"\n"}
+
+data: {"type":"text-delta","id":"0","delta":"#"}
+
+data: {"type":"text-delta","id":"0","delta":" Day"}
+
+data: {"type":"text-delta","id":"0","delta":" in"}
+
+data: {"type":"text-delta","id":"0","delta":" the"}
+
+data: {"type":"text-delta","id":"0","delta":" Life"}
+
+data: {"type":"text-delta","id":"0","delta":" of"}
+
+data: {"type":"text-delta","id":"0","delta":" an"}
+
+data: {"type":"text-delta","id":"0","delta":" Asp"}
+
+data: {"type":"text-delta","id":"0","delta":"iring"}
+
+data: {"type":"text-delta","id":"0","delta":" Te"}
+
+data: {"type":"text-delta","id":"0","delta":"ch"}
+
+data: {"type":"text-delta","id":"0","delta":" Professional"}
+
+data: {"type":"text-delta","id":"0","delta":":"}
+
+data: {"type":"text-delta","id":"0","delta":" Emb"}
+
+data: {"type":"text-delta","id":"0","delta":"rac"}
+
+data: {"type":"text-delta","id":"0","delta":"ing"}
+
+data: {"type":"text-delta","id":"0","delta":" New"}
+
+data: {"type":"text-delta","id":"0","delta":" Begin"}
+
+data: {"type":"text-delta","id":"0","delta":"nings"}
+
+data: {"type":"text-delta","id":"0","delta":" with"}
+
+data: {"type":"text-delta","id":"0","delta":" Support"}
+
+data: {"type":"text-delta","id":"0","delta":" and"}
+
+data: {"type":"text-delta","id":"0","delta":" Anal"}
+
+data: {"type":"text-delta","id":"0","delta":"yt"}
+
+data: {"type":"text-delta","id":"0","delta":"ical"}
+
+data: {"type":"text-delta","id":"0","delta":" Ins"}
+
+data: {"type":"text-delta","id":"0","delta":"ights"}
+
+data: {"type":"text-delta","id":"0","delta":"\n"}
+
+data: {"type":"text-delta","id":"0","delta":"\n"}
+
+data: {"type":"text-delta","id":"0","delta":"---"}
+
+data: {"type":"text-delta","id":"0","delta":"\n"}
+
+data: {"type":"text-delta","id":"0","delta":"\n"}
+
+data: {"type":"text-delta","id":"0","delta":"M"}
+
+data: {"type":"text-delta","id":"0","delta":"arch"}
+
+data: {"type":"text-delta","id":"0","delta":" "}
+
+data: {"type":"text-delta","id":"0","delta":"2"}
+
+data: {"type":"text-delta","id":"0","delta":"0"}
+
+data: {"type":"text-delta","id":"0","delta":","}
+
+data: {"type":"text-delta","id":"0","delta":" "}
+
+data: {"type":"text-delta","id":"0","delta":"2"}
+
+data: {"type":"text-delta","id":"0","delta":"0"}
+
+data: {"type":"text-delta","id":"0","delta":"XX"}
+
+data: {"type":"text-delta","id":"0","delta":" —"}
+
+data: {"type":"text-delta","id":"0","delta":" A"}
+
+data: {"type":"text-delta","id":"0","delta":" fresh"}
+
+data: {"type":"text-delta","id":"0","delta":" day"}
+
+data: {"type":"text-delta","id":"0","delta":" br"}
+
+data: {"type":"text-delta","id":"0","delta":"imming"}
+
+data: {"type":"text-delta","id":"0","delta":" with"}
+
+data: {"type":"text-delta","id":"0","delta":" professional"}
+
+data: {"type":"text-delta","id":"0","delta":" undert"}
+
+data: {"type":"text-delta","id":"0","delta":"ak"}
+
+data: {"type":"text-delta","id":"0","delta":"in"}
+
+data: {"type":"text-delta","id":"0","delta":"**"}
+
+data: {"type":"text-delta","id":"0","delta":"s"}
+
+data: {"type":"text-delta","id":"0","delta":"."}
+
+data: {"type":"text-delta","id":"0","delta":" As"}
+
+data: {"type":"text-delta","id":"0","delta":" I"}
+
+data: {"type":"text-delta","id":"0","delta":" navigate"}
+
+data: {"type":"text-delta","id":"0","delta":" through"}
+
+data: {"type":"text-delta","id":"0","delta":" un"}
+
+data: {"type":"text-delta","id":"0","delta":"chart"}
+
+data: {"type":"text-delta","id":"0","delta":"ed"}
+
+data: {"type":"text-delta","id":"0","delta":" waters"}
+
+data: {"type":"text-delta","id":"0","delta":","}
+
+data: {"type":"text-delta","id":"0","delta":" seeking"}
+
+data: {"type":"text-delta","id":"0","delta":" growth"}
+
+data: {"type":"text-delta","id":"0","delta":" amid"}
+
+data: {"type":"text-delta","id":"0","delta":"st"}
+
+data: {"type":"text-delta","id":"0","delta":" a"}
+
+data: {"type":"text-delta","id":"0","delta":" sea"}
+
+data: {"type":"text-delta","id":"0","delta":" of"}
+
+data: {"type":"text-delta","id":"0","delta":" opportun"}
+
+data: {"type":"text-delta","id":"0","delta":"ities"}
+
+data: {"type":"text-delta","id":"0","delta":" in"}
+
+data: {"type":"text-delta","id":"0","delta":" te"}
+
+data: {"type":"text-delta","id":"0","delta":"ch"}
+
+data: {"type":"text-delta","id":"0","delta":" start"}
+
+data: {"type":"text-delta","id":"0","delta":"ups"}
+
+data: {"type":"text-delta","id":"0","delta":","}
+
+data: {"type":"text-delta","id":"0","delta":" my"}
+
+data: {"type":"text-delta","id":"0","delta":" resolve"}
+
+data: {"type":"text-delta","id":"0","delta":" to"}
+
+data: {"type":"text-delta","id":"0","delta":" learn"}
+
+data: {"type":"text-delta","id":"0","delta":" is"}
+
+data: {"type":"text-delta","id":"0","delta":" as"}
+
+data: {"type":"text-delta","id":"0","delta":" stead"}
+
+data: {"type":"text-delta","id":"0","delta":"fast"}
+
+data: {"type":"text-delta","id":"0","delta":" as"}
+
+data: {"type":"text-delta","id":"0","delta":" the"}
+
+data: {"type":"text-delta","id":"0","delta":" morning"}
+
+data: {"type":"text-delta","id":"0","delta":" sun"}
+
+data: {"type":"text-delta","id":"0","delta":" rising"}
+
+data: {"type":"text-delta","id":"0","delta":" over"}
+
+data: {"type":"text-delta","id":"0","delta":" Sil"}
+
+data: {"type":"text-delta","id":"0","delta":"icon"}
+
+data: {"type":"text-delta","id":"0","delta":" Valley"}
+
+data: {"type":"text-delta","id":"0","delta":"'"}
+
+data: {"type":"text-delta","id":"0","delta":"s"}
+
+data: {"type":"text-delta","id":"0","delta":" ill"}
+
+data: {"type":"text-delta","id":"0","delta":"ust"}
+
+data: {"type":"text-delta","id":"0","delta":"ri"}
+
+data: {"type":"text-delta","id":"0","delta":"ous"}
+
+data: {"type":"text-delta","id":"0","delta":" sky"}
+
+data: {"type":"text-delta","id":"0","delta":"line"}
+
+data: {"type":"text-delta","id":"0","delta":"."}
+
+data: {"type":"text-delta","id":"0","delta":"\n"}
+
+data: {"type":"text-delta","id":"0","delta":"\n"}
+
+data: {"type":"text-delta","id":"0","delta":"---"}
+
+data: {"type":"text-delta","id":"0","delta":"\n"}
+
+data: {"type":"text-delta","id":"0","delta":"```"}
+
+data: {"type":"text-delta","id":"0","delta":"\n"}
+
+data: {"type":"text-delta","id":"0","delta":"\n"}
+
+data: {"type":"text-delta","id":"0","delta":"In"}
+
+data: {"type":"text-delta","id":"0","delta":" this"}
+
+data: {"type":"text-delta","id":"0","delta":" draft"}
+
+data: {"type":"text-delta","id":"0","delta":" entry"}
+
+data: {"type":"text-delta","id":"0","delta":","}
+
+data: {"type":"text-delta","id":"0","delta":" we"}
+
+data: {"type":"text-delta","id":"0","delta":" explore"}
+
+data: {"type":"text-delta","id":"0","delta":" the"}
+
+data: {"type":"text-delta","id":"0","delta":" personal"}
+
+data: {"type":"text-delta","id":"0","delta":" journey"}
+
+data: {"type":"text-delta","id":"0","delta":" towards"}
+
+data: {"type":"text-delta","id":"0","delta":" acqu"}
+
+data: {"type":"text-delta","id":"0","delta":"iring"}
+
+data: {"type":"text-delta","id":"0","delta":" expert"}
+
+data: {"type":"text-delta","id":"0","delta":"ise"}
+
+data: {"type":"text-delta","id":"0","delta":" through"}
+
+data: {"type":"text-delta","id":"0","delta":" emb"}
+
+data: {"type":"text-delta","id":"0","delta":"rac"}
+
+data: {"type":"text-delta","id":"0","delta":"ing"}
+
+data: {"type":"text-delta","id":"0","delta":" challeng"}
+
+data: {"type":"text-delta","id":"0","delta":"es"}
+
+data: {"type":"text-delta","id":"0","delta":" and"}
+
+data: {"type":"text-delta","id":"0","delta":" seeking"}
+
+data: {"type":"text-delta","id":"0","delta":" knowledge"}
+
+data: {"type":"text-delta","id":"0","delta":"-"}
+
+data: {"type":"text-delta","id":"0","delta":"sh"}
+
+data: {"type":"text-delta","id":"0","delta":"aring"}
+
+data: {"type":"text-delta","id":"0","delta":" communities"}
+
+data: {"type":"text-delta","id":"0","delta":" a"}
+
+data: {"type":"text-delta","id":"0","delta":"kin"}
+
+data: {"type":"text-delta","id":"0","delta":" to"}
+
+data: {"type":"text-delta","id":"0","delta":" M"}
+
+data: {"type":"text-delta","id":"0","delta":"inds"}
+
+data: {"type":"text-delta","id":"0","delta":" W"}
+
+data: {"type":"text-delta","id":"0","delta":"ide"}
+
+data: {"type":"text-delta","id":"0","delta":" Open"}
+
+data: {"type":"text-delta","id":"0","delta":" ("}
+
+data: {"type":"text-delta","id":"0","delta":"MW"}
+
+data: {"type":"text-delta","id":"0","delta":"O"}
+
+data: {"type":"text-delta","id":"0","delta":")."}
+
+data: {"type":"text-delta","id":"0","delta":" A"}
+
+data: {"type":"text-delta","id":"0","delta":" v"}
+
+data: {"type":"text-delta","id":"0","delta":"ivid"}
+
+data: {"type":"text-delta","id":"0","delta":" rec"}
+
+data: {"type":"text-delta","id":"0","delta":"ount"}
+
+data: {"type":"text-delta","id":"0","delta":" of"}
+
+data: {"type":"text-delta","id":"0","delta":" att"}
+
+data: {"type":"text-delta","id":"0","delta":"ending"}
+
+data: {"type":"text-delta","id":"0","delta":" my"}
+
+data: {"type":"text-delta","id":"0","delta":" first"}
+
+data: {"type":"text-delta","id":"0","delta":" industry"}
+
+data: {"type":"text-delta","id":"0","delta":" web"}
+
+data: {"type":"text-delta","id":"0","delta":"inar"}
+
+data: {"type":"text-delta","id":"0","delta":" on"}
+
+data: {"type":"text-delta","id":"0","delta":" Ag"}
+
+data: {"type":"text-delta","id":"0","delta":"ile"}
+
+data: {"type":"text-delta","id":"0","delta":" method"}
+
+data: {"type":"text-delta","id":"0","delta":"ologies"}
+
+data: {"type":"text-delta","id":"0","delta":" is"}
+
+data: {"type":"text-delta","id":"0","delta":" provided"}
+
+data: {"type":"text-delta","id":"0","delta":" alongside"}
+
+data: {"type":"text-delta","id":"0","delta":" ref"}
+
+data: {"type":"text-delta","id":"0","delta":"lections"}
+
+data: {"type":"text-delta","id":"0","delta":" from"}
+
+data: {"type":"text-delta","id":"0","delta":" an"}
+
+data: {"type":"text-delta","id":"0","delta":" insight"}
+
+data: {"type":"text-delta","id":"0","delta":"ful"}
+
+data: {"type":"text-delta","id":"0","delta":" conversation"}
+
+data: {"type":"text-delta","id":"0","delta":" with"}
+
+data: {"type":"text-delta","id":"0","delta":" Ellen"}
+
+data: {"type":"text-delta","id":"0","delta":" McG"}
+
+data: {"type":"text-delta","id":"0","delta":"old"}
+
+data: {"type":"text-delta","id":"0","delta":"rick"}
+
+data: {"type":"text-delta","id":"0","delta":","}
+
+data: {"type":"text-delta","id":"0","delta":" highlight"}
+
+data: {"type":"text-delta","id":"0","delta":"ing"}
+
+data: {"type":"text-delta","id":"0","delta":" the"}
+
+data: {"type":"text-delta","id":"0","delta":" importance"}
+
+data: {"type":"text-delta","id":"0","delta":" of"}
+
+data: {"type":"text-delta","id":"0","delta":" res"}
+
+data: {"type":"text-delta","id":"0","delta":"ili"}
+
+data: {"type":"text-delta","id":"0","delta":"ence"}
+
+data: {"type":"text-delta","id":"0","delta":" in"}
+
+data: {"type":"text-delta","id":"0","delta":" professional"}
+
+data: {"type":"text-delta","id":"0","delta":" development"}
+
+data: {"type":"text-delta","id":"0","delta":"."}
+
+data: {"type":"text-delta","id":"0","delta":" The"}
+
+data: {"type":"text-delta","id":"0","delta":" draft"}
+
+data: {"type":"text-delta","id":"0","delta":" offers"}
+
+data: {"type":"text-delta","id":"0","delta":" construct"}
+
+data: {"type":"text-delta","id":"0","delta":"ive"}
+
+data: {"type":"text-delta","id":"0","delta":" criticism"}
+
+data: {"type":"text-delta","id":"0","delta":" and"}
+
+data: {"type":"text-delta","id":"0","delta":" support"}
+
+data: {"type":"text-delta","id":"0","delta":" for"}
+
+data: {"type":"text-delta","id":"0","delta":" pe"}
+
+data: {"type":"text-delta","id":"0","delta":"ers"}
+
+data: {"type":"text-delta","id":"0","delta":" entering"}
+
+data: {"type":"text-delta","id":"0","delta":" or"}
+
+data: {"type":"text-delta","id":"0","delta":" transition"}
+
+data: {"type":"text-delta","id":"0","delta":"ing"}
+
+data: {"type":"text-delta","id":"0","delta":" to"}
+
+data: {"type":"text-delta","id":"0","delta":" new"}
+
+data: {"type":"text-delta","id":"0","delta":" roles"}
+
+data: {"type":"text-delta","id":"0","delta":" while"}
+
+data: {"type":"text-delta","id":"0","delta":" advoc"}
+
+data: {"type":"text-delta","id":"0","delta":"ating"}
+
+data: {"type":"text-delta","id":"0","delta":" for"}
+
+data: {"type":"text-delta","id":"0","delta":" growth"}
+
+data: {"type":"text-delta","id":"0","delta":" within"}
+
+data: {"type":"text-delta","id":"0","delta":" ones"}
+
+data: {"type":"text-delta","id":"0","delta":"elf"}
+
+data: {"type":"text-delta","id":"0","delta":" through"}
+
+data: {"type":"text-delta","id":"0","delta":" ment"}
+
+data: {"type":"text-delta","id":"0","delta":"or"}
+
+data: {"type":"text-delta","id":"0","delta":"ship"}
+
+data: {"type":"text-delta","id":"0","delta":" experiences"}
+
+data: {"type":"text-delta","id":"0","delta":" —"}
+
+data: {"type":"text-delta","id":"0","delta":" all"}
+
+data: {"type":"text-delta","id":"0","delta":" cul"}
+
+data: {"type":"text-delta","id":"0","delta":"min"}
+
+data: {"type":"text-delta","id":"0","delta":"ating"}
+
+data: {"type":"text-delta","id":"0","delta":" towards"}
+
+data: {"type":"text-delta","id":"0","delta":" a"}
+
+data: {"type":"text-delta","id":"0","delta":" shared"}
+
+data: {"type":"text-delta","id":"0","delta":" goal"}
+
+data: {"type":"text-delta","id":"0","delta":" as"}
+
+data: {"type":"text-delta","id":"0","delta":" M"}
+
+data: {"type":"text-delta","id":"0","delta":"W"}
+
+data: {"type":"text-delta","id":"0","delta":"O"}
+
+data: {"type":"text-delta","id":"0","delta":" champions"}
+
+data: {"type":"text-delta","id":"0","delta":":"}
+
+data: {"type":"text-delta","id":"0","delta":" fost"}
+
+data: {"type":"text-delta","id":"0","delta":"ering"}
+
+data: {"type":"text-delta","id":"0","delta":" an"}
+
+data: {"type":"text-delta","id":"0","delta":" inclus"}
+
+data: {"type":"text-delta","id":"0","delta":"ive"}
+
+data: {"type":"text-delta","id":"0","delta":" environment"}
+
+data: {"type":"text-delta","id":"0","delta":" where"}
+
+data: {"type":"text-delta","id":"0","delta":" passion"}
+
+data: {"type":"text-delta","id":"0","delta":" drives"}
+
+data: {"type":"text-delta","id":"0","delta":" progress"}
+
+data: {"type":"text-delta","id":"0","delta":","}
+
+data: {"type":"text-delta","id":"0","delta":" much"}
+
+data: {"type":"text-delta","id":"0","delta":" like"}
+
+data: {"type":"text-delta","id":"0","delta":" joining"}
+
+data: {"type":"text-delta","id":"0","delta":" the"}
+
+data: {"type":"text-delta","id":"0","delta":" Ag"}
+
+data: {"type":"text-delta","id":"0","delta":"ile"}
+
+data: {"type":"text-delta","id":"0","delta":" community"}
+
+data: {"type":"text-delta","id":"0","delta":" at"}
+
+data: {"type":"text-delta","id":"0","delta":" my"}
+
+data: {"type":"text-delta","id":"0","delta":" organization"}
+
+data: {"type":"text-delta","id":"0","delta":"."}
+
+data: {"type":"text-delta","id":"0","delta":"\n"}
+
+data: {"type":"text-delta","id":"0","delta":"\n"}
+
+data: {"type":"text-delta","id":"0","delta":"```"}
+
+data: {"type":"text-delta","id":"0","delta":"mark"}
+
+data: {"type":"text-delta","id":"0","delta":"down"}
+
+data: {"type":"text-delta","id":"0","delta":"\n"}
+
+data: {"type":"text-delta","id":"0","delta":"---"}
+
+data: {"type":"text-delta","id":"0","delta":"\n"}
+
+data: {"type":"text-delta","id":"0","delta":"##"}
+
+data: {"type":"text-delta","id":"0","delta":" D"}
+
+data: {"type":"text-delta","id":"0","delta":"raft"}
+
+data: {"type":"text-delta","id":"0","delta":" Entry"}
+
+data: {"type":"text-delta","id":"0","delta":" -"}
+
+data: {"type":"text-delta","id":"0","delta":" Ref"}
+
+data: {"type":"text-delta","id":"0","delta":"lect"}
+
+data: {"type":"text-delta","id":"0","delta":"ing"}
+
+data: {"type":"text-delta","id":"0","delta":" on"}
+
+data: {"type":"text-delta","id":"0","delta":" In"}
+
+data: {"type":"text-delta","id":"0","delta":"iti"}
+
+data: {"type":"text-delta","id":"0","delta":"ated"}
+
+data: {"type":"text-delta","id":"0","delta":" G"}
+
+data: {"type":"text-delta","id":"0","delta":"row"}
+
+data: {"type":"text-delta","id":"0","delta":"th"}
+
+data: {"type":"text-delta","id":"0","delta":" and"}
+
+data: {"type":"text-delta","id":"0","delta":" Enc"}
+
+data: {"type":"text-delta","id":"0","delta":"ou"}
+
+data: {"type":"text-delta","id":"0","delta":"rag"}
+
+data: {"type":"text-delta","id":"0","delta":"ement"}
+
+data: {"type":"text-delta","id":"0","delta":" in"}
+
+data: {"type":"text-delta","id":"0","delta":" Te"}
+
+data: {"type":"text-delta","id":"0","delta":"ch"}
+
+data: {"type":"text-delta","id":"0","delta":" Ende"}
+
+data: {"type":"text-delta","id":"0","delta":"av"}
+
+data: {"type":"text-delta","id":"0","delta":"ors"}
+
+data: {"type":"text-delta","id":"0","delta":" "}
+
+data: {"type":"text-delta","id":"0","delta":"\n"}
+
+data: {"type":"text-delta","id":"0","delta":"\n"}
+
+data: {"type":"text-delta","id":"0","delta":"I"}
+
+data: {"type":"text-delta","id":"0","delta":" find"}
+
+data: {"type":"text-delta","id":"0","delta":" myself"}
+
+data: {"type":"text-delta","id":"0","delta":" today"}
+
+data: {"type":"text-delta","id":"0","delta":" imm"}
+
+data: {"type":"text-delta","id":"0","delta":"ers"}
+
+data: {"type":"text-delta","id":"0","delta":"ed"}
+
+data: {"type":"text-delta","id":"0","delta":" among"}
+
+data: {"type":"text-delta","id":"0","delta":" asp"}
+
+data: {"type":"text-delta","id":"0","delta":"iring"}
+
+data: {"type":"text-delta","id":"0","delta":" minds"}
+
+data: {"type":"text-delta","id":"0","delta":" eager"}
+
+data: {"type":"text-delta","id":"0","delta":" to"}
+
+data: {"type":"text-delta","id":"0","delta":" make"}
+
+data: {"type":"text-delta","id":"0","delta":" their"}
+
+data: {"type":"text-delta","id":"0","delta":" mark"}
+
+data: {"type":"text-delta","id":"0","delta":" as"}
+
+data: {"type":"text-delta","id":"0","delta":" an"}
+
+data: {"type":"text-delta","id":"0","delta":" am"}
+
+data: {"type":"text-delta","id":"0","delta":"bit"}
+
+data: {"type":"text-delta","id":"0","delta":"ious"}
+
+data: {"type":"text-delta","id":"0","delta":" te"}
+
+data: {"type":"text-delta","id":"0","delta":"en"}
+
+data: {"type":"text-delta","id":"0","delta":"ager"}
+
+data: {"type":"text-delta","id":"0","delta":" looking"}
+
+data: {"type":"text-delta","id":"0","delta":" toward"}
+
+data: {"type":"text-delta","id":"0","delta":" gradu"}
+
+data: {"type":"text-delta","id":"0","delta":"ation"}
+
+data: {"type":"text-delta","id":"0","delta":"."}
+
+data: {"type":"text-delta","id":"0","delta":" With"}
+
+data: {"type":"text-delta","id":"0","delta":" fresh"}
+
+data: {"type":"text-delta","id":"0","delta":" ideas"}
+
+data: {"type":"text-delta","id":"0","delta":" stir"}
+
+data: {"type":"text-delta","id":"0","delta":"ring"}
+
+data: {"type":"text-delta","id":"0","delta":" amid"}
+
+data: {"type":"text-delta","id":"0","delta":"st"}
+
+data: {"type":"text-delta","id":"0","delta":" season"}
+
+data: {"type":"text-delta","id":"0","delta":"al"}
+
+data: {"type":"text-delta","id":"0","delta":" changes"}
+
+data: {"type":"text-delta","id":"0","delta":","}
+
+data: {"type":"text-delta","id":"0","delta":" the"}
+
+data: {"type":"text-delta","id":"0","delta":" desire"}
+
+data: {"type":"text-delta","id":"0","delta":" for"}
+
+data: {"type":"text-delta","id":"0","delta":" continuous"}
+
+data: {"type":"text-delta","id":"0","delta":" education"}
+
+data: {"type":"text-delta","id":"0","delta":" alongside"}
+
+data: {"type":"text-delta","id":"0","delta":" personal"}
+
+data: {"type":"text-delta","id":"0","delta":" development"}
+
+data: {"type":"text-delta","id":"0","delta":" becomes"}
+
+data: {"type":"text-delta","id":"0","delta":" increasing"}
+
+data: {"type":"text-delta","id":"0","delta":"ly"}
+
+data: {"type":"text-delta","id":"0","delta":" comp"}
+
+data: {"type":"text-delta","id":"0","delta":"elling"}
+
+data: {"type":"text-delta","id":"0","delta":";"}
+
+data: {"type":"text-delta","id":"0","delta":" I"}
+
+data: {"type":"text-delta","id":"0","delta":" recall"}
+
+data: {"type":"text-delta","id":"0","delta":" my"}
+
+data: {"type":"text-delta","id":"0","delta":" previous"}
+
+data: {"type":"text-delta","id":"0","delta":" attempts"}
+
+data: {"type":"text-delta","id":"0","delta":" at"}
+
+data: {"type":"text-delta","id":"0","delta":" bal"}
+
+data: {"type":"text-delta","id":"0","delta":"ancing"}
+
+data: {"type":"text-delta","id":"0","delta":" studies"}
+
+data: {"type":"text-delta","id":"0","delta":" and"}
+
+data: {"type":"text-delta","id":"0","delta":" ext"}
+
+data: {"type":"text-delta","id":"0","delta":"rac"}
+
+data: {"type":"text-delta","id":"0","delta":"urr"}
+
+data: {"type":"text-delta","id":"0","delta":"icular"}
+
+data: {"type":"text-delta","id":"0","delta":" activities"}
+
+data: {"type":"text-delta","id":"0","delta":" but"}
+
+data: {"type":"text-delta","id":"0","delta":" recognize"}
+
+data: {"type":"text-delta","id":"0","delta":" now"}
+
+data: {"type":"text-delta","id":"0","delta":" that"}
+
+data: {"type":"text-delta","id":"0","delta":" it"}
+
+data: {"type":"text-delta","id":"0","delta":" was"}
+
+data: {"type":"text-delta","id":"0","delta":" perhaps"}
+
+data: {"type":"text-delta","id":"0","delta":" not"}
+
+data: {"type":"text-delta","id":"0","delta":" fully"}
+
+data: {"type":"text-delta","id":"0","delta":" emb"}
+
+data: {"type":"text-delta","id":"0","delta":"rac"}
+
+data: {"type":"text-delta","id":"0","delta":"ed"}
+
+data: {"type":"text-delta","id":"0","delta":" nor"}
+
+data: {"type":"text-delta","id":"0","delta":" understood"}
+
+data: {"type":"text-delta","id":"0","delta":" during"}
+
+data: {"type":"text-delta","id":"0","delta":" its"}
+
+data: {"type":"text-delta","id":"0","delta":" in"}
+
+data: {"type":"text-delta","id":"0","delta":"ception"}
+
+data: {"type":"text-delta","id":"0","delta":"..."}
+
+data: {"type":"text-delta","id":"0","delta":"\n"}
+
+data: {"type":"text-delta","id":"0","delta":"\n"}
+
+data: {"type":"text-delta","id":"0","delta":"---"}
+
+data: {"type":"text-delta","id":"0","delta":"\n"}
+
+data: {"type":"text-delta","id":"0","delta":"```"}
+
+data: {"type":"text-end","id":"0"}
+
+data: {"type":"finish-step"}
+
+data: {"type":"finish","finishReason":"stop"}
+
+data: [DONE]
+

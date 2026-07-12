@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--background);
+  --color-secondary-bg: var(--secondary-bg);
+  --color-card: var(--card);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-highlight: var(--highlight);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  
+  --color-text-main: var(--text-main);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-border: var(--border-color);
+
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+}
+
+@layer base {
+  /* Premium Warm Light Theme (default) */
+  :root, [data-theme="light"] {
+    --background: #FFF8F2;
+    --secondary-bg: #F8F1E8;
+    --card: #FFFFFF;
+    --primary: #F97316;
+    --secondary: #FBBF24;
+    --accent: #FB7185;
+    --highlight: #38BDF8;
+    --success: #22C55E;
+    --danger: #EF4444;
+    --error: #EF4444;
+    
+    --text-main: #2D2A26;
+    --text-secondary: #6B5E52;
+    --text-muted: #9A8F84;
+    --border-color: #E7D8C9;
+  }
+
+  /* Premium Dark Theme */
+  [data-theme="dark"] {
+    --background: #0F0E0D;
+    --secondary-bg: #1A1814;
+    --card: #1E1C18;
+    --primary: #F97316;
+    --secondary: #FBBF24;
+    --accent: #FB7185;
+    --highlight: #38BDF8;
+    --success: #22C55E;
+    --danger: #EF4444;
+    --error: #EF4444;
+    
+    --text-main: #F5EFE6;
+    --text-secondary: #A89880;
+    --text-muted: #6B5E52;
+    --border-color: #2D2820;
+  }
+
+  body {
+    @apply bg-background text-text-main antialiased selection:bg-primary/20 selection:text-primary;
+    font-family: var(--font-sans), system-ui, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading), system-ui, sans-serif;
+    @apply tracking-tight;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/60 backdrop-blur-xl border border-white/40 shadow-sm;
+  }
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-xl border border-white/50 shadow-lg shadow-primary/5 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300;
+    border-radius: var(--radius-lg);
+  }
+  .glow-primary {
+    box-shadow: 0 0 30px -5px rgba(249, 115, 22, 0.4);
+  }
+  .text-glow {
+    text-shadow: 0 0 10px rgba(249, 115, 22, 0.3);
+  }
+}
+
+/* Dark theme glass overrides */
+[data-theme="dark"] .glass {
+  background: rgba(30, 28, 24, 0.8) !important;
+  border-color: rgba(45, 40, 32, 0.6) !important;
+}
+
+[data-theme="dark"] .glass-card {
+  background: rgba(30, 28, 24, 0.9) !important;
+  border-color: rgba(45, 40, 32, 0.8) !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-background;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-[var(--border-color)] rounded-full border-2 border-solid border-[var(--background)];
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-text-muted;
+}

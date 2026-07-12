@@ -13,7 +13,7 @@ async function getTopPages(days: number = 30) {
     orderBy: { _count: { path: "desc" } },
     take: 10,
   });
-  return results.map(r => ({ path: r.path, count: r._count.path }));
+  return results.map((r: { path: string; _count: { path: number } }) => ({ path: r.path, count: r._count.path }));
 }
 
 async function getDeviceBreakdown() {
@@ -21,7 +21,7 @@ async function getDeviceBreakdown() {
     by: ["device"],
     _count: { device: true },
   });
-  return results.map(r => ({ device: r.device || "unknown", count: r._count.device }));
+  return results.map((r: { device: string | null; _count: { device: number } }) => ({ device: r.device || "unknown", count: r._count.device }));
 }
 
 export default async function AdminAnalyticsPage() {

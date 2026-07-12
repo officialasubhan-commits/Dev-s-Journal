@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { SmartEditor } from "@/components/admin/SmartEditor";
 import { DragList } from "@/components/admin/DragList";
-import { getAboutData, updateAboutProfile, updateAchievements, AboutFormData, AchievementInput } from "./actions";
+import { getAboutData, updateAboutProfile, AboutFormData } from "./actions";
 import { Loader2, Plus, Save, Undo, Eye } from "lucide-react";
 import { CldUploadWidget } from "next-cloudinary";
 import { ImageUploadCropper } from "@/components/ui/ImageUploadCropper";
@@ -22,7 +22,6 @@ export default function AboutManagerPage() {
   const [activeTab, setActiveTab] = useState("profile");
 
   const [formData, setFormData] = useState<Partial<AboutFormData>>({});
-  const [achievements, setAchievements] = useState<AchievementInput[]>([]);
 
   const [newSkill, setNewSkill] = useState("");
   const [newTech, setNewTech] = useState("");
@@ -43,7 +42,7 @@ export default function AboutManagerPage() {
 
   const loadData = async () => {
     try {
-      const { admin, settings, achievements: dbAch } = await getAboutData();
+      const { admin, settings } = await getAboutData();
       
       setFormData({
         name: admin?.name || "",
@@ -71,12 +70,7 @@ export default function AboutManagerPage() {
         youtubeUrl: settings?.youtubeUrl || "",
       });
 
-      setAchievements(dbAch.map(a => ({
-        id: a.id,
-        title: a.title,
-        description: a.description,
-        date: a.date,
-      })));
+
     } catch (error) {
       console.error(error);
       setMessage({ type: "error", text: "Failed to load data." });
@@ -91,7 +85,7 @@ export default function AboutManagerPage() {
 
     try {
       await updateAboutProfile(formData);
-      await updateAchievements(achievements);
+
       setMessage({ type: "success", text: "About profile updated successfully!" });
       setTimeout(() => setMessage({ type: "", text: "" }), 3000);
     } catch (error: any) {
@@ -139,7 +133,7 @@ export default function AboutManagerPage() {
 
       {/* Tabs */}
       <div className="flex flex-wrap gap-2 border-b border-[var(--border-color)] pb-px">
-        {["profile", "skills", "timeline", "social"].map((tab) => (
+        {["profile", "skills", "social"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -337,74 +331,7 @@ export default function AboutManagerPage() {
           </div>
         )}
 
-        {/* TIMELINE TAB */}
-        {activeTab === "timeline" && (
-          <div className="space-y-6 animate-in fade-in">
-            <div className="flex justify-between items-center">
-              <h3 className="font-semibold text-lg">Timeline & Achievements</h3>
-              <Button type="button" size="sm" onClick={() => {
-                setAchievements([{ id: `temp-${Date.now()}`, title: "New Milestone", description: "", date: new Date() }, ...achievements]);
-              }}>
-                <Plus className="w-4 h-4 mr-2" /> Add Milestone
-              </Button>
-            </div>
-            
-            <p className="text-sm text-[var(--text-secondary)]">Drag items to reorder them on your timeline.</p>
 
-            <DragList 
-              items={achievements}
-              setItems={setAchievements}
-              keyExtractor={(item) => item.id!}
-              onRemove={(id) => setAchievements(achievements.filter(a => a.id !== id))}
-              renderItem={(item) => (
-                <div className="space-y-3 py-2">
-                  <div className="flex gap-4">
-                    <div className="flex-1 space-y-1">
-                      <label className="text-xs text-[var(--text-secondary)]">Title</label>
-                      <Input 
-                        value={item.title} 
-                        onChange={(e) => {
-                          const newAch = [...achievements];
-                          const idx = newAch.findIndex(a => a.id === item.id);
-                          if (idx >= 0) newAch[idx].title = e.target.value;
-                          setAchievements(newAch);
-                        }} 
-                        className="h-8 text-sm font-bold"
-                      />
-                    </div>
-                    <div className="w-40 space-y-1">
-                      <label className="text-xs text-[var(--text-secondary)]">Date</label>
-                      <Input 
-                        type="date"
-                        value={new Date(item.date).toISOString().split('T')[0]} 
-                        onChange={(e) => {
-                          const newAch = [...achievements];
-                          const idx = newAch.findIndex(a => a.id === item.id);
-                          if (idx >= 0) newAch[idx].date = new Date(e.target.value);
-                          setAchievements(newAch);
-                        }} 
-                        className="h-8 text-sm"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs text-[var(--text-secondary)]">Description</label>
-                    <Input 
-                      value={item.description} 
-                      onChange={(e) => {
-                        const newAch = [...achievements];
-                        const idx = newAch.findIndex(a => a.id === item.id);
-                        if (idx >= 0) newAch[idx].description = e.target.value;
-                        setAchievements(newAch);
-                      }} 
-                      className="h-8 text-sm"
-                    />
-                  </div>
-                </div>
-              )}
-            />
-          </div>
-        )}
 
         {/* SOCIAL & MEDIA TAB */}
         {activeTab === "social" && (

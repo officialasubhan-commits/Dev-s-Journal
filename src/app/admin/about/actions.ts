@@ -48,11 +48,7 @@ export async function getAboutData() {
     where: { id: "singleton" },
   });
 
-  const achievements = await prisma.achievement.findMany({
-    orderBy: { date: "desc" },
-  });
-
-  return { admin, settings, achievements };
+  return { admin, settings };
 }
 
 export async function updateAboutProfile(data: Partial<AboutFormData>) {
@@ -113,52 +109,3 @@ export async function updateAboutProfile(data: Partial<AboutFormData>) {
   return { success: true };
 }
 
-export type AchievementInput = {
-  id?: string;
-  title: string;
-  description: string;
-  date: Date;
-};
-
-export async function updateAchievements(achievements: AchievementInput[]) {
-  const session = await getServerSession(authOptions);
-  
-  if (!session || (session.user as any).role !== "ADMIN") {
-    throw new Error("Unauthorized");
-  }
-
-  const operations = achievements.map(ach => {
-    if (ach.id && !ach.id.startsWith("temp-")) {
-      return prisma.achievement.update({
-        where: { id: ach.id },
-        data: {
-          title: ach.title,
-          description: ach.description,
-          date: new Date(ach.date),
-        }
-      });
-    } else {
-      return prisma.achievement.create({
-        data: {
-          title: ach.title,
-          description: ach.description,
-          date: new Date(ach.date),
-        }
-      });
-    }
-  });
-
-  const current = await prisma.achievement.findMany({ select: { id: true } });
-  const incomingIds = achievements.filter(a => a.id && !a.id.startsWith("temp-")).map(a => a.id);
-  const toDelete = current.filter(c => !incomingIds.includes(c.id)).map(c => c.id);
-
-  if (toDelete.length > 0) {
-    operations.unshift(prisma.achievement.deleteMany({
-      where: { id: { in: toDelete } }
-    }) as any);
-  }
-
-  await prisma.$transaction(operations);
-
-  return { success: true };
-}

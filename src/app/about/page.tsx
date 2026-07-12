@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import prisma from "@/lib/prisma";
-import { format } from "date-fns";
-import { Achievement } from "@prisma/client";
 import { FaGithub, FaLinkedin, FaTwitter, FaInstagram, FaYoutube, FaFacebook } from "react-icons/fa";
 import Link from "next/link";
 import { GraduationCap, Briefcase, User, Star, FileText, Terminal, BarChart2 } from "lucide-react";
@@ -20,9 +18,7 @@ export default async function AboutPage() {
     where: { id: "singleton" },
   });
 
-  const achievements = await prisma.achievement.findMany({
-    orderBy: { date: "desc" },
-  });
+
 
   const postsCount = await prisma.post.count({ where: { published: true } });
   const projectsCount = await prisma.project.count({ where: { published: true } });
@@ -212,32 +208,7 @@ export default async function AboutPage() {
           </section>
         </div>
 
-        {/* Timeline */}
-        <section className="space-y-6">
-          <h2 className="text-3xl font-bold tracking-tight text-center md:text-left">Milestones</h2>
-          {achievements.length === 0 ? (
-            <div className="glass-card p-8 rounded-2xl text-center">
-              <p className="text-[var(--text-secondary)]">No timeline events added yet.</p>
-            </div>
-          ) : (
-            <div className="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-[var(--border-color)] before:to-transparent">
-              {achievements.map((achievement: Achievement, index: number) => (
-                <div key={achievement.id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                  <div className={`flex items-center justify-center w-10 h-10 rounded-full border-4 border-[var(--background)] ${index === 0 ? 'bg-[var(--primary)] glow-blue' : 'bg-[var(--card)]'} text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10`}>
-                    <span className={`w-3 h-3 ${index === 0 ? 'bg-white' : 'bg-[var(--border-color)]'} rounded-full`}></span>
-                  </div>
-                  <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] glass-card p-6 rounded-2xl transition-transform hover:-translate-y-1">
-                    <div className="flex flex-col space-y-2">
-                      <span className="text-[var(--accent)] font-semibold text-sm">{format(achievement.date, "MMM yyyy")}</span>
-                      <h3 className="text-xl font-bold">{achievement.title}</h3>
-                      <p className="text-[var(--text-secondary)] text-sm">{achievement.description}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
+
       </div>
     </div>
   );

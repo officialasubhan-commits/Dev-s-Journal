@@ -12,7 +12,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
     where: { id: resolvedParams.id },
     include: {
       _count: {
-        select: { posts: true, projects: true, comments: true, userAchievements: true }
+        select: { posts: true, projects: true, comments: true }
       },
       activities: {
         orderBy: { createdAt: 'desc' },
@@ -92,7 +92,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
               <li className="flex justify-between"><span>Posts:</span> <span className="text-[var(--text-main)]">{user._count.posts}</span></li>
               <li className="flex justify-between"><span>Projects:</span> <span className="text-[var(--text-main)]">{user._count.projects}</span></li>
               <li className="flex justify-between"><span>Comments:</span> <span className="text-[var(--text-main)]">{user._count.comments}</span></li>
-              <li className="flex justify-between"><span>Achievements:</span> <span className="text-[var(--text-main)]">{user._count.userAchievements}</span></li>
+
             </ul>
           </div>
 

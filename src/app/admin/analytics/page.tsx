@@ -45,7 +45,10 @@ export default async function AdminAnalyticsPage() {
     return <Monitor className="w-4 h-4" />;
   };
 
-  const totalDeviceViews = deviceBreakdown.reduce((sum, d) => sum + d.count, 0) || 1;
+  const totalDeviceViews = deviceBreakdown.reduce(
+    (sum: number, d: { count: number }) => sum + d.count,
+    0
+  ) || 1;
 
   return (
     <div className="space-y-8">

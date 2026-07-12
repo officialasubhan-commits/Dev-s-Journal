@@ -15,6 +15,8 @@ interface ImageUploadCropperProps {
   label?: string;
   className?: string;
   accept?: string;
+  maxSizeMB?: number;
+  onRemove?: () => void;
 }
 
 export function ImageUploadCropper({
@@ -24,7 +26,9 @@ export function ImageUploadCropper({
   circularCrop = false,
   label = "Upload Image",
   className,
-  accept = "image/*"
+  accept = "image/jpeg, image/png, image/webp",
+  maxSizeMB = 5,
+  onRemove,
 }: ImageUploadCropperProps) {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>("");
@@ -45,6 +49,22 @@ export function ImageUploadCropper({
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
+      
+      // File Size Validation
+      if (file.size > maxSizeMB * 1024 * 1024) {
+        alert(`File size exceeds ${maxSizeMB}MB limit.`);
+        e.target.value = '';
+        return;
+      }
+      
+      // File Type Validation (Optional fallback if accept doesn't catch it)
+      const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+      if (!validTypes.includes(file.type) && accept.includes('image')) {
+        alert("Only JPG, JPEG, PNG, and WEBP image formats are allowed.");
+        e.target.value = '';
+        return;
+      }
+
       setFileName(file.name);
       
       // If it's a video, bypass cropping and upload directly
@@ -131,10 +151,15 @@ export function ImageUploadCropper({
                alt="Uploaded" 
                className={`w-full max-h-[300px] object-contain ${circularCrop ? 'rounded-full aspect-square object-cover' : ''}`}
              />
-             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <Button type="button" onClick={() => fileInputRef.current?.click()} variant="secondary">
+             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                <Button type="button" onClick={() => fileInputRef.current?.click()} variant="secondary" size="sm">
                   Change Image
                 </Button>
+                {onRemove && (
+                  <Button type="button" onClick={onRemove} variant="destructive" size="sm">
+                    Remove
+                  </Button>
+                )}
              </div>
            </div>
         ) : (

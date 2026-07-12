@@ -11,6 +11,7 @@ import { DragList } from "@/components/admin/DragList";
 import { getAboutData, updateAboutProfile, updateAchievements, AboutFormData, AchievementInput } from "./actions";
 import { Loader2, Plus, Save, Undo, Eye } from "lucide-react";
 import { CldUploadWidget } from "next-cloudinary";
+import { ImageUploadCropper } from "@/components/ui/ImageUploadCropper";
 
 export default function AboutManagerPage() {
   const { data: session, status } = useSession();
@@ -415,27 +416,18 @@ export default function AboutManagerPage() {
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Profile Picture</h3>
                   <div className="flex items-center gap-4">
-                    <div className="w-20 h-20 rounded-full border-2 border-[var(--border-color)] overflow-hidden bg-[var(--background)]">
-                      {formData.image ? (
-                        <img src={formData.image} alt="Profile" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-[var(--text-secondary)]">No Img</div>
-                      )}
+                    <div className="w-40">
+                      <ImageUploadCropper
+                        value={formData.image || undefined}
+                        onChange={(url) => setFormData({ ...formData, image: url })}
+                        onRemove={() => setFormData({ ...formData, image: "" })}
+                        circularCrop={true}
+                        aspect={1}
+                        maxSizeMB={5}
+                        accept="image/jpeg, image/png, image/webp"
+                        label="Upload Photo"
+                      />
                     </div>
-                    <CldUploadWidget 
-                      uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "ml_default"} 
-                      onSuccess={(result: any) => {
-                        if (result?.info?.secure_url) {
-                          setFormData({ ...formData, image: result.info.secure_url });
-                        }
-                      }}
-                    >
-                      {({ open }) => (
-                        <Button type="button" variant="outline" onClick={() => open?.()}>
-                          Upload Image
-                        </Button>
-                      )}
-                    </CldUploadWidget>
                   </div>
                 </div>
 

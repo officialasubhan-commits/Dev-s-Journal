@@ -4,6 +4,7 @@ import { Mail, MapPin, Download, Phone, CheckCircle, Clock, XCircle } from "luci
 import { FaGithub, FaLinkedin, FaTwitter, FaInstagram, FaFacebook, FaYoutube, FaDiscord, FaTelegram, FaWhatsapp } from "react-icons/fa";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
+import { ContactForm } from "./ContactForm";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -163,38 +164,7 @@ export default async function ContactPage() {
           </div>
 
           {/* Contact Form */}
-          <div className="glass-card p-8 rounded-2xl h-fit border border-[var(--border-color)] bg-[var(--card)]">
-            <form className="space-y-6">
-              <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-medium">Name</label>
-                <input 
-                  type="text" 
-                  id="name" 
-                  className="w-full bg-[var(--background)] border border-[var(--border-color)] rounded-lg px-4 py-3 focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] transition-all"
-                  placeholder="Your Name"
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium">Email</label>
-                <input 
-                  type="email" 
-                  id="email" 
-                  className="w-full bg-[var(--background)] border border-[var(--border-color)] rounded-lg px-4 py-3 focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] transition-all"
-                  placeholder="you@example.com"
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="message" className="text-sm font-medium">Message</label>
-                <textarea 
-                  id="message" 
-                  rows={5}
-                  className="w-full bg-[var(--background)] border border-[var(--border-color)] rounded-lg px-4 py-3 focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] transition-all resize-none"
-                  placeholder="Your message..."
-                />
-              </div>
-              <Button type="submit" className="w-full py-6 text-base font-semibold">Send Message</Button>
-            </form>
-          </div>
+          <ContactForm />
         </div>
       </div>
     </div>

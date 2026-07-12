@@ -8,6 +8,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragEndEvent,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -21,14 +22,14 @@ import { GripVertical, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-export type SortableItemProps = {
+export type SortableItemProps<T> = {
   id: string;
-  item: any;
-  renderItem: (item: any) => React.ReactNode;
+  item: T;
+  renderItem: (item: T) => React.ReactNode;
   onRemove?: (id: string) => void;
 };
 
-export function SortableItem({ id, item, renderItem, onRemove }: SortableItemProps) {
+export function SortableItem<T>({ id, item, renderItem, onRemove }: SortableItemProps<T>) {
   const {
     attributes,
     listeners,
@@ -62,18 +63,18 @@ export function SortableItem({ id, item, renderItem, onRemove }: SortableItemPro
   );
 }
 
-export function DragList({ 
+export function DragList<T>({ 
   items, 
   setItems, 
   renderItem, 
   onRemove,
-  keyExtractor = (item: any) => item.id || item
+  keyExtractor = (item: T) => (item as { id?: string }).id || String(item)
 }: { 
-  items: any[]; 
-  setItems: (items: any[]) => void; 
-  renderItem: (item: any) => React.ReactNode; 
+  items: T[]; 
+  setItems: (items: T[]) => void; 
+  renderItem: (item: T) => React.ReactNode; 
   onRemove?: (id: string) => void;
-  keyExtractor?: (item: any) => string;
+  keyExtractor?: (item: T) => string;
 }) {
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -82,7 +83,7 @@ export function DragList({
     })
   );
 
-  function handleDragEnd(event: any) {
+  function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {

@@ -37,7 +37,6 @@ export default async function AboutPage() {
         {/* Header / Intro section */}
         <section className="flex flex-col md:flex-row gap-8 items-center md:items-start">
           <div className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden shrink-0 border border-[var(--border-color)] shadow-lg relative group">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={image} alt={name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
           </div>
           <div className="flex-1 space-y-6 text-center md:text-left">

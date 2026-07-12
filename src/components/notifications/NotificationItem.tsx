@@ -14,8 +14,22 @@ import {
   Check,
   Bell
 } from "lucide-react";
+interface NotificationData {
+  id: string;
+  type: string;
+  title?: string | null;
+  message: string;
+  link?: string | null;
+  read: boolean;
+  createdAt: string | Date;
+}
 
-export function NotificationItem({ notification, onUpdate }: any) {
+interface NotificationItemProps {
+  notification: NotificationData;
+  onUpdate: () => void;
+}
+
+export function NotificationItem({ notification, onUpdate }: NotificationItemProps) {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const getIcon = () => {

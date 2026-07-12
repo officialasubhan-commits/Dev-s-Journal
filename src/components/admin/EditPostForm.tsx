@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { SmartEditor } from "@/components/admin/SmartEditor";
 import { useState } from "react";
 import { MediaUploader } from "./MediaUploader";
+import { Post } from "@prisma/client";
 
-export function EditPostForm({ post }: { post: any }) {
+export function EditPostForm({ post }: { post: Post }) {
   const updatePostWithId = updatePost.bind(null, post.id);
   const [coverImage, setCoverImage] = useState(post.coverImage || "");
 
@@ -22,7 +23,7 @@ export function EditPostForm({ post }: { post: any }) {
     seoDescription: post.seoDescription || "",
   });
 
-  const updateField = (field: keyof typeof formData, value: any) => {
+  const updateField = (field: keyof typeof formData, value: string | number) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 

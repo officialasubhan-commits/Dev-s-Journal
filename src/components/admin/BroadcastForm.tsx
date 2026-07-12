@@ -55,7 +55,7 @@ export function BroadcastForm() {
               <select 
                 name="targetType"
                 value={targetType}
-                onChange={(e) => setTargetType(e.target.value as any)}
+                onChange={(e) => setTargetType(e.target.value as "ALL" | "ROLE" | "USER")}
                 className="w-full bg-[var(--background)] border border-[var(--border-color)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[var(--primary)]"
               >
                 <option value="ALL">All Users</option>

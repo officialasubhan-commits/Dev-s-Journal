@@ -29,17 +29,6 @@ export default function AboutManagerPage() {
 
   const [message, setMessage] = useState({ type: "", text: "" });
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/admin/login");
-      return;
-    }
-
-    if (status === "authenticated") {
-      loadData();
-    }
-  }, [status, router]);
-
   const loadData = async () => {
     try {
       const { admin, settings } = await getAboutData();
@@ -78,6 +67,17 @@ export default function AboutManagerPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/admin/login");
+      return;
+    }
+
+    if (status === "authenticated") {
+      loadData();
+    }
+  }, [status, router]);
 
   const handleSave = async () => {
     setSaving(true);

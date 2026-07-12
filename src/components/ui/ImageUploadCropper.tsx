@@ -145,7 +145,6 @@ export function ImageUploadCropper({
         />
         {value ? (
            <div className="relative group rounded-xl overflow-hidden border border-[var(--border-color)] flex items-center justify-center bg-[var(--background)]">
-             {/* eslint-disable-next-line @next/next/no-img-element */}
              <img 
                src={value} 
                alt="Uploaded" 

@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-
+import { Prisma } from "@prisma/client";
 export type NotificationType = "JOURNAL" | "PROJECT" | "LEARNING" | "GALLERY" | "ANNOUNCEMENT" | "INFO" | "SUCCESS" | "WARNING" | "ERROR";
 
 /**
@@ -50,7 +50,7 @@ export async function sendAdminNotification(
   targetUserId?: string
 ) {
   try {
-    let whereClause: any = {};
+    let whereClause: Prisma.UserWhereInput = {};
     if (targetType === "ROLE" && targetRole) {
       whereClause.role = targetRole;
     } else if (targetType === "USER" && targetUserId) {
@@ -101,7 +101,7 @@ export async function getUserNotifications(
     const { filter, search, page = 1, limit = 10 } = options || {};
     const skip = (page - 1) * limit;
 
-    const whereClause: any = { userId };
+    const whereClause: Prisma.NotificationWhereInput = { userId };
     
     if (filter === "unread") {
       whereClause.read = false;

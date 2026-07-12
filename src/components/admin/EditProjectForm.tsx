@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { SmartEditor } from "@/components/admin/SmartEditor";
 import { useState } from "react";
 import { MediaUploader } from "./MediaUploader";
+import { Project } from "@prisma/client";
 
-export function EditProjectForm({ project }: { project: any }) {
+export function EditProjectForm({ project }: { project: Project }) {
   const updateProjectWithId = updateProject.bind(null, project.id);
   const [coverImage, setCoverImage] = useState(project.coverImage || "");
   const [demoVideo, setDemoVideo] = useState(project.demoVideo || "");

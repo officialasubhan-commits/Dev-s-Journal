@@ -5,10 +5,20 @@ import Link from "next/link";
 import { Bell, Check, Megaphone, BookOpen, Briefcase, Image as ImageIcon, GraduationCap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+type NotificationData = {
+  id: string;
+  type: string;
+  title?: string;
+  message: string;
+  link?: string;
+  createdAt: string;
+  read: boolean;
+};
+
 export function NotificationDropdown({ isPublicMode = false }: { isPublicMode?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [recentNotifications, setRecentNotifications] = useState<any[]>([]);
+  const [recentNotifications, setRecentNotifications] = useState<NotificationData[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const failureCountRef = useRef(0);
@@ -36,7 +46,7 @@ export function NotificationDropdown({ isPublicMode = false }: { isPublicMode?: 
           const lastReadDate = lastReadDateStr ? new Date(lastReadDateStr).getTime() : 0;
           
           let unread = 0;
-          const processedNotifs = notifs.map((n: any) => {
+          const processedNotifs = notifs.map((n: NotificationData) => {
             const isRead = new Date(n.createdAt).getTime() <= lastReadDate;
             if (!isRead) unread++;
             return { ...n, read: isRead };
@@ -51,8 +61,8 @@ export function NotificationDropdown({ isPublicMode = false }: { isPublicMode?: 
         
         failureCountRef.current = 0; // Reset on success
       }
-    } catch (error: any) {
-      if (error.name === "AbortError") return;
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === "AbortError") return;
       
       failureCountRef.current += 1;
       
@@ -174,23 +184,33 @@ export function NotificationDropdown({ isPublicMode = false }: { isPublicMode?: 
               ) : (
                 <div className="divide-y divide-[var(--border-color)]">
                   {recentNotifications.map((notif) => {
-                    const Wrapper = notif.link ? Link : "div";
-                    const wrapperProps = notif.link ? { href: notif.link } : {};
+                    const innerContent = (
+                      <>
+                        <div className="mt-0.5 flex-shrink-0 bg-white p-2 rounded-full shadow-sm border border-[var(--border-color)]">
+                          {getIcon(notif.type)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-sm ${!notif.read ? 'text-[var(--text-main)] font-semibold' : 'text-[var(--text-secondary)]'}`}>
+                            {notif.title || notif.message}
+                          </p>
+                          <p className="text-xs text-[var(--text-muted)] mt-1 truncate">
+                            {notif.title ? notif.message : new Date(notif.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </>
+                    );
+
                     return (
                       <div key={notif.id} className={`group relative block p-3 transition-colors hover:bg-[var(--secondary-bg)] ${notif.read ? 'opacity-70' : 'bg-[var(--primary)]/5'}`}>
-                        <Wrapper {...(wrapperProps as any)} className="flex items-start gap-3" onClick={() => setIsOpen(false)}>
-                          <div className="mt-0.5 flex-shrink-0 bg-white p-2 rounded-full shadow-sm border border-[var(--border-color)]">
-                            {getIcon(notif.type)}
+                        {notif.link ? (
+                          <Link href={notif.link} className="flex items-start gap-3" onClick={() => setIsOpen(false)}>
+                            {innerContent}
+                          </Link>
+                        ) : (
+                          <div className="flex items-start gap-3" onClick={() => setIsOpen(false)}>
+                            {innerContent}
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <p className={`text-sm ${!notif.read ? 'text-[var(--text-main)] font-semibold' : 'text-[var(--text-secondary)]'}`}>
-                              {notif.title || notif.message}
-                            </p>
-                            <p className="text-xs text-[var(--text-muted)] mt-1 truncate">
-                              {notif.title ? notif.message : new Date(notif.createdAt).toLocaleDateString()}
-                            </p>
-                          </div>
-                        </Wrapper>
+                        )}
                         {!notif.read && (
                           <button 
                             onClick={(e) => handleMarkAsRead(notif.id, e)}

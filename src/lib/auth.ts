@@ -7,6 +7,14 @@ import prisma from "./prisma";
 import bcrypt from "bcryptjs";
 import { verify } from "otplib";
 
+interface CustomUser {
+  id: string;
+  role?: string;
+  image?: string | null;
+  profileCompleted?: boolean;
+  username?: string;
+}
+
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -107,10 +115,11 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, user, trigger, session }) {
       if (user) {
-        token.id = user.id;
-        token.role = (user as any).role || "USER";
-        token.picture = (user as any).image || user.image;
-        token.profileCompleted = (user as any).profileCompleted || false;
+        const u = user as unknown as CustomUser;
+        token.id = u.id;
+        token.role = u.role || "USER";
+        token.picture = u.image || user.image;
+        token.profileCompleted = u.profileCompleted || false;
       }
       
       if (trigger === "update" && session) {
@@ -124,11 +133,12 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (token && session.user) {
-        (session.user as any).id = token.id as string;
-        (session.user as any).role = token.role as string;
+        const u = session.user as unknown as CustomUser;
+        u.id = token.id as string;
+        u.role = token.role as string;
         session.user.image = token.picture as string | null | undefined;
-        (session.user as any).username = token.username;
-        (session.user as any).profileCompleted = token.profileCompleted as boolean;
+        u.username = token.username as string | undefined;
+        u.profileCompleted = token.profileCompleted as boolean;
       }
       return session;
     },

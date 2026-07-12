@@ -88,8 +88,8 @@ export default function AboutManagerPage() {
 
       setMessage({ type: "success", text: "About profile updated successfully!" });
       setTimeout(() => setMessage({ type: "", text: "" }), 3000);
-    } catch (error: any) {
-      setMessage({ type: "error", text: error.message || "Failed to save data." });
+    } catch (error: unknown) {
+      setMessage({ type: "error", text: (error instanceof Error ? error.message : "Failed to save data.") });
     } finally {
       setSaving(false);
     }
@@ -367,9 +367,10 @@ export default function AboutManagerPage() {
                     <CldUploadWidget 
                       uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "ml_default"} 
                       options={{ clientAllowedFormats: ['pdf'] }}
-                      onSuccess={(result: any) => {
-                        if (result?.info?.secure_url) {
-                          setFormData({ ...formData, resumePdf: result.info.secure_url });
+                      onSuccess={(result) => {
+                        const info = typeof result.info === 'object' && result.info !== null ? result.info as { secure_url?: string } : null;
+                        if (info?.secure_url) {
+                          setFormData({ ...formData, resumePdf: info.secure_url });
                         }
                       }}
                     >

@@ -8,12 +8,12 @@ import { authOptions } from "@/lib/auth";
 
 export async function updateUserRole(formData: FormData) {
   const session = await getServerSession(authOptions);
-  if ((session?.user as any)?.role !== "ADMIN") throw new Error("Unauthorized");
+  if (session?.user?.role !== "ADMIN") throw new Error("Unauthorized");
 
   const userId = formData.get("userId") as string;
   const role = formData.get("role") as string;
 
-  if (userId === (session?.user as any)?.id) {
+  if (userId === session?.user?.id) {
     throw new Error("You cannot change your own role");
   }
 
@@ -28,7 +28,7 @@ export async function updateUserRole(formData: FormData) {
 
 export async function toggleSuspension(formData: FormData) {
   const session = await getServerSession(authOptions);
-  if ((session?.user as any)?.role !== "ADMIN") throw new Error("Unauthorized");
+  if (session?.user?.role !== "ADMIN") throw new Error("Unauthorized");
 
   const userId = formData.get("userId") as string;
 
@@ -50,12 +50,12 @@ export async function toggleSuspension(formData: FormData) {
 
 export async function deleteUser(formData: FormData) {
   const session = await getServerSession(authOptions);
-  if ((session?.user as any)?.role !== "ADMIN") throw new Error("Unauthorized");
+  if (session?.user?.role !== "ADMIN") throw new Error("Unauthorized");
 
   const userId = formData.get("userId") as string;
 
   // Prevent admin from deleting themselves
-  if (userId === (session?.user as any)?.id) {
+  if (userId === session?.user?.id) {
     throw new Error("Cannot delete yourself");
   }
 

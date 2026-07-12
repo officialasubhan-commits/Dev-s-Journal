@@ -21,7 +21,7 @@ export default function NewPostPage() {
     seoDescription: "",
   });
 
-  const updateField = (field: keyof typeof formData, value: any) => {
+  const updateField = (field: keyof typeof formData, value: string | number) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 

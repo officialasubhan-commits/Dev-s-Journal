@@ -11,7 +11,7 @@ export async function PATCH(req: Request, context: { params: Promise<unknown> })
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
     if (!userId) {
       return NextResponse.json({ error: "User ID not found in session" }, { status: 401 });
     }
@@ -33,7 +33,7 @@ export async function DELETE(req: Request, context: { params: Promise<unknown> }
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const userId = (session.user as any).id;
+    const userId = session.user.id;
     if (!userId) {
       return NextResponse.json({ error: "User ID not found in session" }, { status: 401 });
     }

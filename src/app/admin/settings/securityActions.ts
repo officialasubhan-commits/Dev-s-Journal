@@ -34,7 +34,7 @@ export async function updateAdminSecurity(formData: FormData) {
     return { error: "Incorrect current password" };
   }
 
-  const updateData: any = {};
+  const updateData: { email?: string; password?: string } = {};
   
   if (newEmail && newEmail !== user.email) {
     // Check if new email is taken

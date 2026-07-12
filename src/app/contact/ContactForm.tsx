@@ -36,8 +36,8 @@ export function ContactForm() {
 
       setSuccessMsg("Message sent successfully");
       e.currentTarget.reset();
-    } catch (err: any) {
-      setErrorMsg(err.message || "An error occurred");
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsSubmitting(false);
     }

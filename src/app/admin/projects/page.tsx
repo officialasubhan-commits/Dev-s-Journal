@@ -51,7 +51,7 @@ export default async function AdminProjectsPage() {
                   </td>
                 </tr>
               ) : (
-                projects.map((project: any) => (
+                projects.map((project) => (
                   <tr key={project.id} className="hover:bg-[var(--background)]/30 transition-colors group">
                     <td className="p-4">
                       <p className="font-medium">{project.title}</p>
@@ -68,7 +68,7 @@ export default async function AdminProjectsPage() {
                     </td>
                     <td className="p-4 text-sm text-[var(--text-secondary)]">
                       <div className="flex gap-1 flex-wrap max-w-[200px]">
-                        {project.technologies.slice(0, 3).map((tech: any) => (
+                        {project.technologies.slice(0, 3).map((tech) => (
                           <span key={tech} className="px-2 py-0.5 bg-[var(--background)] border border-[var(--border-color)] rounded-md text-[10px]">{tech}</span>
                         ))}
                         {project.technologies.length > 3 && <span className="px-2 py-0.5 text-[10px]">+{project.technologies.length - 3}</span>}

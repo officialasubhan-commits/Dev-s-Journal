@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, Image as ImageIcon, Upload } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ImageUploadCropper } from "@/components/ui/ImageUploadCropper";
+import { SiteSettings } from "@prisma/client";
 
-export function BrandingSettingsForm({ settings }: { settings: any }) {
+export function BrandingSettingsForm({ settings }: { settings: SiteSettings }) {
   const [logoPreview, setLogoPreview] = useState(settings.siteLogo || "");
   const [faviconPreview, setFaviconPreview] = useState(settings.siteFavicon || "");
   const [isSaving, setIsSaving] = useState(false);

@@ -4,6 +4,8 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
+import { Prisma } from "@prisma/client";
+
 export type AboutFormData = {
   // User Model
   name: string;
@@ -21,7 +23,7 @@ export type AboutFormData = {
   technologies: string[];
   spokenLanguages: string[];
   image: string;
-  customStats: any;
+  customStats: Prisma.JsonValue;
 
   // SiteSettings Model
   resumePdf: string;
@@ -36,7 +38,7 @@ export type AboutFormData = {
 export async function getAboutData() {
   const session = await getServerSession(authOptions);
   
-  if (!session || (session.user as any).role !== "ADMIN") {
+  if (!session || session.user.role !== "ADMIN") {
     throw new Error("Unauthorized");
   }
 
@@ -54,7 +56,7 @@ export async function getAboutData() {
 export async function updateAboutProfile(data: Partial<AboutFormData>) {
   const session = await getServerSession(authOptions);
   
-  if (!session || (session.user as any).role !== "ADMIN") {
+  if (!session || session.user.role !== "ADMIN") {
     throw new Error("Unauthorized");
   }
 
@@ -80,7 +82,7 @@ export async function updateAboutProfile(data: Partial<AboutFormData>) {
     technologies: data.technologies !== undefined ? data.technologies : admin.technologies,
     spokenLanguages: data.spokenLanguages !== undefined ? data.spokenLanguages : admin.spokenLanguages,
     image: data.image !== undefined ? data.image : admin.image,
-    customStats: data.customStats !== undefined ? data.customStats : admin.customStats,
+    customStats: data.customStats !== undefined ? data.customStats as Prisma.InputJsonValue : admin.customStats as Prisma.InputJsonValue,
   };
 
   await prisma.user.update({

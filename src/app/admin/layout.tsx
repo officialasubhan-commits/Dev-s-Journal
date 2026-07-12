@@ -120,7 +120,7 @@ function SidebarContent({ pathname, onNavigate, onCommandPalette }: { pathname: 
 }
 
 // Simple search icon component to avoid importing another one if not needed
-function SearchIcon(props: any) {
+function SearchIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}

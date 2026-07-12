@@ -39,7 +39,7 @@ export default async function AdminGalleryPage() {
           <p className="text-[var(--text-secondary)]">No albums yet.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {albums.map((album: any) => (
+            {albums.map((album) => (
               <div key={album.id} className="bg-[var(--card)] border border-[var(--border-color)] rounded-xl overflow-hidden group">
                 <div className="h-40 bg-[var(--background)] relative">
                   {album.coverImage ? (
@@ -74,7 +74,7 @@ export default async function AdminGalleryPage() {
           <p className="text-[var(--text-secondary)]">No images uploaded.</p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {images.map((image: any) => (
+            {images.map((image) => (
               <div key={image.id} className="relative aspect-square bg-[var(--card)] border border-[var(--border-color)] rounded-lg overflow-hidden group">
                 {image.url?.match(/\.(mp4|webm|ogg)$/i) ? (
                   <video src={image.url} className="object-cover w-full h-full" />

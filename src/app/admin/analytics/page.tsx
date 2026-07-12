@@ -114,7 +114,7 @@ export default async function AdminAnalyticsPage() {
               <div className="space-y-4">
                 {deviceBreakdown.length === 0 ? (
                   <p className="text-[var(--text-muted)] text-sm italic">No data yet.</p>
-                ) : deviceBreakdown.map(({ device, count }) => {
+                ) : deviceBreakdown.map(({ device, count }: { device: string; count: number }) => {
                   const pct = Math.round((count / totalDeviceViews) * 100);
                   return (
                     <div key={device} className="space-y-2">
@@ -149,7 +149,7 @@ export default async function AdminAnalyticsPage() {
               <p className="p-8 text-center text-[var(--text-muted)] italic">No page view data yet. Views will appear here as visitors browse your site.</p>
             ) : (
               <div className="divide-y divide-[var(--border-color)]">
-                {topPages.map(({ path, count }, i) => {
+                {topPages.map(({ path, count }: { path: string; count: number }, i) => {
                   const maxCount = topPages[0]?.count || 1;
                   return (
                     <div key={path} className="p-4 flex items-center gap-4 hover:bg-[var(--background)]/50 transition-colors">

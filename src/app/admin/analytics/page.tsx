@@ -149,7 +149,7 @@ export default async function AdminAnalyticsPage() {
               <p className="p-8 text-center text-[var(--text-muted)] italic">No page view data yet. Views will appear here as visitors browse your site.</p>
             ) : (
               <div className="divide-y divide-[var(--border-color)]">
-                {topPages.map(({ path, count }: { path: string; count: number }, i) => {
+                {topPages.map(({ path, count }: { path: string; count: number }, i: number) => {
                   const maxCount = topPages[0]?.count || 1;
                   return (
                     <div key={path} className="p-4 flex items-center gap-4 hover:bg-[var(--background)]/50 transition-colors">

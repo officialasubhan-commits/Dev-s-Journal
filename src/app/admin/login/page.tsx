@@ -30,8 +30,7 @@ export default function AdminLoginPage() {
       if (res?.error) {
         setError("Invalid email or password.");
       } else {
-        router.push("/admin/dashboard");
-        router.refresh();
+        window.location.href = "/admin/dashboard";
       }
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");

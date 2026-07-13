@@ -40,8 +40,7 @@ export function AdminLoginForm() {
         setError(res.error);
       }
     } else {
-      router.push("/admin/dashboard");
-      router.refresh();
+      window.location.href = "/admin/dashboard";
     }
   };
 

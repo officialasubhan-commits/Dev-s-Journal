@@ -116,7 +116,11 @@ export async function createNotificationAction(data: {
   const admin = await getAdmin();
 
   if (data.link && data.link.trim() !== "") {
-    const isValid = await validateLink(data.link);
+    const trimmedLink = data.link.trim();
+    if (trimmedLink.startsWith("/admin")) {
+      throw new Error("Cannot publish notifications pointing to admin-only URLs (/admin/...).");
+    }
+    const isValid = await validateLink(trimmedLink);
     if (!isValid) {
       throw new Error("Invalid URL link. The referenced page or resource does not exist.");
     }
@@ -176,7 +180,11 @@ export async function updateNotificationAction(id: string, data: {
   const admin = await getAdmin();
 
   if (data.link && data.link.trim() !== "") {
-    const isValid = await validateLink(data.link);
+    const trimmedLink = data.link.trim();
+    if (trimmedLink.startsWith("/admin")) {
+      throw new Error("Cannot publish notifications pointing to admin-only URLs (/admin/...).");
+    }
+    const isValid = await validateLink(trimmedLink);
     if (!isValid) {
       throw new Error("Invalid URL link. The referenced page or resource does not exist.");
     }

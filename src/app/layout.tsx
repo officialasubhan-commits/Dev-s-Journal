@@ -12,10 +12,19 @@ const outfit = Outfit({ subsets: ["latin"], variable: "--font-heading" });
 
 import prisma from "@/lib/prisma";
 
+async function getSiteSettings() {
+  try {
+    return await prisma.siteSettings.findUnique({
+      where: { id: "singleton" },
+    });
+  } catch (error) {
+    console.log("[v0] Failed to load site settings, using defaults:", error instanceof Error ? error.message : error);
+    return null;
+  }
+}
+
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await prisma.siteSettings.findUnique({
-    where: { id: "singleton" }
-  });
+  const settings = await getSiteSettings();
 
   return {
     title: {
@@ -38,10 +47,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const settings = await prisma.siteSettings.findUnique({
-    where: { id: "singleton" }
-  });
-  
+  const settings = await getSiteSettings();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${outfit.variable} font-sans antialiased text-[var(--text-main)]`}>

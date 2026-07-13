@@ -18,6 +18,7 @@ function RedirectPageContent() {
 
   // Rewrite admin routes for non-admin visitors to safe public routes
   if (link.startsWith("/admin") && !isAdmin) {
+    const oldLink = link;
     if (link.startsWith("/admin/posts")) {
       link = "/journal";
     } else if (link.startsWith("/admin/projects")) {
@@ -29,6 +30,7 @@ function RedirectPageContent() {
     } else {
       link = "/";
     }
+    console.log("[RedirectPage] Rewriting admin link from", oldLink, "to safe public link", link, "because user is not ADMIN");
   }
 
   const [status, setStatus] = useState<"checking" | "valid" | "invalid">("checking");
@@ -41,12 +43,15 @@ function RedirectPageContent() {
 
     const checkLink = async () => {
       try {
+        console.log("[RedirectPage] Validating final link:", link);
         const res = await fetch(`/api/notifications/validate-link?link=${encodeURIComponent(link)}`);
         if (res.ok) {
           const data = await res.json();
+          console.log("[RedirectPage] Validation response for", link, "is:", data);
           if (data.valid) {
             setStatus("valid");
             // If valid, redirect immediately
+            console.log("[RedirectPage] Redirecting to valid URL:", link);
             router.replace(link);
           } else {
             setStatus("invalid");
@@ -55,6 +60,7 @@ function RedirectPageContent() {
           setStatus("invalid");
         }
       } catch (error) {
+        console.error("[RedirectPage] Error validation check:", error);
         setStatus("invalid");
       }
     };

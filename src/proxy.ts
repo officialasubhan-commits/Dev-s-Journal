@@ -22,13 +22,6 @@ export default withAuth(
       }
     }
 
-    // Protect /notifications route
-    if (path.startsWith("/notifications")) {
-      if (!token || token.role !== "ADMIN") {
-        return NextResponse.redirect(new URL("/admin/login", req.url));
-      }
-    }
-
     return NextResponse.next();
   },
   {
@@ -39,5 +32,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/admin/:path*", "/notifications/:path*"],
+  matcher: ["/admin/:path*"],
 };

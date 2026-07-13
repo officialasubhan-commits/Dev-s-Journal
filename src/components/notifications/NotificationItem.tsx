@@ -14,6 +14,7 @@ import {
   Check,
   Bell
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 interface NotificationData {
   id: string;
   type: string;
@@ -30,6 +31,7 @@ interface NotificationItemProps {
 }
 
 export function NotificationItem({ notification, onUpdate }: NotificationItemProps) {
+  const { data: session } = useSession();
   const [isDeleting, setIsDeleting] = useState(false);
 
   const getIcon = () => {
@@ -127,15 +129,37 @@ export function NotificationItem({ notification, onUpdate }: NotificationItemPro
         notification.read ? "border-[var(--border-color)] bg-[var(--card)]/50 opacity-70" : "border-[var(--primary)]/30 bg-[var(--card)] shadow-[0_0_15px_rgba(var(--primary-rgb),0.1)]"
       } transition-all hover:bg-[var(--card)]`}
     >
-      {notification.link && notification.link !== "" ? (
-        <Link href={`/notifications/redirect?url=${encodeURIComponent(notification.link)}`} className="flex items-start p-5 gap-4">
-          {innerContent}
-        </Link>
-      ) : (
-        <div className="flex items-start p-5 gap-4">
-          {innerContent}
-        </div>
-      )}
+      {(() => {
+        const isAdmin = session?.user?.role === "ADMIN";
+        let safeLink = notification.link;
+        if (safeLink && safeLink.startsWith("/admin") && !isAdmin) {
+          if (safeLink.startsWith("/admin/posts")) {
+            safeLink = "/journal";
+          } else if (safeLink.startsWith("/admin/projects")) {
+            safeLink = "/projects";
+          } else if (safeLink.startsWith("/admin/gallery")) {
+            safeLink = "/gallery";
+          } else if (safeLink.startsWith("/admin/learning")) {
+            safeLink = "/learning";
+          } else {
+            safeLink = "/";
+          }
+        }
+
+        if (safeLink && safeLink !== "") {
+          return (
+            <Link href={`/notifications/redirect?url=${encodeURIComponent(safeLink)}`} className="flex items-start p-5 gap-4">
+              {innerContent}
+            </Link>
+          );
+        }
+
+        return (
+          <div className="flex items-start p-5 gap-4">
+            {innerContent}
+          </div>
+        );
+      })()}
     </motion.div>
   );
 }

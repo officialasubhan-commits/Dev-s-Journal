@@ -6,10 +6,30 @@ import { Button } from "@/components/ui/button";
 import { Megaphone, Home, BookOpen, Briefcase, Mail, Loader2, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
+import { useSession } from "next-auth/react";
+
 function RedirectPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const link = searchParams.get("url") || "";
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.role === "ADMIN";
+  
+  let link = searchParams.get("url") || "";
+
+  // Rewrite admin routes for non-admin visitors to safe public routes
+  if (link.startsWith("/admin") && !isAdmin) {
+    if (link.startsWith("/admin/posts")) {
+      link = "/journal";
+    } else if (link.startsWith("/admin/projects")) {
+      link = "/projects";
+    } else if (link.startsWith("/admin/gallery")) {
+      link = "/gallery";
+    } else if (link.startsWith("/admin/learning")) {
+      link = "/learning";
+    } else {
+      link = "/";
+    }
+  }
 
   const [status, setStatus] = useState<"checking" | "valid" | "invalid">("checking");
 

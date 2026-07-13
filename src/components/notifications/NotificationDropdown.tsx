@@ -227,10 +227,26 @@ export function NotificationDropdown({ isPublicMode = false }: { isPublicMode?: 
                       </>
                     );
 
+                    const isAdmin = session?.user?.role === "ADMIN";
+                    let safeLink = notif.link;
+                    if (safeLink && safeLink.startsWith("/admin") && !isAdmin) {
+                      if (safeLink.startsWith("/admin/posts")) {
+                        safeLink = "/journal";
+                      } else if (safeLink.startsWith("/admin/projects")) {
+                        safeLink = "/projects";
+                      } else if (safeLink.startsWith("/admin/gallery")) {
+                        safeLink = "/gallery";
+                      } else if (safeLink.startsWith("/admin/learning")) {
+                        safeLink = "/learning";
+                      } else {
+                        safeLink = "/";
+                      }
+                    }
+
                     return (
                       <div key={notif.id} className={`group relative block p-3 transition-colors hover:bg-[var(--secondary-bg)] ${notif.read ? 'opacity-70' : 'bg-[var(--primary)]/5'}`}>
-                        {notif.link ? (
-                          <Link href={`/notifications/redirect?url=${encodeURIComponent(notif.link)}`} className="flex items-start gap-3" onClick={() => setIsOpen(false)}>
+                        {safeLink ? (
+                          <Link href={`/notifications/redirect?url=${encodeURIComponent(safeLink)}`} className="flex items-start gap-3" onClick={() => setIsOpen(false)}>
                             {innerContent}
                           </Link>
                         ) : (

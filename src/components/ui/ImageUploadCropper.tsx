@@ -116,6 +116,18 @@ export function ImageUploadCropper({
         body: formData
       });
       
+      if (!res.ok) {
+        const errorText = await res.text();
+        let errorMessage = "Upload failed";
+        try {
+          const errorJson = JSON.parse(errorText);
+          errorMessage = errorJson.error || errorMessage;
+        } catch (_) {
+          errorMessage = `HTTP error ${res.status}: ${errorText || res.statusText}`;
+        }
+        throw new Error(errorMessage);
+      }
+      
       const data = await res.json();
       if (data.url) {
         onChange(data.url);
@@ -125,9 +137,9 @@ export function ImageUploadCropper({
       } else {
         throw new Error(data.error || "Upload failed");
       }
-    } catch (e) {
-      console.error(e);
-      alert("Failed to crop and upload image");
+    } catch (err: any) {
+      console.error(err);
+      alert(`Failed to crop and upload image: ${err?.message || err || 'Unknown error'}`);
     } finally {
       setIsUploading(false);
     }

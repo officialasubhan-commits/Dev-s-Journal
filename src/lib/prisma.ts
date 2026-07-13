@@ -12,7 +12,7 @@ const connectionString = process.env.DATABASE_URL || "postgresql://user:password
 const pool = new Pool({ connectionString })
 const adapter = new PrismaPg(pool)
 
-export const prisma = globalForPrisma.__prisma_v2 ?? new PrismaClient({ adapter })
+const prisma = globalForPrisma.__prisma_v2 ?? new PrismaClient({ adapter })
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.__prisma_v2 = prisma
 

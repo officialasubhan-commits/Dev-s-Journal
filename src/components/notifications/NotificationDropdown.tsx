@@ -230,7 +230,7 @@ export function NotificationDropdown({ isPublicMode = false }: { isPublicMode?: 
                     return (
                       <div key={notif.id} className={`group relative block p-3 transition-colors hover:bg-[var(--secondary-bg)] ${notif.read ? 'opacity-70' : 'bg-[var(--primary)]/5'}`}>
                         {notif.link ? (
-                          <Link href={notif.link} className="flex items-start gap-3" onClick={() => setIsOpen(false)}>
+                          <Link href={`/notifications/redirect?url=${encodeURIComponent(notif.link)}`} className="flex items-start gap-3" onClick={() => setIsOpen(false)}>
                             {innerContent}
                           </Link>
                         ) : (

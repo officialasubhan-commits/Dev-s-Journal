@@ -6,7 +6,8 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { 
   LayoutDashboard, FileText, Briefcase, Image as ImageIcon, Settings, LogOut, 
-  Sparkles, Users, User, MessageSquare, Mail, BookOpen, BarChart3, Menu, X, GraduationCap, Command as CommandIcon
+  Sparkles, Users, User, MessageSquare, Mail, BookOpen, BarChart3, Menu, X, GraduationCap, Command as CommandIcon,
+  Bell
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { AdminCommandPalette } from "@/components/admin/CommandPalette";
@@ -14,6 +15,7 @@ import { useSession } from "next-auth/react";
 
 const navLinks = [
   { href: "/admin/dashboard", label: "Overview", icon: LayoutDashboard },
+  { href: "/admin/notifications", label: "Alert Center", icon: Bell },
   { href: "/admin/posts", label: "Content Studio", icon: FileText },
   { href: "/admin/projects", label: "Projects", icon: Briefcase },
   { href: "/admin/gallery", label: "Media Gallery", icon: ImageIcon },

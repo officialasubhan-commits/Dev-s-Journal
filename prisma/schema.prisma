@@ -335,17 +335,24 @@ model Draft {
 
 
 model Notification {
-  id        String   @id @default(cuid())
-  type      String   // "SYSTEM", "CONTRIBUTION", "COMMENT", "LIKE", "MODERATION"
-  title     String?
-  message   String
-  link      String?
-  read      Boolean  @default(false)
+  id          String   @id @default(cuid())
+  type        String   // "SYSTEM", "CONTRIBUTION", "COMMENT", "LIKE", "MODERATION"
+  title       String?
+  message     String
+  link        String?
+  read        Boolean  @default(false)
   
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  createdAt DateTime @default(now())
+  published   Boolean  @default(true)
+  priority    String   @default("MEDIUM")
+  pinned      Boolean  @default(false)
+  archived    Boolean  @default(false)
+  publishedAt DateTime? @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+  
+  createdAt   DateTime @default(now())
 }
 
 model PasswordResetToken {

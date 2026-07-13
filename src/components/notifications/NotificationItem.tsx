@@ -128,7 +128,7 @@ export function NotificationItem({ notification, onUpdate }: NotificationItemPro
       } transition-all hover:bg-[var(--card)]`}
     >
       {notification.link && notification.link !== "" ? (
-        <Link href={notification.link} className="flex items-start p-5 gap-4">
+        <Link href={`/notifications/redirect?url=${encodeURIComponent(notification.link)}`} className="flex items-start p-5 gap-4">
           {innerContent}
         </Link>
       ) : (

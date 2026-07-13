@@ -308,8 +308,14 @@ export async function deletePost(id: string) {
     where: { id },
     select: { slug: true }
   });
+  if (post?.slug) {
+    await prisma.notification.updateMany({
+      where: { link: `/journal/${post.slug}` },
+      data: { archived: true }
+    });
+    revalidatePath(`/journal/${post.slug}`);
+  }
   revalidatePath("/journal");
-  if (post?.slug) revalidatePath(`/journal/${post.slug}`);
   revalidatePath("/");
   revalidatePath("/admin/posts");
 }
@@ -319,8 +325,14 @@ export async function deleteProject(id: string) {
     where: { id },
     select: { slug: true }
   });
+  if (project?.slug) {
+    await prisma.notification.updateMany({
+      where: { link: `/projects/${project.slug}` },
+      data: { archived: true }
+    });
+    revalidatePath(`/projects/${project.slug}`);
+  }
   revalidatePath("/projects");
-  if (project?.slug) revalidatePath(`/projects/${project.slug}`);
   revalidatePath("/");
   revalidatePath("/admin/projects");
 }

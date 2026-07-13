@@ -1,31 +1,21 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Sun, Moon, Monitor } from "lucide-react";
-
-type Theme = "light" | "dark" | "system";
+import { useTheme } from "next-themes";
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("light");
+  const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    const stored = (localStorage.getItem("theme") as Theme) || "light";
-    setTheme(stored);
-    applyTheme(stored);
   }, []);
 
-  function applyTheme(t: Theme) {
-    const isDark = t === "dark" || (t === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
-    document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
-  }
-
   function cycle() {
-    const order: Theme[] = ["light", "dark", "system"];
-    const next = order[(order.indexOf(theme) + 1) % order.length];
+    const order = ["light", "dark", "system"];
+    const currentTheme = theme || "light";
+    const next = order[(order.indexOf(currentTheme) + 1) % order.length];
     setTheme(next);
-    localStorage.setItem("theme", next);
-    applyTheme(next);
   }
 
   if (!mounted) return <div className="w-9 h-9" />;

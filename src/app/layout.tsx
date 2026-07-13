@@ -45,7 +45,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${outfit.variable} flex flex-col min-h-screen bg-[var(--background)] font-sans antialiased text-[var(--text-main)]`}>
-        <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="data-theme" defaultTheme="light" enableSystem>
           <AuthProvider>
             <PageTracker />
             <Navbar siteTitle={settings?.siteTitle || "Boss Journal"} siteLogo={settings?.siteLogo || ""} />

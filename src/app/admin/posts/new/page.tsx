@@ -5,9 +5,14 @@ import { Button } from "@/components/ui/button";
 import { SmartEditor } from "@/components/admin/SmartEditor";
 import { useState } from "react";
 import { MediaUploader } from "@/components/admin/MediaUploader";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 export default function NewPostPage() {
+  const router = useRouter();
   const [coverImage, setCoverImage] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // Controlled form state
   const [formData, setFormData] = useState({
@@ -25,13 +30,37 @@ export default function NewPostPage() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
+    const data = new FormData(e.currentTarget);
+    try {
+      const res = await createPost(data);
+      if (res?.error) {
+        setError(res.error);
+        setIsLoading(false);
+      }
+    } catch (err: any) {
+      // Catch redirect exceptions from server action gracefully
+      console.log("Post created successfully. Redirecting...");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">New Post</h1>
       </div>
       
-      <form action={createPost} className="space-y-6 max-w-4xl bg-[var(--card)] border border-[var(--border-color)] p-6 rounded-xl shadow-lg">
+      {error && (
+        <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-500 rounded-lg text-sm font-medium">
+          {error}
+        </div>
+      )}
+      
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl bg-[var(--card)] border border-[var(--border-color)] p-6 rounded-xl shadow-lg">
         
         <div className="space-y-2">
           <label className="text-sm font-medium text-[var(--text-secondary)]">Cover Image</label>
@@ -55,6 +84,7 @@ export default function NewPostPage() {
               value={formData.title}
               onChange={(e) => updateField("title", e.target.value)}
               placeholder="Post Title"
+              disabled={isLoading}
               className="w-full bg-[var(--background)] border border-[var(--border-color)] p-3 rounded-lg focus:outline-none focus:border-[var(--primary)]" 
             />
           </div>
@@ -68,6 +98,7 @@ export default function NewPostPage() {
               value={formData.slug}
               onChange={(e) => updateField("slug", e.target.value)}
               placeholder="post-title"
+              disabled={isLoading}
               className="w-full bg-[var(--background)] border border-[var(--border-color)] p-3 rounded-lg focus:outline-none focus:border-[var(--primary)]" 
             />
           </div>
@@ -77,8 +108,8 @@ export default function NewPostPage() {
           <label className="flex items-center text-sm font-medium text-[var(--text-secondary)]">
             Content
           </label>
-          <input type="hidden" name="content" id="hidden_content" />
           <SmartEditor 
+            name="content"
             value={formData.content} 
             onChange={(val) => updateField("content", val)}
           />
@@ -94,6 +125,7 @@ export default function NewPostPage() {
               value={formData.mood}
               onChange={(e) => updateField("mood", e.target.value)}
               placeholder="e.g. Happy, Reflective"
+              disabled={isLoading}
               className="w-full bg-[var(--background)] border border-[var(--border-color)] p-3 rounded-lg focus:outline-none focus:border-[var(--primary)]" 
             />
           </div>
@@ -106,6 +138,7 @@ export default function NewPostPage() {
               type="number"
               value={formData.readingTime}
               onChange={(e) => updateField("readingTime", parseInt(e.target.value) || 5)}
+              disabled={isLoading}
               className="w-full bg-[var(--background)] border border-[var(--border-color)] p-3 rounded-lg focus:outline-none focus:border-[var(--primary)]" 
             />
           </div>
@@ -118,6 +151,7 @@ export default function NewPostPage() {
               value={formData.tags}
               onChange={(e) => updateField("tags", e.target.value)}
               placeholder="react, tech, life"
+              disabled={isLoading}
               className="w-full bg-[var(--background)] border border-[var(--border-color)] p-3 rounded-lg focus:outline-none focus:border-[var(--primary)]" 
             />
           </div>
@@ -133,6 +167,7 @@ export default function NewPostPage() {
               value={formData.seoTitle}
               onChange={(e) => updateField("seoTitle", e.target.value)}
               placeholder="SEO Optimized Title"
+              disabled={isLoading}
               className="w-full bg-[var(--background)] border border-[var(--border-color)] p-3 rounded-lg focus:outline-none focus:border-[var(--primary)]" 
             />
           </div>
@@ -145,6 +180,7 @@ export default function NewPostPage() {
               value={formData.seoDescription}
               onChange={(e) => updateField("seoDescription", e.target.value)}
               placeholder="Meta description for search engines"
+              disabled={isLoading}
               className="w-full bg-[var(--background)] border border-[var(--border-color)] p-3 rounded-lg focus:outline-none focus:border-[var(--primary)]" 
             />
           </div>
@@ -156,6 +192,7 @@ export default function NewPostPage() {
             <input 
               name="scheduledFor" 
               type="datetime-local"
+              disabled={isLoading}
               className="w-full bg-[var(--background)] border border-[var(--border-color)] p-3 rounded-lg focus:outline-none focus:border-[var(--primary)]" 
             />
           </div>
@@ -163,29 +200,31 @@ export default function NewPostPage() {
         
         <div className="flex flex-wrap items-center gap-4 bg-[var(--background)] p-4 rounded-lg border border-[var(--border-color)]">
           <div className="flex items-center space-x-2">
-            <input type="checkbox" name="published" id="published" className="w-5 h-5 accent-[var(--primary)] rounded cursor-pointer" />
+            <input type="checkbox" name="published" id="published" disabled={isLoading} className="w-5 h-5 accent-[var(--primary)] rounded cursor-pointer" />
             <label htmlFor="published" className="font-medium cursor-pointer">Published to public</label>
           </div>
           <div className="flex items-center space-x-2">
-            <input type="checkbox" name="pinned" id="pinned" className="w-5 h-5 accent-[var(--primary)] rounded cursor-pointer" />
+            <input type="checkbox" name="pinned" id="pinned" disabled={isLoading} className="w-5 h-5 accent-[var(--primary)] rounded cursor-pointer" />
             <label htmlFor="pinned" className="font-medium cursor-pointer">Pinned</label>
           </div>
           <div className="flex items-center space-x-2">
-            <input type="checkbox" name="archived" id="archived" className="w-5 h-5 accent-[var(--primary)] rounded cursor-pointer" />
+            <input type="checkbox" name="archived" id="archived" disabled={isLoading} className="w-5 h-5 accent-[var(--primary)] rounded cursor-pointer" />
             <label htmlFor="archived" className="font-medium cursor-pointer text-[var(--error)]">Archived</label>
           </div>
         </div>
         
         <div className="pt-4 flex justify-end space-x-4 border-t border-[var(--border-color)]">
-          <Button variant="outline" type="button" onClick={() => window.history.back()}>Cancel</Button>
-          <Button type="submit" onClick={() => {
-            const editorTextarea = document.querySelector('.smart-editor-textarea') as HTMLTextAreaElement;
-            if (editorTextarea) {
-              (document.getElementById('hidden_content') as HTMLInputElement).value = editorTextarea.value;
-            } else if (formData.content) {
-              (document.getElementById('hidden_content') as HTMLInputElement).value = formData.content;
-            }
-          }}>Save Post</Button>
+          <Button variant="outline" type="button" onClick={() => window.history.back()} disabled={isLoading}>Cancel</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              "Save Post"
+            )}
+          </Button>
         </div>
       </form>
     </div>

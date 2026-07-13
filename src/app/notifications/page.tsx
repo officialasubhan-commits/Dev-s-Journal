@@ -4,8 +4,10 @@ import { useState, useEffect } from "react";
 import { NotificationList } from "@/components/notifications/NotificationList";
 import { Button } from "@/components/ui/button";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 export default function NotificationsPage() {
+  const { data: session, status } = useSession();
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -21,6 +23,7 @@ export default function NotificationsPage() {
   }, [search]);
 
   const fetchNotifications = async () => {
+    if (status === "loading") return;
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -28,6 +31,9 @@ export default function NotificationsPage() {
       if (debouncedSearch) params.append("search", debouncedSearch);
       params.append("page", page.toString());
       params.append("limit", "10");
+      if (status === "unauthenticated" || !session) {
+        params.append("public", "true");
+      }
 
       const res = await fetch(`/api/notifications?${params.toString()}`);
       if (res.ok) {
@@ -43,18 +49,16 @@ export default function NotificationsPage() {
   };
 
   useEffect(() => {
-     
+    if (status === "loading") return;
     fetchNotifications();
 
     // Poll every 30 seconds
     const interval = setInterval(() => {
-       
       fetchNotifications();
     }, 30000);
 
     // Listen for updates from other components
     const handleUpdateEvent = () => {
-       
       fetchNotifications();
     };
     window.addEventListener("notifications-updated", handleUpdateEvent);
@@ -63,7 +67,7 @@ export default function NotificationsPage() {
       clearInterval(interval);
       window.removeEventListener("notifications-updated", handleUpdateEvent);
     };
-  }, [filter, debouncedSearch, page]);
+  }, [filter, debouncedSearch, page, status, session]);
 
   const markAllAsRead = async () => {
     try {

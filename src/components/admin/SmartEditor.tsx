@@ -5,22 +5,35 @@ import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import { Button } from '@/components/ui/button';
 import { Bold, Italic, List, ListOrdered, Quote } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-export function SmartEditor({ initialContent = "", value, onChange }: { initialContent?: string, value?: string, onChange?: (val: string) => void }) {
+export function SmartEditor({ 
+  initialContent = "", 
+  value, 
+  onChange,
+  name
+}: { 
+  initialContent?: string; 
+  value?: string; 
+  onChange?: (val: string) => void;
+  name?: string;
+}) {
   const isControlled = value !== undefined;
+  const [htmlContent, setHtmlContent] = useState(isControlled ? value : initialContent);
   
   const editor = useEditor({
     extensions: [
       StarterKit,
       Placeholder.configure({
-        placeholder: 'Write your biography here...',
+        placeholder: 'Write your content here...',
       }),
     ],
     content: isControlled ? value : initialContent,
     onUpdate: ({ editor }) => {
+      const html = editor.getHTML();
+      setHtmlContent(html);
       if (onChange) {
-        onChange(editor.getHTML());
+        onChange(html);
       }
     },
     editorProps: {
@@ -30,12 +43,15 @@ export function SmartEditor({ initialContent = "", value, onChange }: { initialC
     },
   });
 
-  // Update editor content if controlled value changes externally
+  // Update editor content if controlled value changes externally, while avoiding infinite loops
   useEffect(() => {
-    if (isControlled && editor && value !== editor.getHTML()) {
-      editor.commands.setContent(value || "");
+    if (isControlled && value !== htmlContent) {
+      setHtmlContent(value || "");
+      if (editor && value !== editor.getHTML()) {
+        editor.commands.setContent(value || "");
+      }
     }
-  }, [value, editor, isControlled]);
+  }, [value, editor, isControlled, htmlContent]);
 
   if (!editor) return null;
 
@@ -109,6 +125,7 @@ export function SmartEditor({ initialContent = "", value, onChange }: { initialC
         </Button>
       </div>
       <EditorContent editor={editor} className="flex-1 overflow-y-auto bg-transparent" />
+      {name && <input type="hidden" name={name} value={htmlContent} />}
     </div>
   );
 }

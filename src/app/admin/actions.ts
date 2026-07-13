@@ -8,65 +8,87 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 export async function createPost(formData: FormData) {
-  const session = await getServerSession(authOptions);
-  const authorId = session?.user?.id;
+  try {
+    const session = await getServerSession(authOptions);
+    const authorId = session?.user?.id;
 
-  const title = formData.get("title") as string;
-  const slug = formData.get("slug") as string;
-  const content = formData.get("content") as string;
-  const published = formData.get("published") === "on";
-  
-  const coverImage = formData.get("coverImage") as string | null;
-  const mood = formData.get("mood") as string | null;
-  const readingTime = parseInt((formData.get("readingTime") as string) || "5");
-  const pinned = formData.get("pinned") === "on";
-  const archived = formData.get("archived") === "on";
-  const seoTitle = formData.get("seoTitle") as string | null;
-  const seoDescription = formData.get("seoDescription") as string | null;
-  
-  // Extract tags as a comma separated string and split
-  const tagsString = formData.get("tags") as string | null;
-  const tags = tagsString ? tagsString.split(",").map(t => t.trim()).filter(Boolean) : [];
-  
-  const scheduledForStr = formData.get("scheduledFor") as string | null;
-  const scheduledFor = scheduledForStr ? new Date(scheduledForStr) : null;
+    const title = formData.get("title") as string;
+    const slug = formData.get("slug") as string;
+    const content = formData.get("content") as string;
+    const published = formData.get("published") === "on";
+    
+    const coverImage = formData.get("coverImage") as string | null;
+    const mood = formData.get("mood") as string | null;
+    const readingTime = parseInt((formData.get("readingTime") as string) || "5");
+    const pinned = formData.get("pinned") === "on";
+    const archived = formData.get("archived") === "on";
+    const seoTitle = formData.get("seoTitle") as string | null;
+    const seoDescription = formData.get("seoDescription") as string | null;
+    
+    // Extract tags as a comma separated string and split
+    const tagsString = formData.get("tags") as string | null;
+    const tags = tagsString ? tagsString.split(",").map(t => t.trim()).filter(Boolean) : [];
+    
+    const scheduledForStr = formData.get("scheduledFor") as string | null;
+    const scheduledFor = scheduledForStr ? new Date(scheduledForStr) : null;
 
+    console.log("[createPost] Form fields parsed:", { title, slug, isContentEmpty: !content, published });
 
+    if (!title || !slug || !content) {
+      const missing = [];
+      if (!title) missing.push("Title");
+      if (!slug) missing.push("Slug");
+      if (!content) missing.push("Content");
+      return { error: `Missing required fields: ${missing.join(", ")}` };
+    }
 
-  if (!title || !slug || !content) return;
+    // Check unique slug
+    const existing = await prisma.post.findUnique({ where: { slug } });
+    if (existing) {
+      console.warn(`[createPost] Duplicate slug violation: ${slug}`);
+      return { error: `A post with the slug "${slug}" already exists. Please choose a different slug.` };
+    }
 
-  await prisma.post.create({
-    data: {
-      title,
-      slug,
-      content,
-      published,
-      coverImage,
-      mood,
-      readingTime,
-      pinned,
-      archived,
-      seoTitle,
-      seoDescription,
-      tags,
-      scheduledFor,
-      authorId
-    },
-  });
+    const newPost = await prisma.post.create({
+      data: {
+        title,
+        slug,
+        content,
+        published,
+        coverImage,
+        mood,
+        readingTime,
+        pinned,
+        archived,
+        seoTitle,
+        seoDescription,
+        tags,
+        scheduledFor,
+        authorId
+      },
+    });
 
-  if (published) {
-    await broadcastNotification(
-      "JOURNAL",
-      `New journal entry published: ${title}`,
-      "📢 New Journal Published",
-      `/journal/${slug}`
-    );
+    console.log("[createPost] Post created successfully:", newPost.id);
+
+    if (published) {
+      await broadcastNotification(
+        "JOURNAL",
+        `New journal entry published: ${title}`,
+        "📢 New Journal Published",
+        `/journal/${slug}`
+      );
+    }
+
+    revalidatePath("/journal");
+    revalidatePath("/journal/[slug]");
+    revalidatePath("/");
+    revalidatePath("/admin/posts");
+  } catch (error: any) {
+    console.error("[createPost] Error saving to database:", error);
+    return { error: `Database save failed: ${error?.message || error}` };
   }
 
-  revalidatePath("/journal");
-  revalidatePath("/journal/[slug]");
-  revalidatePath("/");
-  revalidatePath("/admin/posts");
+  // Next.js redirect must be run outside try/catch to redirect client cleanly
   redirect("/admin/posts");
 }
 
@@ -143,54 +165,80 @@ export async function createProject(formData: FormData) {
 }
 
 export async function updatePost(id: string, formData: FormData) {
-  const title = formData.get("title") as string;
-  const slug = formData.get("slug") as string;
-  const content = formData.get("content") as string;
-  const published = formData.get("published") === "on";
+  try {
+    const title = formData.get("title") as string;
+    const slug = formData.get("slug") as string;
+    const content = formData.get("content") as string;
+    const published = formData.get("published") === "on";
 
-  const coverImage = formData.get("coverImage") as string | null;
-  const mood = formData.get("mood") as string | null;
-  const readingTime = parseInt((formData.get("readingTime") as string) || "5");
-  const pinned = formData.get("pinned") === "on";
-  const archived = formData.get("archived") === "on";
-  const seoTitle = formData.get("seoTitle") as string | null;
-  const seoDescription = formData.get("seoDescription") as string | null;
-  
-  // Extract tags as a comma separated string and split
-  const tagsString = formData.get("tags") as string | null;
-  const tags = tagsString ? tagsString.split(",").map(t => t.trim()).filter(Boolean) : [];
-  
-  const scheduledForStr = formData.get("scheduledFor") as string | null;
-  const scheduledFor = scheduledForStr ? new Date(scheduledForStr) : null;
+    const coverImage = formData.get("coverImage") as string | null;
+    const mood = formData.get("mood") as string | null;
+    const readingTime = parseInt((formData.get("readingTime") as string) || "5");
+    const pinned = formData.get("pinned") === "on";
+    const archived = formData.get("archived") === "on";
+    const seoTitle = formData.get("seoTitle") as string | null;
+    const seoDescription = formData.get("seoDescription") as string | null;
+    
+    // Extract tags as a comma separated string and split
+    const tagsString = formData.get("tags") as string | null;
+    const tags = tagsString ? tagsString.split(",").map(t => t.trim()).filter(Boolean) : [];
+    
+    const scheduledForStr = formData.get("scheduledFor") as string | null;
+    const scheduledFor = scheduledForStr ? new Date(scheduledForStr) : null;
 
+    console.log("[updatePost] Form fields parsed for update:", { id, title, slug, isContentEmpty: !content, published });
 
+    if (!title || !slug || !content) {
+      const missing = [];
+      if (!title) missing.push("Title");
+      if (!slug) missing.push("Slug");
+      if (!content) missing.push("Content");
+      return { error: `Missing required fields: ${missing.join(", ")}` };
+    }
 
-  if (!title || !slug || !content) return;
+    // Check unique slug on other posts
+    const existing = await prisma.post.findFirst({
+      where: {
+        slug,
+        id: { not: id }
+      }
+    });
+    if (existing) {
+      console.warn(`[updatePost] Duplicate slug violation: ${slug}`);
+      return { error: `A post with the slug "${slug}" already exists. Please choose a different slug.` };
+    }
 
-  await prisma.post.update({
-    where: { id },
-    data: {
-      title,
-      slug,
-      content,
-      published,
-      coverImage,
-      mood,
-      readingTime,
-      pinned,
-      archived,
-      seoTitle,
-      seoDescription,
-      tags,
-      scheduledFor
-    },
-  });
+    await prisma.post.update({
+      where: { id },
+      data: {
+        title,
+        slug,
+        content,
+        published,
+        coverImage,
+        mood,
+        readingTime,
+        pinned,
+        archived,
+        seoTitle,
+        seoDescription,
+        tags,
+        scheduledFor
+      },
+    });
 
-  revalidatePath("/journal");
-  revalidatePath("/journal/[slug]");
-  revalidatePath(`/journal/${slug}`);
-  revalidatePath("/");
-  revalidatePath("/admin/posts");
+    console.log("[updatePost] Post updated successfully:", id);
+
+    revalidatePath("/journal");
+    revalidatePath("/journal/[slug]");
+    revalidatePath(`/journal/${slug}`);
+    revalidatePath("/");
+    revalidatePath("/admin/posts");
+  } catch (error: any) {
+    console.error("[updatePost] Error updating database:", error);
+    return { error: `Database update failed: ${error?.message || error}` };
+  }
+
   redirect("/admin/posts");
 }
 

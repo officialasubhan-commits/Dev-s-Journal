@@ -56,6 +56,7 @@ export async function saveGeneralSettings(formData: FormData): Promise<void> {
     create: { id: "singleton" },
   });
   revalidatePath("/admin/settings");
+  revalidatePath("/", "layout");
 }
 
 export async function saveContactSettings(formData: FormData): Promise<void> {
@@ -74,6 +75,8 @@ export async function saveContactSettings(formData: FormData): Promise<void> {
     create: { id: "singleton" },
   });
   revalidatePath("/admin/settings");
+  revalidatePath("/contact");
+  revalidatePath("/about");
 }
 
 export async function saveSeoSettings(formData: FormData): Promise<void> {
@@ -88,21 +91,7 @@ export async function saveSeoSettings(formData: FormData): Promise<void> {
     create: { id: "singleton" },
   });
   revalidatePath("/admin/settings");
-}
-
-export async function saveSocialSettings(formData: FormData): Promise<void> {
-  await prisma.siteSettings.upsert({
-    where: { id: "singleton" },
-    update: {
-      githubUrl: formData.get("githubUrl") as string,
-      linkedinUrl: formData.get("linkedinUrl") as string,
-      twitterUrl: formData.get("twitterUrl") as string,
-      instagramUrl: formData.get("instagramUrl") as string,
-      youtubeUrl: formData.get("youtubeUrl") as string,
-    },
-    create: { id: "singleton" },
-  });
-  revalidatePath("/admin/settings");
+  revalidatePath("/", "layout");
 }
 
 export async function saveAppearanceSettings(formData: FormData): Promise<void> {
@@ -114,6 +103,7 @@ export async function saveAppearanceSettings(formData: FormData): Promise<void> 
     create: { id: "singleton" },
   });
   revalidatePath("/admin/settings");
+  revalidatePath("/", "layout");
 }
 
 
@@ -129,6 +119,7 @@ export async function saveFeatureFlags(formData: FormData): Promise<void> {
     create: { id: "singleton" },
   });
   revalidatePath("/admin/settings");
+  revalidatePath("/", "layout");
 }
 
 export async function saveMaintenanceSettings(formData: FormData): Promise<void> {
@@ -141,4 +132,5 @@ export async function saveMaintenanceSettings(formData: FormData): Promise<void>
     create: { id: "singleton" },
   });
   revalidatePath("/admin/settings");
+  revalidatePath("/", "layout");
 }

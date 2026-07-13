@@ -1,4 +1,4 @@
-import { getSiteSettings, saveGeneralSettings, saveSeoSettings, saveSocialSettings, saveAppearanceSettings, saveFeatureFlags, saveMaintenanceSettings, saveContactSettings } from "./actions";
+import { getSiteSettings, saveGeneralSettings, saveSeoSettings, saveAppearanceSettings, saveFeatureFlags, saveMaintenanceSettings, saveContactSettings } from "./actions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Globe, Palette, Search, Share2, Cpu, ShieldCheck, Wrench, Bell, Zap } from "lucide-react";

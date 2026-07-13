@@ -63,5 +63,6 @@ export async function deleteUser(formData: FormData) {
     where: { id: userId },
   });
 
+  revalidatePath("/admin/users");
   redirect("/admin/users");
 }

@@ -63,6 +63,9 @@ export async function createPost(formData: FormData) {
     );
   }
 
+  revalidatePath("/journal");
+  revalidatePath("/journal/[slug]");
+  revalidatePath("/");
   revalidatePath("/admin/posts");
   redirect("/admin/posts");
 }
@@ -132,6 +135,9 @@ export async function createProject(formData: FormData) {
     );
   }
 
+  revalidatePath("/projects");
+  revalidatePath("/projects/[slug]");
+  revalidatePath("/");
   revalidatePath("/admin/projects");
   redirect("/admin/projects");
 }
@@ -180,6 +186,10 @@ export async function updatePost(id: string, formData: FormData) {
     },
   });
 
+  revalidatePath("/journal");
+  revalidatePath("/journal/[slug]");
+  revalidatePath(`/journal/${slug}`);
+  revalidatePath("/");
   revalidatePath("/admin/posts");
   redirect("/admin/posts");
 }
@@ -237,17 +247,33 @@ export async function updateProject(id: string, formData: FormData) {
     },
   });
 
+  revalidatePath("/projects");
+  revalidatePath("/projects/[slug]");
+  revalidatePath(`/projects/${slug}`);
+  revalidatePath("/");
   revalidatePath("/admin/projects");
   redirect("/admin/projects");
 }
 
 export async function deletePost(id: string) {
-  await prisma.post.delete({ where: { id } });
+  const post = await prisma.post.delete({
+    where: { id },
+    select: { slug: true }
+  });
+  revalidatePath("/journal");
+  if (post?.slug) revalidatePath(`/journal/${post.slug}`);
+  revalidatePath("/");
   revalidatePath("/admin/posts");
 }
 
 export async function deleteProject(id: string) {
-  await prisma.project.delete({ where: { id } });
+  const project = await prisma.project.delete({
+    where: { id },
+    select: { slug: true }
+  });
+  revalidatePath("/projects");
+  if (project?.slug) revalidatePath(`/projects/${project.slug}`);
+  revalidatePath("/");
   revalidatePath("/admin/projects");
 }
 

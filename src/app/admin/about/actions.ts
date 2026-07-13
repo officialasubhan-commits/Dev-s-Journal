@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
 
 
 
@@ -90,23 +91,45 @@ export async function updateAboutProfile(data: Partial<AboutFormData>) {
     data: userUpdates,
   });
 
-  if (data.resumePdf !== undefined || data.githubUrl !== undefined) {
+  const hasSettingsUpdate = 
+    data.resumePdf !== undefined ||
+    data.githubUrl !== undefined ||
+    data.linkedinUrl !== undefined ||
+    data.discordUsername !== undefined ||
+    data.instagramUrl !== undefined ||
+    data.facebookUrl !== undefined ||
+    data.youtubeUrl !== undefined;
+
+  if (hasSettingsUpdate) {
     const settings = await prisma.siteSettings.findUnique({ where: { id: "singleton" } });
-    if (settings) {
-      await prisma.siteSettings.update({
-        where: { id: "singleton" },
-        data: {
-          resumePdf: data.resumePdf !== undefined ? data.resumePdf : settings.resumePdf,
-          githubUrl: data.githubUrl !== undefined ? data.githubUrl : settings.githubUrl,
-          linkedinUrl: data.linkedinUrl !== undefined ? data.linkedinUrl : settings.linkedinUrl,
-          discordUsername: data.discordUsername !== undefined ? data.discordUsername : settings.discordUsername,
-          instagramUrl: data.instagramUrl !== undefined ? data.instagramUrl : settings.instagramUrl,
-          facebookUrl: data.facebookUrl !== undefined ? data.facebookUrl : settings.facebookUrl,
-          youtubeUrl: data.youtubeUrl !== undefined ? data.youtubeUrl : settings.youtubeUrl,
-        }
-      });
-    }
+    await prisma.siteSettings.upsert({
+      where: { id: "singleton" },
+      update: {
+        resumePdf: data.resumePdf !== undefined ? data.resumePdf : (settings?.resumePdf || ""),
+        githubUrl: data.githubUrl !== undefined ? data.githubUrl : (settings?.githubUrl || ""),
+        linkedinUrl: data.linkedinUrl !== undefined ? data.linkedinUrl : (settings?.linkedinUrl || ""),
+        discordUsername: data.discordUsername !== undefined ? data.discordUsername : (settings?.discordUsername || ""),
+        instagramUrl: data.instagramUrl !== undefined ? data.instagramUrl : (settings?.instagramUrl || ""),
+        facebookUrl: data.facebookUrl !== undefined ? data.facebookUrl : (settings?.facebookUrl || ""),
+        youtubeUrl: data.youtubeUrl !== undefined ? data.youtubeUrl : (settings?.youtubeUrl || ""),
+      },
+      create: {
+        id: "singleton",
+        resumePdf: data.resumePdf || "",
+        githubUrl: data.githubUrl || "",
+        linkedinUrl: data.linkedinUrl || "",
+        discordUsername: data.discordUsername || "",
+        instagramUrl: data.instagramUrl || "",
+        facebookUrl: data.facebookUrl || "",
+        youtubeUrl: data.youtubeUrl || "",
+      }
+    });
   }
+
+  // Instantly revalidate public pages and layout to display updates
+  revalidatePath("/about");
+  revalidatePath("/");
+  revalidatePath("/admin/about");
 
   return { success: true };
 }

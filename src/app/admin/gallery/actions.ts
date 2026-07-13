@@ -27,6 +27,7 @@ export async function createAlbum(formData: FormData) {
   });
 
   revalidatePath("/admin/gallery");
+  revalidatePath("/gallery");
 }
 
 export async function uploadImages(urls: string[], albumId: string | null = null) {
@@ -53,15 +54,18 @@ export async function uploadImages(urls: string[], albumId: string | null = null
   );
 
   revalidatePath("/admin/gallery");
+  revalidatePath("/gallery");
 }
 
 export async function deleteAlbum(id: string) {
   // Prisma SetNull will detach images, or we can delete them. We will just delete the album.
   await prisma.album.delete({ where: { id } });
   revalidatePath("/admin/gallery");
+  revalidatePath("/gallery");
 }
 
 export async function deleteImage(id: string) {
   await prisma.galleryImage.delete({ where: { id } });
   revalidatePath("/admin/gallery");
+  revalidatePath("/gallery");
 }

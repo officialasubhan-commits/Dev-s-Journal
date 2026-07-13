@@ -1,9 +1,9 @@
 "use client";
 
-import { ReactNode, useState, useEffect, useRef } from "react";
+import { ReactNode, useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { 
   LayoutDashboard, FileText, Briefcase, Image as ImageIcon, Settings, LogOut, 
   Sparkles, Users, User, MessageSquare, Mail, BookOpen, BarChart3, Menu, X, GraduationCap, Command as CommandIcon
@@ -205,17 +205,20 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         {/* Scrollable Content */}
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto pt-16 lg:pt-0 pb-10">
           <div className="p-4 md:p-8 max-w-7xl mx-auto w-full relative z-10">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={pathname}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.25, ease: "easeOut" }}
-              >
+            <motion.div
+              key={pathname}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+            >
+              <Suspense fallback={
+                <div className="flex h-64 items-center justify-center">
+                  <div className="w-8 h-8 border-4 border-[var(--primary)]/30 border-t-[var(--primary)] rounded-full animate-spin" />
+                </div>
+              }>
                 {children}
-              </motion.div>
-            </AnimatePresence>
+              </Suspense>
+            </motion.div>
           </div>
         </div>
       </main>

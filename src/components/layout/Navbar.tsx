@@ -24,6 +24,11 @@ export function Navbar({ siteTitle = "Boss Journal", siteLogo = "" }: { siteTitl
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Hide navbar on admin routes — admin has its own sidebar layout
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
+
   return (
     <>
 

@@ -1,7 +1,17 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { FaGithub, FaTwitter, FaLinkedin } from "react-icons/fa";
 
 export function Footer({ siteTitle = "Boss Journal" }: { siteTitle?: string }) {
+  const pathname = usePathname();
+
+  // Hide footer on admin routes — admin has its own full-screen layout
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
+
   return (
     <footer className="mt-20 border-t border-[var(--border-color)] bg-[var(--secondary-bg)] py-12">
       <div className="container max-w-5xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">

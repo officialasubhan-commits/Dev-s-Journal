@@ -44,14 +44,17 @@ export default async function RootLayout({
   
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${outfit.variable} flex flex-col min-h-screen bg-[var(--background)] font-sans antialiased text-[var(--text-main)]`}>
+      <body className={`${inter.variable} ${outfit.variable} font-sans antialiased text-[var(--text-main)]`}>
         <ThemeProvider attribute="data-theme" defaultTheme="light" enableSystem>
           <AuthProvider>
             <PageTracker />
+            {/* 
+              Navbar and Footer are "use client" components.
+              They check usePathname() internally and return null on /admin/* routes.
+              This prevents them from interfering with the admin panel's own full-screen layout.
+            */}
             <Navbar siteTitle={settings?.siteTitle || "Boss Journal"} siteLogo={settings?.siteLogo || ""} />
-            <main className="flex-1">
-              {children}
-            </main>
+            {children}
             <Footer siteTitle={settings?.siteTitle || "Boss Journal"} />
           </AuthProvider>
         </ThemeProvider>

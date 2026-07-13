@@ -145,10 +145,7 @@ export default async function ContactSettingsPage() {
                 <label className={labelCls}>LinkedIn URL</label>
                 <input name="linkedinUrl" defaultValue={settings.linkedinUrl} type="url" className={inputCls} />
               </div>
-              <div>
-                <label className={labelCls}>X / Twitter URL</label>
-                <input name="twitterUrl" defaultValue={settings.twitterUrl} type="url" className={inputCls} />
-              </div>
+
               <div>
                 <label className={labelCls}>Instagram URL</label>
                 <input name="instagramUrl" defaultValue={settings.instagramUrl} type="url" className={inputCls} />

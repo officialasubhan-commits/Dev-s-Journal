@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import prisma from "@/lib/prisma";
-import { FaGithub, FaLinkedin, FaTwitter, FaInstagram, FaYoutube, FaFacebook } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaDiscord, FaInstagram, FaYoutube, FaFacebook } from "react-icons/fa";
 import Link from "next/link";
 import { GraduationCap, Briefcase, User, Star, FileText, Terminal, BarChart2 } from "lucide-react";
 
@@ -70,9 +70,9 @@ export default async function AboutPage() {
                   <FaLinkedin className="w-6 h-6" />
                 </Link>
               )}
-              {settings?.twitterUrl && (
-                <Link href={settings.twitterUrl} target="_blank" className="text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors">
-                  <FaTwitter className="w-6 h-6" />
+              {settings?.discordUsername && (
+                <Link href={settings.discordUsername} target="_blank" rel="noopener noreferrer" className="text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors">
+                  <FaDiscord className="w-6 h-6" />
                 </Link>
               )}
               {settings?.instagramUrl && (

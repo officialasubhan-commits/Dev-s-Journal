@@ -53,7 +53,7 @@ export default function AboutManagerPage() {
         resumePdf: settings?.resumePdf || "",
         githubUrl: settings?.githubUrl || "",
         linkedinUrl: settings?.linkedinUrl || "",
-        twitterUrl: settings?.twitterUrl || "",
+        discordUsername: settings?.discordUsername || "",
         instagramUrl: settings?.instagramUrl || "",
         facebookUrl: settings?.facebookUrl || "",
         youtubeUrl: settings?.youtubeUrl || "",
@@ -397,8 +397,8 @@ export default function AboutManagerPage() {
                     <Input className="flex-1" value={formData.linkedinUrl || ""} onChange={e => setFormData({...formData, linkedinUrl: e.target.value})} placeholder="https://linkedin.com/in/..." />
                   </div>
                   <div className="flex gap-2 items-center">
-                    <span className="w-24 text-sm font-medium">Twitter / X</span>
-                    <Input className="flex-1" value={formData.twitterUrl || ""} onChange={e => setFormData({...formData, twitterUrl: e.target.value})} placeholder="https://x.com/..." />
+                    <span className="w-24 text-sm font-medium">Discord URL</span>
+                    <Input className="flex-1" value={formData.discordUsername || ""} onChange={e => setFormData({...formData, discordUsername: e.target.value})} placeholder="https://discord.gg/..." />
                   </div>
                   <div className="flex gap-2 items-center">
                     <span className="w-24 text-sm font-medium">Instagram</span>

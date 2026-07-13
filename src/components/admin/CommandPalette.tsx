@@ -103,7 +103,7 @@ export function AdminCommandPalette({ open, setOpen }: { open: boolean, setOpen:
 
             <Command.Group heading="Actions" className="px-2 py-2 text-xs font-semibold text-[var(--text-muted)]">
               <Command.Item 
-                onSelect={() => runCommand(() => signOut({ callbackUrl: "/login" }))}
+                onSelect={() => runCommand(() => signOut({ callbackUrl: "/admin/login" }))}
                 className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm font-medium text-[var(--error)] hover:bg-[var(--error)]/10 aria-selected:bg-[var(--error)]/10"
               >
                 <LogOut className="w-4 h-4" /> Log Out

@@ -24,7 +24,7 @@ export async function saveContactSettings(formData: FormData): Promise<void> {
       
       githubUrl: formData.get("githubUrl") as string,
       linkedinUrl: formData.get("linkedinUrl") as string,
-      twitterUrl: formData.get("twitterUrl") as string,
+      twitterUrl: "",
       instagramUrl: formData.get("instagramUrl") as string,
       facebookUrl: formData.get("facebookUrl") as string,
       youtubeUrl: formData.get("youtubeUrl") as string,

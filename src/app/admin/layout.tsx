@@ -108,7 +108,7 @@ function SidebarContent({ pathname = "", onNavigate, onCommandPalette }: { pathn
           <span>Exit to Site</span>
         </Link>
         <button
-          onClick={() => signOut({ callbackUrl: "/login" })}
+          onClick={() => signOut({ callbackUrl: "/admin/login" })}
           className="w-full flex items-center gap-3 px-3 py-2.5 mt-1 rounded-xl text-sm font-medium text-[var(--error)] hover:bg-[var(--error)]/10 transition-all"
         >
           <LogOut className="w-4 h-4" />

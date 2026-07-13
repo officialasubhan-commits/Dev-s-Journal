@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { Mail, MapPin, Download, Phone, CheckCircle, Clock, XCircle } from "lucide-react";
-import { FaGithub, FaLinkedin, FaTwitter, FaInstagram, FaFacebook, FaYoutube, FaDiscord, FaTelegram, FaWhatsapp } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaInstagram, FaFacebook, FaYoutube, FaDiscord, FaTelegram, FaWhatsapp } from "react-icons/fa";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { ContactForm } from "./ContactForm";
@@ -34,7 +34,6 @@ export default async function ContactPage() {
   const socialLinks = [
     { url: settings?.githubUrl, icon: FaGithub, label: "GitHub" },
     { url: settings?.linkedinUrl, icon: FaLinkedin, label: "LinkedIn" },
-    { url: settings?.twitterUrl, icon: FaTwitter, label: "X (Twitter)" },
     { url: settings?.instagramUrl, icon: FaInstagram, label: "Instagram" },
     { url: settings?.facebookUrl, icon: FaFacebook, label: "Facebook" },
     { url: settings?.youtubeUrl, icon: FaYoutube, label: "YouTube" },

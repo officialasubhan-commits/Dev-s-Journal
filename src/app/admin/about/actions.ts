@@ -29,7 +29,7 @@ export type AboutFormData = {
   resumePdf: string;
   githubUrl: string;
   linkedinUrl: string;
-  twitterUrl: string;
+  discordUsername: string;
   instagramUrl: string;
   facebookUrl: string;
   youtubeUrl: string;
@@ -99,7 +99,7 @@ export async function updateAboutProfile(data: Partial<AboutFormData>) {
           resumePdf: data.resumePdf !== undefined ? data.resumePdf : settings.resumePdf,
           githubUrl: data.githubUrl !== undefined ? data.githubUrl : settings.githubUrl,
           linkedinUrl: data.linkedinUrl !== undefined ? data.linkedinUrl : settings.linkedinUrl,
-          twitterUrl: data.twitterUrl !== undefined ? data.twitterUrl : settings.twitterUrl,
+          discordUsername: data.discordUsername !== undefined ? data.discordUsername : settings.discordUsername,
           instagramUrl: data.instagramUrl !== undefined ? data.instagramUrl : settings.instagramUrl,
           facebookUrl: data.facebookUrl !== undefined ? data.facebookUrl : settings.facebookUrl,
           youtubeUrl: data.youtubeUrl !== undefined ? data.youtubeUrl : settings.youtubeUrl,

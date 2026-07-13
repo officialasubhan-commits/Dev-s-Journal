@@ -21,7 +21,7 @@ export default function UnauthorizedPage() {
             <Link href="/">Return Home</Link>
           </Button>
           <Button asChild variant="outline">
-            <Link href="/login">Switch Account</Link>
+            <Link href="/admin/login">Switch Account</Link>
           </Button>
         </div>
       </div>

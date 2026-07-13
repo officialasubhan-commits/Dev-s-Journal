@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaGithub, FaTwitter, FaLinkedin } from "react-icons/fa";
+import { FaGithub, FaDiscord, FaLinkedin } from "react-icons/fa";
 
 export function Footer({ siteTitle = "Boss Journal" }: { siteTitle?: string }) {
   const pathname = usePathname() || "";
@@ -22,15 +22,15 @@ export function Footer({ siteTitle = "Boss Journal" }: { siteTitle?: string }) {
           </p>
         </div>
         <div className="flex space-x-6">
-          <Link href="https://github.com" target="_blank" rel="noreferrer" className="text-[var(--text-secondary)] hover:text-[var(--primary)] transition-all hover:scale-110">
+          <Link href="https://github.com/officialasubhan-commits" target="_blank" rel="noreferrer" className="text-[var(--text-secondary)] hover:text-[var(--primary)] transition-all hover:scale-110">
             <FaGithub className="h-5 w-5" />
             <span className="sr-only">GitHub</span>
           </Link>
-          <Link href="https://twitter.com" target="_blank" rel="noreferrer" className="text-[var(--text-secondary)] hover:text-[var(--primary)] transition-all hover:scale-110">
-            <FaTwitter className="h-5 w-5" />
-            <span className="sr-only">Twitter</span>
+          <Link href="https://discord.gg/qyCKmTJjR" target="_blank" rel="noreferrer" className="text-[var(--text-secondary)] hover:text-[var(--primary)] transition-all hover:scale-110">
+            <FaDiscord className="h-5 w-5" />
+            <span className="sr-only">Discord</span>
           </Link>
-          <Link href="https://linkedin.com" target="_blank" rel="noreferrer" className="text-[var(--text-secondary)] hover:text-[var(--primary)] transition-all hover:scale-110">
+          <Link href="https://www.linkedin.com/in/abdus-subhan-57509841a?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noreferrer" className="text-[var(--text-secondary)] hover:text-[var(--primary)] transition-all hover:scale-110">
             <FaLinkedin className="h-5 w-5" />
             <span className="sr-only">LinkedIn</span>
           </Link>

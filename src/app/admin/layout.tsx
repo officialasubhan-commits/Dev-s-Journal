@@ -26,7 +26,7 @@ const navLinks = [
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
-function SidebarContent({ pathname, onNavigate, onCommandPalette }: { pathname: string; onNavigate?: () => void; onCommandPalette: () => void }) {
+function SidebarContent({ pathname = "", onNavigate, onCommandPalette }: { pathname: string; onNavigate?: () => void; onCommandPalette: () => void }) {
   const { data: session } = useSession();
 
   return (
@@ -141,7 +141,7 @@ function SearchIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
+  const pathname = usePathname() || "";
   const [mobileOpen, setMobileOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);

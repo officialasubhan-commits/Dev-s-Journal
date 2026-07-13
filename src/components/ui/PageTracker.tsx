@@ -7,7 +7,7 @@ export function PageTracker() {
 
   useEffect(() => {
     // Don't track admin pages or API routes
-    if (pathname.startsWith("/admin") || pathname.startsWith("/api")) return;
+    if (!pathname || pathname.startsWith("/admin") || pathname.startsWith("/api")) return;
 
     const referrer = document.referrer || null;
 

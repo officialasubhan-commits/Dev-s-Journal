@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { FaGithub, FaTwitter, FaLinkedin } from "react-icons/fa";
 
 export function Footer({ siteTitle = "Boss Journal" }: { siteTitle?: string }) {
-  const pathname = usePathname();
+  const pathname = usePathname() || "";
 
   // Hide footer on admin routes — admin has its own full-screen layout
   if (pathname?.startsWith("/admin")) {

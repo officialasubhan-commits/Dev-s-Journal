@@ -21,7 +21,7 @@ const navLinks = [
 export function Navbar({ siteTitle = "Boss Journal", siteLogo = "" }: { siteTitle?: string; siteLogo?: string }) {
   const { data: session, status } = useSession();
   const isAdmin = (session?.user as { role?: string })?.role === "ADMIN";
-  const pathname = usePathname();
+  const pathname = usePathname() || "";
   const [mobileOpen, setMobileOpen] = useState(false);
 
   // Hide navbar on admin routes — admin has its own sidebar layout

@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
-import { Prisma } from "@prisma/client";
+
 
 export type AboutFormData = {
   // User Model
@@ -23,7 +23,7 @@ export type AboutFormData = {
   technologies: string[];
   spokenLanguages: string[];
   image: string;
-  customStats: Prisma.JsonValue;
+  customStats: any;
 
   // SiteSettings Model
   resumePdf: string;
@@ -82,7 +82,7 @@ export async function updateAboutProfile(data: Partial<AboutFormData>) {
     technologies: data.technologies !== undefined ? data.technologies : admin.technologies,
     spokenLanguages: data.spokenLanguages !== undefined ? data.spokenLanguages : admin.spokenLanguages,
     image: data.image !== undefined ? data.image : admin.image,
-    customStats: data.customStats !== undefined ? data.customStats as Prisma.InputJsonValue : admin.customStats as Prisma.InputJsonValue,
+    customStats: data.customStats !== undefined ? data.customStats : admin.customStats,
   };
 
   await prisma.user.update({

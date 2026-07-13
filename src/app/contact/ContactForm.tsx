@@ -10,11 +10,12 @@ export function ContactForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
     setIsSubmitting(true);
     setSuccessMsg("");
     setErrorMsg("");
 
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(form);
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
     const message = formData.get("message") as string;
@@ -35,7 +36,7 @@ export function ContactForm() {
       }
 
       setSuccessMsg("Message sent successfully");
-      e.currentTarget.reset();
+      form.reset();
     } catch (err: unknown) {
       setErrorMsg(err instanceof Error ? err.message : "An error occurred");
     } finally {

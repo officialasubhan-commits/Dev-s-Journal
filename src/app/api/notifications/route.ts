@@ -14,15 +14,49 @@ export async function GET(req: Request) {
     const isPublicReq = searchParams.get("public") === "true";
 
     if (isPublicReq) {
-      // Public notifications (e.g. type ANNOUNCEMENT or INFO, we'll assume ANNOUNCEMENT is public)
-      // Since we don't have an isPublic boolean yet, we'll use type === 'ANNOUNCEMENT' as a proxy for public, 
-      // or we can just return all notifications with type 'ANNOUNCEMENT'
-      const notifications = await prisma.notification.findMany({
-        where: { type: "ANNOUNCEMENT" },
-        orderBy: { createdAt: "desc" },
-        take: limit,
+      const admin = await prisma.user.findFirst({ where: { role: "ADMIN" }, select: { id: true } });
+      if (!admin) {
+        return NextResponse.json({ notifications: [], unreadCount: 0, totalCount: 0, totalPages: 1, page: 1 });
+      }
+
+      const publicTypes = ["JOURNAL", "PROJECT", "LEARNING", "GALLERY", "ANNOUNCEMENT"];
+      const whereClause: any = {
+        userId: admin.id,
+        type: { in: publicTypes }
+      };
+
+      if (filter && filter !== "all") {
+        if (publicTypes.includes(filter.toUpperCase())) {
+          whereClause.type = filter.toUpperCase();
+        }
+      }
+
+      if (search) {
+        whereClause.OR = [
+          { title: { contains: search, mode: "insensitive" } },
+          { message: { contains: search, mode: "insensitive" } },
+        ];
+      }
+
+      const skip = (page - 1) * limit;
+
+      const [notifications, totalCount] = await Promise.all([
+        prisma.notification.findMany({
+          where: whereClause,
+          orderBy: { createdAt: "desc" },
+          skip,
+          take: limit,
+        }),
+        prisma.notification.count({ where: whereClause })
+      ]);
+
+      return NextResponse.json({
+        notifications,
+        unreadCount: 0,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        page
       });
-      return NextResponse.json({ notifications, unreadCount: 0, totalCount: notifications.length, totalPages: 1, page: 1 });
     }
 
     const session = await getServerSession(authOptions);

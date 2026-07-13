@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Bell, Check, Megaphone, BookOpen, Briefcase, Image as ImageIcon, GraduationCap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSession } from "next-auth/react";
 
 type NotificationData = {
   id: string;
@@ -16,6 +17,7 @@ type NotificationData = {
 };
 
 export function NotificationDropdown({ isPublicMode = false }: { isPublicMode?: boolean }) {
+  const { data: session, status } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [recentNotifications, setRecentNotifications] = useState<NotificationData[]>([]);
@@ -38,7 +40,24 @@ export function NotificationDropdown({ isPublicMode = false }: { isPublicMode?: 
       
       if (res.ok) {
         const data = await res.json();
-        const notifs = data.notifications || [];
+        let notifs = data.notifications || [];
+
+        // Prepend local welcome notification if not dismissed
+        const welcomeSeen = typeof window !== 'undefined' && localStorage.getItem("welcome_notif_seen") === "true";
+        let localWelcomeCount = 0;
+        if (!welcomeSeen) {
+          const welcomeNotif: NotificationData = {
+            id: "welcome-local",
+            type: "INFO",
+            title: "👋 Welcome to Boss Journal!",
+            message: "Welcome to my personal portfolio and learning journal.",
+            link: "/",
+            createdAt: new Date().toISOString(),
+            read: false
+          };
+          notifs = [welcomeNotif, ...notifs];
+          localWelcomeCount = 1;
+        }
 
         if (isPublicMode) {
           // Calculate local read state for public notifications
@@ -47,6 +66,10 @@ export function NotificationDropdown({ isPublicMode = false }: { isPublicMode?: 
           
           let unread = 0;
           const processedNotifs = notifs.map((n: NotificationData) => {
+            if (n.id === "welcome-local") {
+              if (!n.read) unread++;
+              return n;
+            }
             const isRead = new Date(n.createdAt).getTime() <= lastReadDate;
             if (!isRead) unread++;
             return { ...n, read: isRead };
@@ -55,7 +78,7 @@ export function NotificationDropdown({ isPublicMode = false }: { isPublicMode?: 
           setRecentNotifications(processedNotifs);
           setUnreadCount(unread);
         } else {
-          setUnreadCount(data.unreadCount || 0);
+          setUnreadCount((data.unreadCount || 0) + localWelcomeCount);
           setRecentNotifications(notifs);
         }
         
@@ -74,18 +97,15 @@ export function NotificationDropdown({ isPublicMode = false }: { isPublicMode?: 
   };
 
   useEffect(() => {
-     
     fetchQuickNotifications();
 
     // Poll every 30 seconds
     const interval = setInterval(() => {
-       
       fetchQuickNotifications();
     }, 30000);
 
     // Listen for updates from other components
     const handleUpdateEvent = () => {
-       
       fetchQuickNotifications();
     };
     window.addEventListener("notifications-updated", handleUpdateEvent);
@@ -94,7 +114,7 @@ export function NotificationDropdown({ isPublicMode = false }: { isPublicMode?: 
       clearInterval(interval);
       window.removeEventListener("notifications-updated", handleUpdateEvent);
     };
-  }, [isPublicMode]);
+  }, [isPublicMode, status, session]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -110,6 +130,13 @@ export function NotificationDropdown({ isPublicMode = false }: { isPublicMode?: 
     e.preventDefault();
     e.stopPropagation();
     
+    if (id === "welcome-local") {
+      localStorage.setItem("welcome_notif_seen", "true");
+      fetchQuickNotifications();
+      window.dispatchEvent(new Event("notifications-updated"));
+      return;
+    }
+
     if (isPublicMode) {
       const notif = recentNotifications.find(n => n.id === id);
       if (notif) {

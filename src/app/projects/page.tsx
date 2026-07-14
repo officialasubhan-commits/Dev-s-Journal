@@ -3,9 +3,13 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink, Rocket } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import prisma from "@/lib/prisma";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/client/CardComponents";
 import { SlideUp, StaggerContainer } from "@/components/ui/animations";
+
+import prisma from "@/lib/prisma";
+// Removed dynamic Card imports; using client CardComponents
+// Removed dynamic CardTitle import; using client CardComponents
+// Removed dynamic CardContent import; using client CardComponents
 
 export const metadata: Metadata = {
   title: "Projects",

@@ -161,7 +161,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       <AdminCommandPalette open={commandOpen} setOpen={setCommandOpen} />
 
       {/* Desktop Sidebar */}
-      <aside className="w-72 bg-[var(--card)] border-r border-[var(--border-color)] flex-col hidden lg:flex h-full z-10 shadow-sm relative">
+      <aside className="w-72 glass-card border-r border-[var(--border-color)] flex-col hidden lg:flex h-full z-10 shadow-sm relative">
         <SidebarContent pathname={pathname} onCommandPalette={() => setCommandOpen(true)} />
       </aside>
 
@@ -185,7 +185,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       {mobileOpen && (
         <div className="fixed inset-0 z-[100] lg:hidden">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onClick={() => setMobileOpen(false)} />
-          <aside className="absolute left-0 top-0 bottom-0 w-72 bg-[var(--card)] border-r border-[var(--border-color)] flex flex-col shadow-2xl animate-in slide-in-from-left-full duration-200">
+          <aside className="absolute left-0 top-0 bottom-0 w-72 glass-card border-r border-[var(--border-color)] flex flex-col shadow-2xl animate-in slide-in-from-left-full duration-200">
             <div className="flex justify-end p-4 absolute top-0 right-0 z-10">
               <button onClick={() => setMobileOpen(false)} className="p-2 rounded-full bg-[var(--background)]/80 backdrop-blur border border-[var(--border-color)] text-[var(--text-main)] hover:bg-[var(--background)]">
                 <X className="w-4 h-4" />

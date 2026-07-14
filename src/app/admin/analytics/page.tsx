@@ -1,7 +1,10 @@
 import prisma from "@/lib/prisma";
 import { BarChart3, Eye, Users, FileText, Briefcase, TrendingUp, Monitor, Smartphone, Tablet } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+// Removed dynamic import of Card components as they are now used via client component
 import { SlideUp, StaggerContainer } from "@/components/ui/animations";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/client/CardComponents";
+
 import { VisitorsChart } from "@/components/admin/DashboardCharts";
 
 async function getTopPages(days: number = 30) {

@@ -1,11 +1,22 @@
-import * as React from "react"
-import { cn } from "@/lib/utils"
+"use client";
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
-const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+import { motion, HTMLMotionProps } from "framer-motion";
+
+type CardProps = HTMLMotionProps<'div'> & { className?: string };
+
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("glass-card text-[var(--text-main)]", className)} {...props} />
+    <motion.div
+      ref={ref}
+      className={cn("glass-card text-[var(--text-main)]", className)}
+      whileHover={{ scale: 1.02, rotate: 0.5 }}
+      transition={{ type: "spring", stiffness: 300 }}
+      {...props}
+    />
   )
-)
+);
 Card.displayName = "Card"
 
 const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(

@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
-import { notFound } from "next/navigation";
+import { UnavailableContent } from "@/components/ui/UnavailableContent";
+import { SafeImage } from "@/components/ui/SafeImage";
 import { Clock, Tag, Calendar } from "lucide-react";
-import Image from "next/image";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -17,13 +17,13 @@ export default async function JournalPostPage({ params }: { params: Promise<{ sl
   const { slug } = await params;
   console.log("Received slug:", slug);
 
-  if (!slug) notFound();
+  if (!slug) return <UnavailableContent type="Journal Post" />;
 
   const post = await prisma.post.findUnique({
     where: { slug, published: true },
   });
 
-  if (!post) notFound();
+  if (!post) return <UnavailableContent type="Journal Post" />;
 
   return (
     <div className="container mx-auto px-4 py-16 md:py-24">
@@ -31,7 +31,7 @@ export default async function JournalPostPage({ params }: { params: Promise<{ sl
         
         {post.coverImage && (
           <div className="w-full aspect-video relative rounded-2xl overflow-hidden border border-[var(--border-color)]">
-            <Image src={post.coverImage} alt={post.title} fill className="object-cover" priority />
+            <SafeImage src={post.coverImage} alt={post.title} fill className="object-cover" priority />
           </div>
         )}
 

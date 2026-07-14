@@ -304,6 +304,13 @@ export async function updateProject(id: string, formData: FormData) {
 }
 
 export async function deletePost(id: string) {
+  try {
+    const { autoBackup } = await import("./backups/actions");
+    await autoBackup("Post Deletion");
+  } catch (err) {
+    console.error("Auto-backup failed before deletion:", err);
+  }
+
   const post = await prisma.post.delete({
     where: { id },
     select: { slug: true }
@@ -321,6 +328,13 @@ export async function deletePost(id: string) {
 }
 
 export async function deleteProject(id: string) {
+  try {
+    const { autoBackup } = await import("./backups/actions");
+    await autoBackup("Project Deletion");
+  } catch (err) {
+    console.error("Auto-backup failed before deletion:", err);
+  }
+
   const project = await prisma.project.delete({
     where: { id },
     select: { slug: true }

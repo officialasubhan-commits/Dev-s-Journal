@@ -420,10 +420,22 @@ model SiteSettings {
   enableNotifications   Boolean @default(true)
   
   // Maintenance
-  maintenanceMode       Boolean @default(false)
+  maintenanceEnabled    Boolean @default(false)
   maintenanceMessage    String  @default("We'll be back soon!")
+  maintenanceUpdatedBy  String?
+  
+  // Analytics & Uploads
+  googleAnalyticsId     String  @default("")
+  maxUploadSizeMb       Int     @default(5)
+  launchedAt            DateTime @default(now())
   
   updatedAt             DateTime @updatedAt
+}
+
+model MaintenanceLog {
+  id          String    @id @default(cuid())
+  enabledAt   DateTime  @default(now())
+  disabledAt  DateTime?
 }
 
 model PageView {
@@ -436,4 +448,16 @@ model PageView {
 
   @@index([path])
   @@index([createdAt])
+}
+
+model Backup {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  notes       String?  @default("")
+  createdAt   DateTime @default(now())
+  size        Int
+  status      String
+  payload     String   @db.Text
+  isAuto      Boolean  @default(false)
 }

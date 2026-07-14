@@ -59,6 +59,13 @@ export async function deleteUser(formData: FormData) {
     throw new Error("Cannot delete yourself");
   }
 
+  try {
+    const { autoBackup } = await import("../../backups/actions");
+    await autoBackup("User Deletion");
+  } catch (err) {
+    console.error("Auto-backup failed before deletion:", err);
+  }
+
   await prisma.user.delete({
     where: { id: userId },
   });

@@ -1,8 +1,8 @@
 import prisma from "@/lib/prisma";
-import { notFound } from "next/navigation";
+import { UnavailableContent } from "@/components/ui/UnavailableContent";
+import { SafeImage } from "@/components/ui/SafeImage";
 import { ExternalLink, Calendar } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
-import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -19,13 +19,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   
-  if (!slug) notFound();
+  if (!slug) return <UnavailableContent type="Project" />;
 
   const project = await prisma.project.findUnique({
     where: { slug, published: true },
   });
 
-  if (!project) notFound();
+  if (!project) return <UnavailableContent type="Project" />;
 
   return (
     <div className="container mx-auto px-4 py-16 md:py-24">
@@ -35,7 +35,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         <div className="space-y-6">
           {project.coverImage && (
             <div className="w-full aspect-video relative rounded-2xl overflow-hidden border border-[var(--border-color)] shadow-2xl">
-              <Image src={project.coverImage} alt={project.title} fill className="object-cover" priority />
+              <SafeImage src={project.coverImage} alt={project.title} fill className="object-cover" priority />
             </div>
           )}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -112,7 +112,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {project.images.map((img, idx) => (
                     <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-[var(--border-color)] group">
-                      <Image src={img} alt={`Screenshot ${idx + 1}`} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <SafeImage src={img} alt={`Screenshot ${idx + 1}`} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
                     </div>
                   ))}
                 </div>

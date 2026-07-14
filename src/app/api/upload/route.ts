@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import crypto from 'crypto';
+import prisma from '@/lib/prisma';
 
 export async function POST(request: Request) {
   try {
@@ -14,10 +15,22 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // File Size Validation (5MB max)
-    const MAX_SIZE = 5 * 1024 * 1024;
+    // File Size Validation (dynamically query from settings, default to 5MB)
+    let maxUploadSizeMb = 5;
+    try {
+      const settings = await prisma.siteSettings.findUnique({
+        where: { id: "singleton" },
+        select: { maxUploadSizeMb: true }
+      });
+      if (settings?.maxUploadSizeMb) {
+        maxUploadSizeMb = settings.maxUploadSizeMb;
+      }
+    } catch (e) {
+      console.error("Failed to query maxUploadSizeMb from settings:", e);
+    }
+    const MAX_SIZE = maxUploadSizeMb * 1024 * 1024;
     if (buffer.length > MAX_SIZE) {
-      return NextResponse.json({ error: 'File size exceeds 5MB limit' }, { status: 400 });
+      return NextResponse.json({ error: `File size exceeds ${maxUploadSizeMb}MB limit` }, { status: 400 });
     }
 
     // Robust File Type Validation

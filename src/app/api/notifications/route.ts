@@ -4,6 +4,8 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { getUserNotifications, getUnreadCount } from "@/lib/notifications";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
@@ -22,6 +24,8 @@ export async function GET(req: Request) {
       const publicTypes = ["JOURNAL", "PROJECT", "LEARNING", "GALLERY", "ANNOUNCEMENT"];
       const whereClause: any = {
         userId: admin.id,
+        published: true,
+        archived: false,
         type: { in: publicTypes }
       };
 
@@ -32,9 +36,13 @@ export async function GET(req: Request) {
       }
 
       if (search) {
-        whereClause.OR = [
-          { title: { contains: search, mode: "insensitive" } },
-          { message: { contains: search, mode: "insensitive" } },
+        whereClause.AND = [
+          {
+            OR: [
+              { title: { contains: search, mode: "insensitive" } },
+              { message: { contains: search, mode: "insensitive" } },
+            ]
+          }
         ];
       }
 
@@ -43,7 +51,10 @@ export async function GET(req: Request) {
       const [notifications, totalCount] = await Promise.all([
         prisma.notification.findMany({
           where: whereClause,
-          orderBy: { createdAt: "desc" },
+          orderBy: [
+            { pinned: "desc" },
+            { createdAt: "desc" }
+          ],
           skip,
           take: limit,
         }),

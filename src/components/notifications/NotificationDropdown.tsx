@@ -35,7 +35,8 @@ export function NotificationDropdown({ isPublicMode = false }: { isPublicMode?: 
 
       const endpoint = isPublicMode ? "/api/notifications?public=true&limit=5" : "/api/notifications?limit=5";
       const res = await fetch(endpoint, {
-        signal: abortControllerRef.current.signal
+        signal: abortControllerRef.current.signal,
+        cache: "no-store"
       });
       
       if (res.ok) {

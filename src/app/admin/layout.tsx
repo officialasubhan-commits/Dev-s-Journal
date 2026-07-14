@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { 
   LayoutDashboard, FileText, Briefcase, Image as ImageIcon, Settings, LogOut, 
   Sparkles, Users, User, MessageSquare, Mail, BookOpen, BarChart3, Menu, X, GraduationCap, Command as CommandIcon,
-  Bell
+  Bell, Database
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { AdminCommandPalette } from "@/components/admin/CommandPalette";
@@ -25,6 +25,7 @@ const navLinks = [
   { href: "/admin/messages", label: "Inbox", icon: Mail },
   { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/admin/contact", label: "Contact Settings", icon: Mail },
+  { href: "/admin/backups", label: "Backup & Recovery", icon: Database },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 

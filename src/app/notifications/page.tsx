@@ -35,10 +35,25 @@ export default function NotificationsPage() {
         params.append("public", "true");
       }
 
-      const res = await fetch(`/api/notifications?${params.toString()}`);
+      const res = await fetch(`/api/notifications?${params.toString()}`, {
+        cache: "no-store",
+      });
       if (res.ok) {
         const data = await res.json();
-        setNotifications(data.notifications || []);
+        let fetchedNotifications = data.notifications || [];
+
+        // If the user is NOT an admin, map general announcements' read status using localStorage
+        const isAdmin = session?.user?.role === "ADMIN";
+        if (!isAdmin) {
+          const lastReadDateStr = typeof window !== 'undefined' ? localStorage.getItem("last_read_notif_date") : null;
+          const lastReadDate = lastReadDateStr ? new Date(lastReadDateStr).getTime() : 0;
+          fetchedNotifications = fetchedNotifications.map((n: any) => {
+            const isRead = new Date(n.createdAt).getTime() <= lastReadDate;
+            return { ...n, read: isRead };
+          });
+        }
+
+        setNotifications(fetchedNotifications);
         setTotalPages(data.totalPages || 1);
       }
     } catch (error) {
@@ -70,8 +85,18 @@ export default function NotificationsPage() {
   }, [filter, debouncedSearch, page, status, session]);
 
   const markAllAsRead = async () => {
+    const isAdmin = session?.user?.role === "ADMIN";
+    if (!isAdmin) {
+      const latestNotif = notifications[0] as any;
+      const latestTimestamp = latestNotif ? latestNotif.createdAt : new Date().toISOString();
+      localStorage.setItem("last_read_notif_date", latestTimestamp);
+      fetchNotifications();
+      window.dispatchEvent(new Event("notifications-updated"));
+      return;
+    }
+
     try {
-      await fetch("/api/notifications/read-all", { method: "POST" });
+      await fetch("/api/notifications/read-all", { method: "POST", cache: "no-store" });
       fetchNotifications();
       window.dispatchEvent(new Event("notifications-updated"));
     } catch (error) {

@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 type UserWhereInput = NonNullable<Parameters<typeof prisma.user.findMany>[0]>["where"];
 type NotificationWhereInput = NonNullable<Parameters<typeof prisma.notification.findMany>[0]>["where"];
 export type NotificationType = "JOURNAL" | "PROJECT" | "LEARNING" | "GALLERY" | "ANNOUNCEMENT" | "INFO" | "SUCCESS" | "WARNING" | "ERROR";
@@ -14,27 +15,25 @@ export async function broadcastNotification(
   link?: string
 ) {
   try {
-    // Find all users (Role: USER or all users). The prompt says "every registered user".
-    // We'll get all users.
-    const users = await prisma.user.findMany({
-      select: { id: true },
+    const admin = await prisma.user.findFirst({ where: { role: "ADMIN" } });
+    if (!admin) throw new Error("Admin user not found");
+
+    await prisma.notification.create({
+      data: {
+        userId: admin.id,
+        type,
+        message,
+        title,
+        link: link || null,
+        published: true,
+        publishedAt: new Date(),
+      },
     });
 
-    if (users.length === 0) return 0;
-
-    const data = users.map((user) => ({
-      userId: user.id,
-      type,
-      message,
-      title,
-      link,
-    }));
-
-    const result = await prisma.notification.createMany({
-      data,
-    });
-
-    return result.count;
+    revalidatePath("/notifications");
+    revalidatePath("/admin/notifications");
+    
+    return 1;
   } catch (error) {
     console.error("Failed to broadcast notification:", error);
     return 0;
@@ -51,43 +50,59 @@ export async function sendAdminNotification(
   targetUserId?: string
 ) {
   try {
-    let whereClause: UserWhereInput = {};
-    if (targetType === "ROLE" && targetRole) {
-      whereClause.role = targetRole;
-    } else if (targetType === "USER" && targetUserId) {
-      // Find by ID or exact email
-      whereClause.OR = [
-        { id: targetUserId },
-        { email: targetUserId }
-      ];
+    const admin = await prisma.user.findFirst({ where: { role: "ADMIN" } });
+    if (!admin) throw new Error("Admin not found");
+
+    if (targetType === "USER" && targetUserId) {
+      const targetUser = await prisma.user.findFirst({
+        where: {
+          OR: [
+            { id: targetUserId },
+            { email: targetUserId },
+            { username: targetUserId }
+          ]
+        },
+        select: { id: true }
+      });
+
+      if (!targetUser) {
+        return { notifiedCount: 0, createdCount: 0, failedCount: 0, error: "Recipient user not found." };
+      }
+
+      await prisma.notification.create({
+        data: {
+          userId: targetUser.id,
+          type,
+          message,
+          title,
+          link: link || null,
+          published: true,
+          publishedAt: new Date(),
+        }
+      });
+
+      revalidatePath("/notifications");
+      revalidatePath("/admin/notifications");
+
+      return { notifiedCount: 1, createdCount: 1, failedCount: 0 };
     }
 
-    const users = await prisma.user.findMany({
-      where: whereClause,
-      select: { id: true },
+    await prisma.notification.create({
+      data: {
+        userId: admin.id,
+        type,
+        message,
+        title,
+        link: link || null,
+        published: true,
+        publishedAt: new Date(),
+      }
     });
 
-    if (users.length === 0) {
-      return { notifiedCount: 0, createdCount: 0, failedCount: 0, error: "No users available." };
-    }
+    revalidatePath("/notifications");
+    revalidatePath("/admin/notifications");
 
-    const data = users.map((user) => ({
-      userId: user.id,
-      type,
-      message,
-      title,
-      link: link || undefined,
-    }));
-
-    const result = await prisma.notification.createMany({
-      data,
-    });
-
-    return { 
-      notifiedCount: users.length, 
-      createdCount: result.count, 
-      failedCount: users.length - result.count 
-    };
+    return { notifiedCount: 1, createdCount: 1, failedCount: 0 };
   } catch (error) {
     console.error("Failed to send admin notification:", error);
     return { notifiedCount: 0, createdCount: 0, failedCount: 0, error: "Database error" };
@@ -102,7 +117,18 @@ export async function getUserNotifications(
     const { filter, search, page = 1, limit = 10 } = options || {};
     const skip = (page - 1) * limit;
 
-    const whereClause: NotificationWhereInput = { userId };
+    const admin = await prisma.user.findFirst({ where: { role: "ADMIN" } });
+    const adminId = admin?.id || "";
+
+    const whereClause: NotificationWhereInput = {
+      OR: [
+        { userId },
+        ...(adminId && adminId !== userId
+          ? [{ userId: adminId, published: true, archived: false }]
+          : []
+        )
+      ]
+    };
     
     if (filter === "unread") {
       whereClause.read = false;
@@ -113,16 +139,23 @@ export async function getUserNotifications(
     }
 
     if (search) {
-      whereClause.OR = [
-        { title: { contains: search, mode: "insensitive" } },
-        { message: { contains: search, mode: "insensitive" } },
+      whereClause.AND = [
+        {
+          OR: [
+            { title: { contains: search, mode: "insensitive" } },
+            { message: { contains: search, mode: "insensitive" } },
+          ]
+        }
       ];
     }
     
     const [notifications, totalCount] = await Promise.all([
       prisma.notification.findMany({
         where: whereClause,
-        orderBy: { createdAt: "desc" },
+        orderBy: [
+          { pinned: "desc" },
+          { createdAt: "desc" }
+        ],
         skip,
         take: limit,
       }),

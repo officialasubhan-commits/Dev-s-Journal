@@ -140,31 +140,9 @@ export async function createNotificationAction(data: {
     }
   });
 
-  if (data.published) {
-    const otherUsers = await prisma.user.findMany({
-      where: { id: { not: admin.id } },
-      select: { id: true }
-    });
-
-    if (otherUsers.length > 0) {
-      await prisma.notification.createMany({
-        data: otherUsers.map(u => ({
-          userId: u.id,
-          title: data.title,
-          message: data.message,
-          type: data.type || "INFO",
-          priority: data.priority || "MEDIUM",
-          published: true,
-          pinned: data.pinned,
-          link: data.link || null,
-          publishedAt: new Date(),
-        }))
-      });
-    }
-  }
-
   revalidatePath("/notifications");
   revalidatePath("/admin/notifications");
+  revalidatePath("/");
   return { success: true, id: notification.id };
 }
 
@@ -211,6 +189,7 @@ export async function updateNotificationAction(id: string, data: {
 
   revalidatePath("/notifications");
   revalidatePath("/admin/notifications");
+  revalidatePath("/");
   return { success: true, id: notification.id };
 }
 
@@ -221,6 +200,7 @@ export async function deleteNotificationAction(id: string) {
   });
   revalidatePath("/notifications");
   revalidatePath("/admin/notifications");
+  revalidatePath("/");
   return { success: true };
 }
 
@@ -239,6 +219,7 @@ export async function togglePublishAction(id: string) {
 
   revalidatePath("/notifications");
   revalidatePath("/admin/notifications");
+  revalidatePath("/");
   return { success: true, published: updated.published };
 }
 
@@ -254,6 +235,7 @@ export async function togglePinAction(id: string) {
 
   revalidatePath("/notifications");
   revalidatePath("/admin/notifications");
+  revalidatePath("/");
   return { success: true, pinned: updated.pinned };
 }
 
@@ -269,6 +251,7 @@ export async function toggleArchiveAction(id: string) {
 
   revalidatePath("/notifications");
   revalidatePath("/admin/notifications");
+  revalidatePath("/");
   return { success: true, archived: updated.archived };
 }
 
@@ -293,6 +276,7 @@ export async function duplicateNotificationAction(id: string) {
 
   revalidatePath("/notifications");
   revalidatePath("/admin/notifications");
+  revalidatePath("/");
   return { success: true, id: duplicated.id };
 }
 
@@ -303,6 +287,7 @@ export async function bulkDeleteAction(ids: string[]) {
   });
   revalidatePath("/notifications");
   revalidatePath("/admin/notifications");
+  revalidatePath("/");
   return { success: true };
 }
 
@@ -317,5 +302,6 @@ export async function bulkPublishAction(ids: string[], publish: boolean) {
   });
   revalidatePath("/notifications");
   revalidatePath("/admin/notifications");
+  revalidatePath("/");
   return { success: true };
 }

@@ -34,6 +34,13 @@ export async function updateCourseProgress(id: string, progress: number) {
 }
 
 export async function deleteCourse(id: string) {
+  try {
+    const { autoBackup } = await import("../backups/actions");
+    await autoBackup("Course Deletion");
+  } catch (err) {
+    console.error("Auto-backup failed before deletion:", err);
+  }
+
   await prisma.course.delete({ where: { id } });
   revalidatePath("/admin/learning");
   revalidatePath("/learning");
@@ -55,6 +62,13 @@ export async function createBook(formData: FormData) {
 }
 
 export async function deleteBook(id: string) {
+  try {
+    const { autoBackup } = await import("../backups/actions");
+    await autoBackup("Book Deletion");
+  } catch (err) {
+    console.error("Auto-backup failed before deletion:", err);
+  }
+
   await prisma.book.delete({ where: { id } });
   revalidatePath("/admin/learning");
   revalidatePath("/learning");
@@ -75,6 +89,13 @@ export async function createSkill(formData: FormData) {
 }
 
 export async function deleteSkill(id: string) {
+  try {
+    const { autoBackup } = await import("../backups/actions");
+    await autoBackup("Skill Deletion");
+  } catch (err) {
+    console.error("Auto-backup failed before deletion:", err);
+  }
+
   await prisma.skill.delete({ where: { id } });
   revalidatePath("/admin/learning");
   revalidatePath("/learning");

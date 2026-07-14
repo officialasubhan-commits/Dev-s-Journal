@@ -58,6 +58,13 @@ export async function uploadImages(urls: string[], albumId: string | null = null
 }
 
 export async function deleteAlbum(id: string) {
+  try {
+    const { autoBackup } = await import("../backups/actions");
+    await autoBackup("Album Deletion");
+  } catch (err) {
+    console.error("Auto-backup failed before deletion:", err);
+  }
+
   // Prisma SetNull will detach images, or we can delete them. We will just delete the album.
   await prisma.album.delete({ where: { id } });
   revalidatePath("/admin/gallery");
@@ -65,6 +72,13 @@ export async function deleteAlbum(id: string) {
 }
 
 export async function deleteImage(id: string) {
+  try {
+    const { autoBackup } = await import("../backups/actions");
+    await autoBackup("Gallery Image Deletion");
+  } catch (err) {
+    console.error("Auto-backup failed before deletion:", err);
+  }
+
   await prisma.galleryImage.delete({ where: { id } });
   revalidatePath("/admin/gallery");
   revalidatePath("/gallery");

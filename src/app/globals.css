@@ -24,40 +24,40 @@
 @layer base {
   /* Premium Warm Light Theme (default) */
   :root, [data-theme="light"] {
-    --background: #FFF8F2;
-    --secondary-bg: #F8F1E8;
+    --background: #FFFBF5;
+    --secondary-bg: #FFF7ED;
     --card: #FFFFFF;
-    --primary: #F97316;
-    --secondary: #FBBF24;
-    --accent: #FB7185;
+    --primary: #F59E0B;
+    --secondary: #D97706;
+    --accent: #FBBF24;
     --highlight: #38BDF8;
     --success: #22C55E;
     --danger: #EF4444;
     --error: #EF4444;
     
-    --text-main: #2D2A26;
-    --text-secondary: #6B5E52;
-    --text-muted: #9A8F84;
-    --border-color: #E7D8C9;
+    --text-main: #1F2937;
+    --text-secondary: #6B7280;
+    --text-muted: #9CA3AF;
+    --border-color: #E5E7EB;
   }
 
   /* Premium Dark Theme */
   [data-theme="dark"] {
-    --background: #0F0E0D;
-    --secondary-bg: #1A1814;
-    --card: #1E1C18;
-    --primary: #F97316;
-    --secondary: #FBBF24;
-    --accent: #FB7185;
+    --background: #18181B;
+    --secondary-bg: #27272A;
+    --card: #27272A;
+    --primary: #F59E0B;
+    --secondary: #D97706;
+    --accent: #FBBF24;
     --highlight: #38BDF8;
     --success: #22C55E;
     --danger: #EF4444;
     --error: #EF4444;
     
-    --text-main: #F5EFE6;
-    --text-secondary: #A89880;
-    --text-muted: #6B5E52;
-    --border-color: #2D2820;
+    --text-main: #F9FAFB;
+    --text-secondary: #D1D5DB;
+    --text-muted: #9CA3AF;
+    --border-color: #3F3F46;
   }
 
   body {

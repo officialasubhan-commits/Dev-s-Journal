@@ -1,150 +1,312 @@
-"use client";
-
-import { Button } from "@/components/ui/button";
+import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { ArrowRight, Code, BookOpen, Camera, Sparkles, X } from "lucide-react";
-import { SlideUp, StaggerContainer } from "@/components/ui/animations";
-import { TypewriterEffect } from "@/components/ui/typewriter";
-import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { ArrowRight, Code, BookOpen, Camera, Globe, Target, Terminal, Calendar, Clock, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { SafeImage } from "@/components/ui/SafeImage";
+import { SlideUp, StaggerContainer, FadeIn } from "@/components/ui/animations";
+import { WelcomePopup } from "@/components/WelcomePopup";
 
-export default function Home() {
-  const [showWelcome, setShowWelcome] = useState(false);
+export const dynamic = "force-dynamic";
 
-  useEffect(() => {
-    const welcomeSeen = localStorage.getItem("welcome_notif_seen") === "true";
-    if (!welcomeSeen) {
-      const timer = setTimeout(() => {
-        setShowWelcome(true);
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
-  }, []);
-
-  useEffect(() => {
-    const handleUpdate = () => {
-      const welcomeSeen = localStorage.getItem("welcome_notif_seen") === "true";
-      if (welcomeSeen) {
-        setShowWelcome(false);
-      }
-    };
-    window.addEventListener("notifications-updated", handleUpdate);
-    return () => window.removeEventListener("notifications-updated", handleUpdate);
-  }, []);
-
-  const handleDismiss = () => {
-    localStorage.setItem("welcome_notif_seen", "true");
-    setShowWelcome(false);
-    window.dispatchEvent(new Event("notifications-updated"));
-  };
-
-  const words = [
-    { text: "Never Stops.", className: "text-[var(--primary)]" },
-    { text: "Is Just Beginning.", className: "text-[var(--accent)]" },
-    { text: "Inspires Others.", className: "text-[var(--highlight)]" },
-  ];
+export default async function Home() {
+  const [
+    featuredProjects,
+    latestPosts,
+    learningProgress,
+    galleryImages,
+    totalPosts,
+    totalProjects,
+    totalCourses,
+    totalGallery
+  ] = await Promise.all([
+    prisma.project.findMany({
+      where: { published: true },
+      orderBy: { createdAt: "desc" },
+      take: 2
+    }),
+    prisma.post.findMany({
+      where: { published: true },
+      orderBy: { createdAt: "desc" },
+      take: 3
+    }),
+    prisma.course.findMany({
+      orderBy: { progress: "desc" },
+      take: 3
+    }),
+    prisma.galleryImage.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 4
+    }),
+    prisma.post.count({ where: { published: true } }),
+    prisma.project.count({ where: { published: true } }),
+    prisma.course.count(),
+    prisma.galleryImage.count()
+  ]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] relative overflow-hidden bg-[var(--background)]">
-      {/* Static premium warm background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-[var(--primary)]/10 to-[var(--accent)]/10 rounded-full blur-[120px] pointer-events-none" />
-      
-      <div className="container px-4 md:px-6 relative z-10 flex flex-col items-center text-center space-y-10 py-24">
-        
-        <SlideUp className="space-y-6 max-w-4xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass border border-[var(--border-color)] text-xs font-semibold text-[var(--primary)] shadow-sm mb-4 tracking-wide uppercase">
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--primary)]" />
-            <span>Welcome to my digital home</span>
-          </div>
-          
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-[var(--text-main)] font-heading leading-tight">
-            My Journey <br className="hidden md:block" />
-            <TypewriterEffect words={words} />
-          </h1>
-          
-          <p className="mx-auto max-w-2xl text-[var(--text-secondary)] text-lg md:text-xl/relaxed lg:text-xl/relaxed font-medium">
-            A carefully curated space where I document my learning, showcase my projects, and share my creative endeavors with the world.
-          </p>
-        </SlideUp>
+    <div className="min-h-screen bg-[var(--background)] py-12 md:py-20 relative overflow-hidden">
+      {/* Soft elegant top glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-to-b from-[var(--primary)]/5 to-transparent rounded-full blur-[140px] pointer-events-none" />
 
-        <SlideUp delay={0.2} className="flex flex-col sm:flex-row gap-4">
-          <Button size="lg" className="h-14 px-8 text-lg" asChild>
-            <Link href="/projects">
-              Explore Work <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
-          </Button>
-          <Button variant="secondary" size="lg" className="h-14 px-8 text-lg" asChild>
-            <Link href="/journal">Read Journal</Link>
-          </Button>
-        </SlideUp>
+      <div className="container max-w-5xl mx-auto px-6 space-y-28 md:space-y-36 relative z-10">
         
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-16 w-full max-w-5xl">
-          <SlideUp className="glass-card p-8 flex flex-col items-center space-y-4 group">
-            <div className="p-4 bg-gradient-to-br from-[var(--primary)]/10 to-[var(--primary)]/5 rounded-2xl group-hover:scale-110 group-hover:bg-[var(--primary)]/20 transition-all duration-300">
-              <Code className="h-8 w-8 text-[var(--primary)]" />
+        {/* HERO SECTION */}
+        <section className="pt-16 pb-6 text-center md:text-left md:flex md:items-center md:justify-between gap-12">
+          <div className="max-w-2xl space-y-6 md:space-y-8">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--secondary-bg)] border border-[var(--border-color)] text-xs font-semibold text-[var(--secondary)] tracking-wider uppercase">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] animate-ping" />
+              <span>Available for New Projects</span>
             </div>
-            <h3 className="font-bold text-xl font-heading text-[var(--text-main)]">Crafting Code</h3>
-            <p className="text-center text-[var(--text-secondary)] leading-relaxed">
-              Building scalable, beautiful applications with modern web technologies.
+            
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-[var(--text-main)] font-heading leading-tight">
+              Designing simple, <br />
+              <span className="text-[var(--primary)] bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent">warm & premium</span> digital experiences.
+            </h1>
+            
+            <p className="text-lg md:text-xl text-[var(--text-secondary)] font-normal leading-relaxed max-w-xl">
+              I am a Software Engineer and UI/UX Designer. This is my digital space where I log my daily learnings, showcase craft projects, and write summaries.
             </p>
-          </SlideUp>
-          
-          <SlideUp className="glass-card p-8 flex flex-col items-center space-y-4 group">
-            <div className="p-4 bg-gradient-to-br from-[var(--accent)]/10 to-[var(--accent)]/5 rounded-2xl group-hover:scale-110 group-hover:bg-[var(--accent)]/20 transition-all duration-300">
-              <BookOpen className="h-8 w-8 text-[var(--accent)]" />
-            </div>
-            <h3 className="font-bold text-xl font-heading text-[var(--text-main)]">Continuous Learning</h3>
-            <p className="text-center text-[var(--text-secondary)] leading-relaxed">
-              Exploring new paradigms, architectures, and design philosophies.
-            </p>
-          </SlideUp>
-          
-          <SlideUp className="glass-card p-8 flex flex-col items-center space-y-4 group">
-            <div className="p-4 bg-gradient-to-br from-[var(--highlight)]/10 to-[var(--highlight)]/5 rounded-2xl group-hover:scale-110 group-hover:bg-[var(--highlight)]/20 transition-all duration-300">
-              <Camera className="h-8 w-8 text-[var(--highlight)]" />
-            </div>
-            <h3 className="font-bold text-xl font-heading text-[var(--text-main)]">Visual Storytelling</h3>
-            <p className="text-center text-[var(--text-secondary)] leading-relaxed">
-              Capturing moments, sharing memories, and expressing creativity.
-            </p>
-          </SlideUp>
-        </StaggerContainer>
-      </div>
 
-      {/* Modern Welcome Notification Pop-Up */}
-      <AnimatePresence>
-        {showWelcome && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.3 }}
-            className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-3rem)] glass-card bg-[var(--card)]/90 border border-[var(--border-color)] shadow-2xl p-6 rounded-2xl flex flex-col gap-3 backdrop-blur-md"
-          >
-            <div className="flex justify-between items-start">
-              <h4 className="font-bold text-lg font-heading text-[var(--text-main)] flex items-center gap-1.5">
-                👋 Welcome to Boss Journal!
-              </h4>
-              <button 
-                onClick={handleDismiss}
-                className="p-1 rounded-full text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--secondary-bg)] transition-all"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="text-sm text-[var(--text-secondary)] space-y-2 leading-relaxed">
-              <p>Welcome to my personal portfolio and learning journal.</p>
-              <p>Here you can explore my projects, daily learning, achievements, and my journey toward becoming a Software Engineer.</p>
-              <p>Thank you for visiting my website. I hope you enjoy exploring my work!</p>
-            </div>
-            <div className="flex justify-end pt-2">
-              <Button size="sm" onClick={handleDismiss} className="px-4">
-                Get Started
+            <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-4 pt-2">
+              <Button size="lg" className="h-12 px-6 text-sm font-semibold rounded-xl bg-[var(--primary)] text-white hover:bg-[var(--secondary)] hover:-translate-y-0.5 transition-all shadow-md shadow-primary/10 cursor-pointer" asChild>
+                <Link href="/projects" className="flex items-center gap-2">
+                  Explore Projects <ArrowRight className="w-4 h-4" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" className="h-12 px-6 text-sm font-semibold rounded-xl border-[var(--border-color)] hover:bg-[var(--secondary-bg)] hover:-translate-y-0.5 transition-all cursor-pointer" asChild>
+                <Link href="/journal">
+                  Read Journal
+                </Link>
               </Button>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+
+          {/* Quick Info / Avatar Card */}
+          <div className="hidden md:block w-72 h-80 relative shrink-0">
+            <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary)]/10 to-[var(--secondary)]/10 rounded-3xl border border-[var(--border-color)] p-6 flex flex-col justify-between shadow-sm">
+              <div className="w-12 h-12 rounded-2xl bg-white dark:bg-[#27272A] border border-[var(--border-color)] flex items-center justify-center shadow-inner">
+                <Globe className="w-6 h-6 text-[var(--primary)]" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-bold font-heading text-lg text-[var(--text-main)]">Abdus Subhan</h3>
+                <p className="text-xs text-[var(--text-secondary)] font-medium leading-relaxed">
+                  Based in India. Focuses on Next.js 16, React 19, TypeScript, and modern clean interface details.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* STATISTICS SECTION */}
+        <section className="grid grid-cols-2 md:grid-cols-4 gap-6 border-y border-[var(--border-color)]/60 py-10">
+          {[
+            { label: "Articles Published", value: totalPosts, desc: "Journal entries" },
+            { label: "Live Projects", value: totalProjects, desc: "Showcased work" },
+            { label: "Completed Courses", value: totalCourses, desc: "Learning records" },
+            { label: "Gallery Assets", value: totalGallery, desc: "Captured frames" }
+          ].map((stat, idx) => (
+            <div key={idx} className="text-center md:text-left space-y-1">
+              <span className="text-3xl md:text-4xl font-extrabold text-[var(--text-main)] font-heading tracking-tight">
+                {stat.value}
+              </span>
+              <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">{stat.label}</p>
+              <p className="text-[10px] text-[var(--text-muted)] font-medium">{stat.desc}</p>
+            </div>
+          ))}
+        </section>
+
+        {/* FEATURED PROJECTS */}
+        <section className="space-y-10">
+          <div className="flex justify-between items-end">
+            <div className="space-y-1">
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight font-heading text-[var(--text-main)]">Featured Projects</h2>
+              <p className="text-sm text-[var(--text-secondary)]">A selected list of my design and engineering projects.</p>
+            </div>
+            <Link href="/projects" className="text-sm font-semibold text-[var(--primary)] hover:text-[var(--secondary)] transition-colors flex items-center gap-1 group">
+              All Projects <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {featuredProjects.map((project) => (
+              <SlideUp key={project.id}>
+                <div className="group bg-[var(--card)] border border-[var(--border-color)] rounded-2xl overflow-hidden hover:shadow-xl hover:border-[var(--primary)]/20 transition-all duration-300 flex flex-col h-full">
+                  {project.coverImage && (
+                    <div className="aspect-video relative overflow-hidden bg-[var(--secondary-bg)] border-b border-[var(--border-color)]">
+                      <SafeImage 
+                        src={project.coverImage} 
+                        alt={project.title} 
+                        fill 
+                        className="object-cover group-hover:scale-105 transition-transform duration-500" 
+                      />
+                    </div>
+                  )}
+                  <div className="p-6 flex flex-col justify-between flex-1 space-y-4">
+                    <div className="space-y-2">
+                      <h3 className="font-bold text-xl font-heading text-[var(--text-main)] group-hover:text-[var(--primary)] transition-colors">
+                        {project.title}
+                      </h3>
+                      <p className="text-sm text-[var(--text-secondary)] leading-relaxed line-clamp-2">
+                        {project.description}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {project.technologies.slice(0, 3).map((tech) => (
+                        <span key={tech} className="px-2 py-0.5 text-[10px] font-semibold bg-[var(--secondary-bg)] border border-[var(--border-color)] text-[var(--text-secondary)] rounded-md">
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </SlideUp>
+            ))}
+          </StaggerContainer>
+        </section>
+
+        {/* LATEST JOURNAL POSTS */}
+        <section className="space-y-10">
+          <div className="flex justify-between items-end">
+            <div className="space-y-1">
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight font-heading text-[var(--text-main)]">Latest Journal Entries</h2>
+              <p className="text-sm text-[var(--text-secondary)]">Thoughts, summaries, and stories about web engineering.</p>
+            </div>
+            <Link href="/journal" className="text-sm font-semibold text-[var(--primary)] hover:text-[var(--secondary)] transition-colors flex items-center gap-1 group">
+              Read More <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+
+          <div className="space-y-4">
+            {latestPosts.map((post) => (
+              <SlideUp key={post.id}>
+                <Link 
+                  href={`/journal/${post.slug}`}
+                  className="block p-5 bg-[var(--card)] hover:bg-[var(--secondary-bg)] border border-[var(--border-color)] hover:border-[var(--primary)]/20 rounded-2xl transition-all duration-200 group"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <h3 className="font-bold text-lg text-[var(--text-main)] group-hover:text-[var(--primary)] transition-colors font-sans">
+                        {post.title}
+                      </h3>
+                      <div className="flex items-center gap-4 text-xs text-[var(--text-secondary)]">
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-3.5 h-3.5" />
+                          {new Date(post.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3.5 h-3.5" />
+                          {post.readingTime} min read
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center text-xs font-semibold text-[var(--text-secondary)] group-hover:text-[var(--primary)] transition-colors shrink-0">
+                      Read Entry <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-0.5 transition-transform" />
+                    </div>
+                  </div>
+                </Link>
+              </SlideUp>
+            ))}
+          </div>
+        </section>
+
+        {/* LEARNING HUB */}
+        <section className="space-y-10">
+          <div className="flex justify-between items-end">
+            <div className="space-y-1">
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight font-heading text-[var(--text-main)]">Learning Progress</h2>
+              <p className="text-sm text-[var(--text-secondary)]">Tracking courses and educational materials currently active.</p>
+            </div>
+            <Link href="/learning" className="text-sm font-semibold text-[var(--primary)] hover:text-[var(--secondary)] transition-colors flex items-center gap-1 group">
+              View Hub <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {learningProgress.map((course) => (
+              <SlideUp key={course.id}>
+                <div className="bg-[var(--card)] border border-[var(--border-color)] p-6 rounded-2xl flex flex-col justify-between h-full space-y-4">
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--primary)] bg-[var(--primary)]/10 px-2 py-0.5 rounded-full">
+                      {course.platform}
+                    </span>
+                    <h3 className="font-bold text-base text-[var(--text-main)] line-clamp-2 leading-snug">
+                      {course.title}
+                    </h3>
+                  </div>
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-xs text-[var(--text-secondary)]">
+                      <span>Progress</span>
+                      <span className="font-semibold">{course.progress}%</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-[var(--secondary-bg)] rounded-full overflow-hidden border border-[var(--border-color)]/30">
+                      <div 
+                        className="h-full bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] rounded-full transition-all duration-500" 
+                        style={{ width: `${course.progress}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </SlideUp>
+            ))}
+          </div>
+        </section>
+
+        {/* GALLERY PREVIEW */}
+        <section className="space-y-10">
+          <div className="flex justify-between items-end">
+            <div className="space-y-1">
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight font-heading text-[var(--text-main)]">Gallery Snaps</h2>
+              <p className="text-sm text-[var(--text-secondary)]">Visual frames and highlights representing daily storytelling.</p>
+            </div>
+            <Link href="/gallery" className="text-sm font-semibold text-[var(--primary)] hover:text-[var(--secondary)] transition-colors flex items-center gap-1 group">
+              View Gallery <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {galleryImages.map((img) => (
+              <SlideUp key={img.id}>
+                <div className="aspect-square relative rounded-2xl overflow-hidden border border-[var(--border-color)] group bg-[var(--secondary-bg)] shadow-sm">
+                  <SafeImage 
+                    src={img.url} 
+                    alt={img.caption || "Gallery Image"} 
+                    fill 
+                    className="object-cover group-hover:scale-105 transition-transform duration-500" 
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                    <span className="text-xs font-semibold text-white truncate w-full">{img.caption}</span>
+                  </div>
+                </div>
+              </SlideUp>
+            ))}
+          </div>
+        </section>
+
+        {/* CONTACT CTA BANNER */}
+        <section>
+          <SlideUp>
+            <div className="bg-gradient-to-br from-[var(--secondary-bg)] to-[var(--background)] border border-[var(--border-color)] rounded-3xl p-8 md:p-12 text-center space-y-6 relative overflow-hidden shadow-sm">
+              <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary)]/5 to-transparent pointer-events-none" />
+              <div className="max-w-xl mx-auto space-y-4 relative z-10">
+                <h2 className="text-2xl md:text-3xl font-bold font-heading text-[var(--text-main)] tracking-tight">Let's craft code together</h2>
+                <p className="text-sm md:text-base text-[var(--text-secondary)] leading-relaxed">
+                  Have an interesting project proposal, contract opening, or just want to chat about developer tooling? Feel free to drop a message.
+                </p>
+                <div className="pt-2">
+                  <Button size="lg" className="h-12 px-6 text-sm font-semibold rounded-xl bg-[var(--primary)] text-white hover:bg-[var(--secondary)] cursor-pointer" asChild>
+                    <Link href="/contact">
+                      Get In Touch
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </SlideUp>
+        </section>
+
+      </div>
+
+      <WelcomePopup />
     </div>
   );
 }

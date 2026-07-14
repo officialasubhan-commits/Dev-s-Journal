@@ -46,43 +46,14 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] relative overflow-hidden bg-[var(--background)]">
-      {/* Animated background glow and particles */}
-      <motion.div 
-        animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-[var(--primary)]/20 to-[var(--accent)]/20 rounded-full blur-[100px] pointer-events-none" 
-      />
-      
-      {/* Floating particles (simplified representation) */}
-      {[...Array(5)].map((_, i) => (
-        <motion.div
-          key={i}
-          animate={{ 
-            y: [0, -20, 0], 
-            opacity: [0, 1, 0],
-            scale: [0.8, 1, 0.8]
-          }}
-          transition={{ 
-            duration: 3 + i, 
-            repeat: Infinity, 
-            delay: i * 0.5,
-            ease: "easeInOut" 
-          }}
-          className="absolute"
-          style={{
-            top: `${[25, 45, 65, 30, 70][i]}%`,
-            left: `${[15, 80, 25, 65, 85][i]}%`,
-          }}
-        >
-          <Sparkles className="w-4 h-4 text-[var(--secondary)] opacity-40" />
-        </motion.div>
-      ))}
+      {/* Static premium warm background glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-[var(--primary)]/10 to-[var(--accent)]/10 rounded-full blur-[120px] pointer-events-none" />
       
       <div className="container px-4 md:px-6 relative z-10 flex flex-col items-center text-center space-y-10 py-24">
         
         <SlideUp className="space-y-6 max-w-4xl">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-[var(--primary)]/30 text-sm font-medium text-[var(--primary)] shadow-sm mb-4">
-            <Sparkles className="w-4 h-4" />
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass border border-[var(--border-color)] text-xs font-semibold text-[var(--primary)] shadow-sm mb-4 tracking-wide uppercase">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--primary)]" />
             <span>Welcome to my digital home</span>
           </div>
           

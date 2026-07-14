@@ -248,7 +248,7 @@ export default async function AdminDashboard() {
         <Card className="border-[var(--border-color)] overflow-hidden shadow-sm">
           <CardHeader className="bg-[var(--background)]/50 border-b border-[var(--border-color)] py-4 px-6">
             <CardTitle className="text-base font-bold text-[var(--text-main)] font-heading flex items-center gap-2">
-              <Activity className="w-4.5 h-4.5 text-[var(--primary)] animate-pulse" />
+              <Activity className="w-4.5 h-4.5 text-[var(--primary)]" />
               Website Status & Day Counter
             </CardTitle>
           </CardHeader>

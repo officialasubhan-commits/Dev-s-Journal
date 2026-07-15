@@ -833,8 +833,69 @@ export async function saveGallerySettings(formData: FormData) {
     revalidatePath("/", "layout");
     await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
     return { success: "Gallery settings saved successfully!" };
-  } catch (error: any) {
+} catch (error: any) {
     console.error("saveGallerySettings error:", error);
     return { error: error?.message || "Failed to save Gallery settings." };
   }
 }
+
+export async function saveCourseSettings(formData: FormData) {
+  try {
+    await assertAdmin();
+    const defaultInstructor = (formData.get("defaultInstructor") as string) || "";
+    const defaultCurrency = (formData.get("defaultCurrency") as string) || "USD";
+    const defaultLanguage = (formData.get("defaultLanguage") as string) || "English";
+
+    await prisma.courseSettings.upsert({
+      where: { id: "singleton" },
+      update: {
+        defaultInstructor,
+        defaultCurrency,
+        defaultLanguage
+      },
+      create: {
+        id: "singleton",
+        defaultInstructor,
+        defaultCurrency,
+        defaultLanguage
+      }
+    });
+
+    revalidatePath("/admin/settings");
+    revalidatePath("/courses");
+    revalidatePath("/", "layout");
+    await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
+    return { success: "Course settings saved successfully!" };
+  } catch (error: any) {
+    console.error("saveCourseSettings error:", error);
+    return { error: error?.message || "Failed to save Course settings." };
+  }
+}
+
+export async function saveCertificateSettings(formData: FormData) {
+  try {
+    await assertAdmin();
+    const enableVerification = formData.get("enableVerification") === "on";
+
+    await prisma.certificateSettings.upsert({
+      where: { id: "singleton" },
+      update: {
+        enableVerification
+      },
+      create: {
+        id: "singleton",
+        enableVerification
+      }
+    });
+
+    revalidatePath("/admin/settings");
+    revalidatePath("/certifications");
+    revalidatePath("/", "layout");
+    await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
+    return { success: "Certificate settings saved successfully!" };
+  } catch (error: any) {
+    console.error("saveCertificateSettings error:", error);
+    return { error: error?.message || "Failed to save Certificate settings." };
+  }
+}
+

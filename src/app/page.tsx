@@ -55,17 +55,26 @@ export default async function Home() {
     const title = settings?.heroTitle || "Designing simple, warm & premium digital experiences.";
     const highlight = settings?.heroHighlighted || "warm & premium";
     
-    if (!highlight || !title.includes(highlight)) {
+    if (!highlight) {
       return title;
     }
-    const index = title.indexOf(highlight);
-    const before = title.substring(0, index);
-    const after = title.substring(index + highlight.length);
+    
+    const regex = new RegExp(`(${highlight})`, "gi");
+    const parts = title.split(regex);
+    
+    if (parts.length === 1) {
+      return title;
+    }
+
     return (
       <>
-        {before}
-        <span className="text-[var(--primary)]">{highlight}</span>
-        {after}
+        {parts.map((part, i) => 
+          part.toLowerCase() === highlight.toLowerCase() ? (
+            <span key={i} className="text-[var(--primary)]">{part}</span>
+          ) : (
+            part
+          )
+        )}
       </>
     );
   };

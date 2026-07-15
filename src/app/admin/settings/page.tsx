@@ -7,6 +7,8 @@ import { SeoSettingsForm } from "./SeoSettingsForm";
 import { AppearanceSettingsForm } from "./AppearanceSettingsForm";
 import { FeatureFlagsForm } from "./FeatureFlagsForm";
 import { AnalyticsUploadSettingsForm } from "./AnalyticsUploadSettingsForm";
+import { CourseSettingsForm } from "./CourseSettingsForm";
+import { CertificateSettingsForm } from "./CertificateSettingsForm";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
@@ -35,6 +37,10 @@ export default async function SettingsPage() {
       <AppearanceSettingsForm settings={settings as any} />
 
       <FeatureFlagsForm settings={settings as any} />
+
+      <CourseSettingsForm settings={settings as any} />
+
+      <CertificateSettingsForm settings={settings as any} />
 
       <AnalyticsUploadSettingsForm settings={settings as any} />
 

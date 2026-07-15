@@ -152,6 +152,28 @@ export async function getSiteSettings() {
     featuredPosts: homepage?.featuredPosts || [],
     featuredCertificates: homepage?.featuredCertificates || [],
     featuredCourses: homepage?.featuredCourses || [],
+    typingConfig: homepage?.typingConfig || {
+      textColor: "#F97316",
+      cursorColor: "#F97316",
+      cursorWidth: "3px",
+      cursorBlinkSpeed: "1s",
+      typingSpeed: 100,
+      deleteSpeed: 50,
+      delayBetweenWords: 2000,
+      animationDelay: 800,
+      fontWeight: "700",
+      fontSize: "inherit",
+      textTransform: "none",
+      letterSpacing: "normal",
+      gradientEnabled: false,
+      gradientStart: "#F97316",
+      gradientEnd: "#FB7185",
+      shadowEnabled: false,
+      animationEnabled: true,
+      fontFamily: "inherit",
+      lineHeight: "normal",
+      wordSpacing: "normal"
+    },
 
     aboutTitle: about?.aboutTitle || "About Me",
     aboutDescription: about?.aboutDescription || "",
@@ -665,6 +687,16 @@ export async function saveHomepageSettings(formData: FormData) {
     const featuredCertificates = formData.getAll("featuredCertificates") as string[];
     const featuredCourses = formData.getAll("featuredCourses") as string[];
 
+    const typingConfigRaw = formData.get("typingConfig") as string;
+    let typingConfig = null;
+    if (typingConfigRaw) {
+      try {
+        typingConfig = JSON.parse(typingConfigRaw);
+      } catch (e) {
+        console.error("Failed to parse typingConfig", e);
+      }
+    }
+
     await prisma.homepageSettings.upsert({
       where: { id: "singleton" },
       update: {
@@ -683,6 +715,7 @@ export async function saveHomepageSettings(formData: FormData) {
         featuredPosts,
         featuredCertificates,
         featuredCourses,
+        typingConfig: typingConfig || undefined
       },
       create: {
         id: "singleton",
@@ -701,6 +734,7 @@ export async function saveHomepageSettings(formData: FormData) {
         featuredPosts,
         featuredCertificates,
         featuredCourses,
+        typingConfig: typingConfig || undefined
       },
     });
 

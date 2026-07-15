@@ -1,3 +1,4 @@
+import React from "react";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { ArrowRight, Code, BookOpen, Camera, Globe, Target, Terminal, Calendar, Clock, Sparkles } from "lucide-react";
@@ -6,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { SlideUp, StaggerContainer, FadeIn } from "@/components/ui/animations";
 import { WelcomePopup } from "@/components/WelcomePopup";
-import { TypingAnimation } from "@/components/home/TypingAnimation";
+import { TypingAnimationWrapper } from "../components/home/TypingAnimationWrapper";
 
 export const dynamic = "force-dynamic";
 
@@ -53,38 +54,10 @@ export default async function Home() {
   ]);
 
   const renderHeroTitle = () => {
-    const title = settings?.heroTitle || "Designing simple, warm & premium digital experiences.";
-    const highlightStr = settings?.heroHighlighted || "warm & premium";
-    
-    if (!highlightStr) {
-      return title;
-    }
-    
-    const highlightWords = highlightStr.split(",").map((s: string) => s.trim()).filter(Boolean);
-    if (highlightWords.length === 0) return title;
-
-    const firstHighlight = highlightWords[0];
-    
-    const regex = new RegExp(`(${firstHighlight})`, "i");
-    const parts = title.split(regex);
-    
-    if (parts.length === 1) {
-      // If the first highlight word isn't in the title at all, just return title
-      return title;
-    }
-
-    return (
-      <>
-        {parts.map((part, i) => 
-          part.toLowerCase() === firstHighlight.toLowerCase() ? (
-            <TypingAnimation key={i} words={highlightWords} className="text-[var(--primary)]" />
-          ) : (
-            part
-          )
-        )}
-      </>
-    );
+    // Static heading as required; never animated.
+    return "Where Ideas Become Software.";
   };
+
 
   return (
     <div className="min-h-screen bg-[var(--background)] py-12 md:py-20 relative overflow-hidden">
@@ -103,9 +76,13 @@ export default async function Home() {
               <span>{settings?.availabilityStatus || "Available"}</span>
             </div>
             
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-[var(--text-main)] font-heading leading-[1.1]">
-              {renderHeroTitle()}
-            </h1>
+            <div>
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-[var(--text-main)] font-heading leading-[1.1]">
+                {renderHeroTitle()}
+              </h1>
+              {/* Separate animated line placed below the static heading */}
+              <TypingAnimationWrapper settings={settings} />
+            </div>
             
             <p className="text-base md:text-lg text-[var(--text-secondary)] font-normal leading-relaxed max-w-xl">
               {settings?.heroDescription || "I am a Software Engineer and UI/UX Designer. This is my digital space where I log my daily learnings, showcase craft projects, and write summaries."}

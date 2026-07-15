@@ -582,6 +582,7 @@ model HomepageSettings {
   featuredPosts        String[] @default([])
   featuredCertificates String[] @default([])
   featuredCourses      String[] @default([])
+  typingConfig         Json?
   updatedAt            DateTime @updatedAt
 }
 

@@ -23,19 +23,15 @@ async function main() {
     return;
   }
 
-  const adminCount = await prisma.user.count({
-    where: { role: 'ADMIN' }
-  });
-
-  if (adminCount > 0) {
-    console.log("Admin user already exists. Seed skipped.");
-    return;
-  }
-
   const hashedPassword = await bcrypt.hash(password, 12);
 
-  const adminUser = await prisma.user.create({
-    data: {
+  const adminUser = await prisma.user.upsert({
+    where: { email: email },
+    update: {
+      password: hashedPassword,
+      role: "ADMIN"
+    },
+    create: {
       name: "Administrator",
       username: "admin",
       email: email,
@@ -56,8 +52,8 @@ async function main() {
     },
   });
 
-  // Seed default site settings singleton
-  await prisma.siteSettings.upsert({
+  // Seed default modular settings
+  await prisma.brandSettings.upsert({
     where: { id: "singleton" },
     update: {},
     create: {
@@ -68,8 +64,28 @@ async function main() {
       siteLogo: "",
       siteFavicon: "",
       siteUrl: "http://localhost:3000",
+    }
+  });
+
+  await prisma.generalSettings.upsert({
+    where: { id: "singleton" },
+    update: {},
+    create: {
+      id: "singleton",
       authorName: "Abdus Subhan",
       authorEmail: email,
+      enableComments: true,
+      enableGallery: true,
+      enableLearning: true,
+      enableNotifications: true,
+    }
+  });
+
+  await prisma.contactSettings.upsert({
+    where: { id: "singleton" },
+    update: {},
+    create: {
+      id: "singleton",
       contactEmail: email,
       availabilityStatus: "Available",
       contactHeading: "Get In Touch",
@@ -81,12 +97,14 @@ async function main() {
       youtubeUrl: "",
       discordUsername: "",
       telegramUsername: "",
-      enableComments: true,
-      enableGallery: true,
-      enableLearning: true,
-      enableNotifications: true,
-      
-      // Homepage Customization
+    }
+  });
+
+  await prisma.homepageSettings.upsert({
+    where: { id: "singleton" },
+    update: {},
+    create: {
+      id: "singleton",
       heroTitle: "Designing simple, warm & premium digital experiences.",
       heroHighlighted: "warm & premium",
       heroDescription: "I am a Software Engineer and UI/UX Designer. This is my digital space where I log my daily learnings, showcase craft projects, and write summaries.",

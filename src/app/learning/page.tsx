@@ -13,7 +13,7 @@ export default async function LearningPage() {
   const admin = await prisma.user.findFirst({ where: { role: "ADMIN" }, select: { id: true } });
   const adminId = admin?.id;
 
-  const courses = await prisma.course.findMany({
+  const courses = await prisma.userLearning.findMany({
     where: { status: "IN_PROGRESS", ...(adminId ? { userId: adminId } : {}) },
     orderBy: { createdAt: "desc" },
   });

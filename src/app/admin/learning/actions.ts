@@ -20,7 +20,7 @@ export async function createCourse(formData: FormData) {
     return { error: "Title and platform are required" };
   }
 
-  const existing = await prisma.course.findFirst({
+  const existing = await prisma.userLearning.findFirst({
     where: { title, platform, userId: adminId }
   });
 
@@ -28,7 +28,7 @@ export async function createCourse(formData: FormData) {
     return { error: "DUPLICATE_ENTRY", id: existing.id };
   }
 
-  await prisma.course.create({
+  await prisma.userLearning.create({
     data: {
       title,
       platform,
@@ -46,7 +46,7 @@ export async function createCourse(formData: FormData) {
 export async function updateCourseProgress(id: string, progress: number) {
   await assertAdmin();
   const status = progress >= 100 ? "COMPLETED" : "IN_PROGRESS";
-  await prisma.course.update({
+  await prisma.userLearning.update({
     where: { id },
     data: { progress, status, completedAt: status === "COMPLETED" ? new Date() : null }
   });
@@ -64,7 +64,7 @@ export async function deleteCourse(id: string) {
     console.error("Auto-backup failed before deletion:", err);
   }
 
-  await prisma.course.delete({ where: { id } });
+  await prisma.userLearning.delete({ where: { id } });
   revalidatePath("/admin/learning");
   revalidatePath("/learning");
   await triggerRealtimeUpdate("devs-journal-sync", "content-updated");

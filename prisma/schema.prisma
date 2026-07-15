@@ -2,93 +2,94 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
   // previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider   = "postgresql"
+  provider = "postgresql"
   // extensions = [vector]
 }
 
 model User {
-  id                  String    @id @default(cuid())
-  name                String?
-  username            String?   @unique
-  email               String    @unique
-  emailVerified       DateTime?
-  password            String?
-  image               String?   @map("profilePicture")
-  biography           String?   @db.Text
-  role                String    @default("USER") // "GUEST", "USER", "ADMIN"
-  
+  id            String    @id @default(cuid())
+  name          String?
+  username      String?   @unique
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?   @map("profilePicture")
+  biography     String?   @db.Text
+  role          String    @default("USER") // "GUEST", "USER", "ADMIN"
+
   // Profile Extended
-  displayName         String?
-  shortIntroduction   String?   @db.Text
-  country             String?
-  state               String?
-  city                String?
-  languages           String[]
-  technologies        String[]
-  spokenLanguages     String[]
-  occupation          String?
-  company             String?
-  college             String?
-  course              String?
-  skills              String[]
-  interests           String[]
-  customStats         Json?
-  
-  website             String?
-  githubProfile       String?
-  linkedinProfile     String?
-  twitterProfile      String?
-  instagramProfile    String?
-  
-  websiteThemePreference String @default("system")
-  profileCompleted    Boolean @default(false)
-  
+  displayName       String?
+  shortIntroduction String?  @db.Text
+  country           String?
+  state             String?
+  city              String?
+  languages         String[]
+  technologies      String[]
+  spokenLanguages   String[]
+  occupation        String?
+  company           String?
+  college           String?
+  course            String?
+  skills            String[]
+  interests         String[]
+  customStats       Json?
+
+  website          String?
+  githubProfile    String?
+  linkedinProfile  String?
+  twitterProfile   String?
+  instagramProfile String?
+
+  websiteThemePreference String  @default("system")
+  profileCompleted       Boolean @default(false)
+
   // Security
   lastLogin           DateTime?
   failedLoginAttempts Int       @default(0)
   lockedUntil         DateTime?
   twoFactorEnabled    Boolean   @default(false)
   twoFactorSecret     String?
-  
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-  
-  accounts            Account[]
-  sessions            Session[]
-  resetTokens         PasswordResetToken[]
-  notifications       Notification[]
-  
-  posts               Post[]
-  projects            Project[]
-  galleryImages       GalleryImage[]
-  albums              Album[]
-  courses             Course[]
-  books               Book[]
-  certifications      Certification[]
-  activities          Activity[]
-  userAchievements    UserAchievement[]
-  comments            Comment[]
-  detailedSkills      Skill[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  resetTokens   PasswordResetToken[]
+  notifications Notification[]
+
+  posts            Post[]
+  projects         Project[]
+  galleryImages    GalleryImage[]
+  albums           Album[]
+  userLearnings    UserLearning[]
+  courses          Course[]
+  books            Book[]
+  certifications   Certification[]
+  activities       Activity[]
+  userAchievements UserAchievement[]
+  comments         Comment[]
+  detailedSkills   Skill[]
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -112,36 +113,35 @@ model VerificationToken {
 }
 
 model Post {
-  id          String    @id @default(cuid())
-  title       String
-  slug        String    @unique
-  content     String    @db.Text // Rich text or markdown
-  coverImage  String?
-  published   Boolean   @default(false)
-  readingTime Int       @default(5)
-  mood        String?
-  tags        String[]
-  likes       Int       @default(0)
-  scheduledFor DateTime?
-  pinned      Boolean   @default(false)
-  archived    Boolean   @default(false)
-  seoTitle    String?
+  id             String    @id @default(cuid())
+  title          String
+  slug           String    @unique
+  content        String    @db.Text // Rich text or markdown
+  coverImage     String?
+  published      Boolean   @default(false)
+  readingTime    Int       @default(5)
+  mood           String?
+  tags           String[]
+  likes          Int       @default(0)
+  scheduledFor   DateTime?
+  pinned         Boolean   @default(false)
+  archived       Boolean   @default(false)
+  seoTitle       String?
   seoDescription String?
-  
-  authorId    String?
-  author      User?     @relation(fields: [authorId], references: [id])
-  
-  categoryId  String?
-  category    Category? @relation(fields: [categoryId], references: [id])
-  
-  comments    Comment[]
-  
-  draftId     String?   @unique
-  draft       Draft?    @relation(fields: [draftId], references: [id])
 
+  authorId String?
+  author   User?   @relation(fields: [authorId], references: [id])
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  comments Comment[]
+
+  draftId String? @unique
+  draft   Draft?  @relation(fields: [draftId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Category {
@@ -152,66 +152,66 @@ model Category {
 }
 
 model Comment {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   authorName  String
   authorEmail String?
-  content     String   @db.Text
-  approved    Boolean  @default(false) // For moderation
-  
-  authorId    String?
-  author      User?    @relation(fields: [authorId], references: [id])
-  
-  postId      String
-  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  
-  createdAt   DateTime @default(now())
+  content     String  @db.Text
+  approved    Boolean @default(false) // For moderation
+
+  authorId String?
+  author   User?   @relation(fields: [authorId], references: [id])
+
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 }
 
 model Project {
-  id           String    @id @default(cuid())
-  title        String
-  slug         String    @unique
-  description  String    @db.Text
-  content      String?   @db.Text
-  features     String?   @db.Text
-  challenges   String?   @db.Text
-  lessonsLearned String? @db.Text
-  technologies String[]
-  githubUrl    String?
-  liveUrl      String?
-  coverImage   String?
-  images       String[]  // Screenshots gallery
-  
-  authorId     String?
-  author       User?     @relation(fields: [authorId], references: [id])
-  
-  startDate    DateTime?
-  endDate      DateTime?
-  published    Boolean   @default(true)
-  pinned       Boolean   @default(false)
-  demoVideo    String?
-  
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id             String   @id @default(cuid())
+  title          String
+  slug           String   @unique
+  description    String   @db.Text
+  content        String?  @db.Text
+  features       String?  @db.Text
+  challenges     String?  @db.Text
+  lessonsLearned String?  @db.Text
+  technologies   String[]
+  githubUrl      String?
+  liveUrl        String?
+  coverImage     String?
+  images         String[] // Screenshots gallery
+
+  authorId String?
+  author   User?   @relation(fields: [authorId], references: [id])
+
+  startDate DateTime?
+  endDate   DateTime?
+  published Boolean   @default(true)
+  pinned    Boolean   @default(false)
+  demoVideo String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Skill {
-  id          String   @id @default(cuid())
-  name        String   
-  category    String   // e.g., "Frontend", "Backend", "Tools"
-  proficiency Int      // 0 - 100
-  icon        String?  // SVG or classname
-  
-  userId      String?
-  user        User?    @relation(fields: [userId], references: [id])
-  
-  createdAt   DateTime @default(now())
-  
+  id          String  @id @default(cuid())
+  name        String
+  category    String // e.g., "Frontend", "Backend", "Tools"
+  proficiency Int // 0 - 100
+  icon        String? // SVG or classname
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
   // Make skill name unique per user if userId is set, otherwise global
   // prisma does not support conditional unique constraints easily, so we remove the pure @unique
 }
 
-model Course {
+model UserLearning {
   id          String    @id @default(cuid())
   title       String
   platform    String
@@ -225,33 +225,129 @@ model Course {
   createdAt   DateTime  @default(now())
 }
 
+model Course {
+  id               String   @id @default(cuid())
+  title            String
+  slug             String   @unique
+  instructor       String
+  instructorBio    String?  @db.Text
+  instructorAvatar String?
+  shortDescription String   @db.Text
+  description      String   @db.Text
+  coverImage       String?
+  trailerUrl       String?
+  difficulty       String   @default("Beginner") // Beginner, Intermediate, Advanced
+  category         String
+  tags             String[]
+  duration         String
+  lessonsCount     Int      @default(0)
+  rating           Float    @default(0.0)
+  studentsCount    Int      @default(0)
+  language         String   @default("English")
+  lastUpdated      DateTime @default(now())
+  isFree           Boolean  @default(false)
+  price            Float    @default(0.0)
+  discountPrice    Float?
+  outcomes         String[]
+  requirements     String[]
+  targetAudience   String[]
+  certificateInfo  String?
+  
+  authorId         String?
+  author           User?    @relation(fields: [authorId], references: [id])
+  
+  curriculum       CourseSection[]
+  reviews          Review[]
+  faqs             FAQ[]
+  
+  published        Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model CourseSection {
+  id        String   @id @default(cuid())
+  title     String
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons   Lesson[]
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Lesson {
+  id        String        @id @default(cuid())
+  title     String
+  duration  String
+  isPreview Boolean       @default(false)
+  sectionId String
+  section   CourseSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  order     Int           @default(0)
+  createdAt DateTime      @default(now())
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userName  String
+  rating    Float
+  comment   String   @db.Text
+  date      DateTime @default(now())
+  avatarUrl String?
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model FAQ {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String   @db.Text
+  courseId  String?
+  course    Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  global    Boolean  @default(false) // If true, it's a global platform FAQ, else course-specific
+  createdAt DateTime @default(now())
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  company   String?
+  content   String   @db.Text
+  avatarUrl String?
+  rating    Int      @default(5)
+  featured  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
 model Book {
-  id          String   @id @default(cuid())
-  title       String
-  author      String
-  status      String   @default("READING") // "READING", "COMPLETED", "WANT_TO_READ"
-  coverImage  String?
-  rating      Int?     // 1 - 5
-  review      String?  @db.Text
-  
-  userId      String?
-  user        User?    @relation(fields: [userId], references: [id])
-  
-  createdAt   DateTime @default(now())
+  id         String  @id @default(cuid())
+  title      String
+  author     String
+  status     String  @default("READING") // "READING", "COMPLETED", "WANT_TO_READ"
+  coverImage String?
+  rating     Int? // 1 - 5
+  review     String? @db.Text
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
 }
 
 model Certification {
-  id          String   @id @default(cuid())
-  title       String
-  issuer      String
-  date        DateTime
-  url         String?
-  image       String?
-  
-  userId      String?
-  user        User?    @relation(fields: [userId], references: [id])
-  
-  createdAt   DateTime @default(now())
+  id     String   @id @default(cuid())
+  title  String
+  issuer String
+  date   DateTime
+  url    String?
+  image  String?
+  skills String[] @default([])
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
 }
 
 model Achievement {
@@ -260,17 +356,17 @@ model Achievement {
   description String   @db.Text
   date        DateTime @default(now())
   createdAt   DateTime @default(now())
-  
+
   userAchievements UserAchievement[]
 }
 
 model UserAchievement {
-  id            String   @id @default(cuid())
+  id            String      @id @default(cuid())
   userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   achievementId String
   achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
-  unlockedAt    DateTime @default(now())
+  unlockedAt    DateTime    @default(now())
 
   @@unique([userId, achievementId])
 }
@@ -279,7 +375,7 @@ model Activity {
   id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type      String   // e.g. "REGISTERED", "COMPLETED_PROFILE", "PUBLISHED_JOURNAL", etc.
+  type      String // e.g. "REGISTERED", "COMPLETED_PROFILE", "PUBLISHED_JOURNAL", etc.
   details   String?  @db.Text
   createdAt DateTime @default(now())
 }
@@ -290,26 +386,26 @@ model Album {
   description String?
   coverImage  String?
   images      GalleryImage[]
-  
-  userId      String?
-  user        User?          @relation(fields: [userId], references: [id])
-  
-  createdAt   DateTime       @default(now())
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
 }
 
 model GalleryImage {
-  id          String   @id @default(cuid())
-  url         String
-  publicId    String?  // For Cloudinary
-  caption     String?
-  
-  authorId    String?
-  author      User?    @relation(fields: [authorId], references: [id])
-  
-  albumId     String?
-  album       Album?   @relation(fields: [albumId], references: [id], onDelete: SetNull)
-  
-  createdAt   DateTime @default(now())
+  id       String  @id @default(cuid())
+  url      String
+  publicId String? // For Cloudinary
+  caption  String?
+
+  authorId String?
+  author   User?   @relation(fields: [authorId], references: [id])
+
+  albumId String?
+  album   Album?  @relation(fields: [albumId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
 }
 
 model Message {
@@ -323,36 +419,34 @@ model Message {
 }
 
 model Draft {
-  id          String   @id @default(cuid())
-  title       String?
-  content     String   @db.Text
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  post        Post?
+  id        String   @id @default(cuid())
+  title     String?
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  post Post?
 }
 
-
-
 model Notification {
-  id          String   @id @default(cuid())
-  type        String   // "SYSTEM", "CONTRIBUTION", "COMMENT", "LIKE", "MODERATION"
-  title       String?
-  message     String
-  link        String?
-  read        Boolean  @default(false)
-  
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  published   Boolean  @default(true)
-  priority    String   @default("MEDIUM")
-  pinned      Boolean  @default(false)
-  archived    Boolean  @default(false)
+  id      String  @id @default(cuid())
+  type    String // "SYSTEM", "CONTRIBUTION", "COMMENT", "LIKE", "MODERATION"
+  title   String?
+  message String
+  link    String?
+  read    Boolean @default(false)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  published   Boolean   @default(true)
+  priority    String    @default("MEDIUM")
+  pinned      Boolean   @default(false)
+  archived    Boolean   @default(false)
   publishedAt DateTime? @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
-  
-  createdAt   DateTime @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
+
+  createdAt DateTime @default(now())
 }
 
 model PasswordResetToken {
@@ -367,9 +461,9 @@ model PasswordResetToken {
 // SiteSettings removed in favor of modular settings models.
 
 model MaintenanceLog {
-  id          String    @id @default(cuid())
-  enabledAt   DateTime  @default(now())
-  disabledAt  DateTime?
+  id         String    @id @default(cuid())
+  enabledAt  DateTime  @default(now())
+  disabledAt DateTime?
 }
 
 model PageView {
@@ -377,7 +471,7 @@ model PageView {
   path      String
   referrer  String?
   country   String?
-  device    String?  // "desktop" | "mobile" | "tablet"
+  device    String? // "desktop" | "mobile" | "tablet"
   createdAt DateTime @default(now())
 
   @@index([path])

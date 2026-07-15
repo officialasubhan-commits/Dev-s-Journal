@@ -7,7 +7,7 @@ import { createCourseForm, deleteCourse, createBookForm, deleteBook, createSkill
 
 export default async function AdminLearningPage() {
   const [courses, books, skills] = await Promise.all([
-    prisma.course.findMany({ orderBy: { createdAt: "desc" } }),
+    prisma.userLearning.findMany({ orderBy: { createdAt: "desc" } }),
     prisma.book.findMany({ orderBy: { createdAt: "desc" } }),
     prisma.skill.findMany({ orderBy: { proficiency: "desc" } }),
   ]);

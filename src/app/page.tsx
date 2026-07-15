@@ -37,7 +37,7 @@ export default async function Home() {
       orderBy: { createdAt: "desc" },
       take: 3
     }),
-    prisma.course.findMany({
+    prisma.userLearning.findMany({
       orderBy: { progress: "desc" },
       take: 3
     }),
@@ -47,7 +47,7 @@ export default async function Home() {
     }),
     prisma.post.count({ where: { published: true } }),
     prisma.project.count({ where: { published: true } }),
-    prisma.course.count(),
+    prisma.userLearning.count(),
     prisma.galleryImage.count()
   ]);
 

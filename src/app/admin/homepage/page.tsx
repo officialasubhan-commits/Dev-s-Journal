@@ -16,7 +16,7 @@ export default async function AdminHomepagePage() {
     prisma.project.findMany({ orderBy: { createdAt: "desc" } }),
     prisma.post.findMany({ orderBy: { createdAt: "desc" } }),
     prisma.certification.findMany({ orderBy: { createdAt: "desc" } }),
-    prisma.course.findMany({ orderBy: { createdAt: "desc" } })
+    prisma.userLearning.findMany({ orderBy: { createdAt: "desc" } })
   ]);
 
   return (

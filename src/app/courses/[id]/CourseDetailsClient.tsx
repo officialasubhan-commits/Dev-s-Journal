@@ -262,11 +262,11 @@ export default function CourseDetailsClient({ course, similarCourses }: { course
                   ) : (
                     <>
                       <span className="text-3xl font-black text-[var(--text-main)]">
-                        ${course.discountPrice || course.price}
+                        ₹{course.discountPrice || course.price}
                       </span>
                       {course.discountPrice && (
                         <span className="text-sm text-[var(--text-muted)] line-through">
-                          ${course.price}
+                          ₹{course.price}
                         </span>
                       )}
                     </>
@@ -356,7 +356,7 @@ export default function CourseDetailsClient({ course, similarCourses }: { course
                     {sim.shortDescription}
                   </p>
                   <span className="text-[9px] font-bold text-[var(--primary)] block">
-                    {sim.isFree ? "Free" : `$${sim.discountPrice || sim.price}`}
+                    {sim.isFree ? "Free" : `₹${sim.discountPrice || sim.price}`}
                   </span>
                 </div>
               </Link>

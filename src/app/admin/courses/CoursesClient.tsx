@@ -129,7 +129,7 @@ export default function CoursesClient({ initialCourses }: { initialCourses: Cour
           { label: "Active Syllabi", value: courses.length, desc: "Created courses" },
           { label: "Total Students Enrolled", value: courses.reduce((a, b) => a + b.studentsCount, 0), desc: "Active users logs" },
           { label: "Average Academy Rating", value: "4.8 / 5.0", desc: "Verifiable reviews" },
-          { label: "Total Revenue", value: `$${courses.reduce((a, b) => a + (b.studentsCount * (b.discountPrice || b.price)), 0).toLocaleString()}`, desc: "Calculated transactions" }
+          { label: "Total Revenue", value: `₹${courses.reduce((a, b) => a + (b.studentsCount * (b.discountPrice || b.price)), 0).toLocaleString()}`, desc: "Calculated transactions" }
         ].map((widget, idx) => (
           <div key={idx} className="bg-[var(--card)] border border-[var(--border-color)]/70 p-4 rounded-2xl shadow-sm space-y-1">
             <span className="text-xl md:text-2xl font-black text-[var(--text-main)] font-heading">{widget.value}</span>
@@ -174,7 +174,7 @@ export default function CoursesClient({ initialCourses }: { initialCourses: Cour
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[var(--text-secondary)]">Price ($)</label>
+              <label className="text-xs font-semibold text-[var(--text-secondary)]">Price (₹)</label>
               <input
                 type="number"
                 min={0}
@@ -243,7 +243,7 @@ export default function CoursesClient({ initialCourses }: { initialCourses: Cour
                     <div className="flex items-center gap-1"><Users className="w-3.5 h-3.5" /> {c.studentsCount} students</div>
                   </td>
                   <td className="p-4 font-bold text-[var(--text-main)]">
-                    {c.isFree ? "Free" : `$${c.discountPrice || c.price}`}
+                    {c.isFree ? "Free" : `₹${c.discountPrice || c.price}`}
                   </td>
                   <td className="p-4 text-right space-x-1 whitespace-nowrap">
                     <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg" title="View catalog page" asChild>

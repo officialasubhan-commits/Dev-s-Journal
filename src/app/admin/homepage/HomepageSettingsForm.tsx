@@ -4,7 +4,7 @@ import { useState } from "react";
 import { saveHomepageSettings } from "../settings/actions";
 import { Button } from "@/components/ui/button";
 import { ImageManager } from "@/components/admin/ImageManager";
-import { Sparkles, ArrowRight, User, Globe, Link2, Sparkle, Loader2 } from "lucide-react";
+import { Sparkles, ArrowRight, User, Globe, Link2, Sparkle, Loader2, ArrowUp, ArrowDown, Pencil, Check, Trash2 } from "lucide-react";
 
 interface HomepageSettingsFormProps {
   settings: any;
@@ -36,6 +36,8 @@ export function HomepageSettingsForm({
     settings?.heroHighlighted ? settings.heroHighlighted.split(",").map((s: string) => s.trim()).filter(Boolean) : []
   );
   const [newWord, setNewWord] = useState("");
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingValue, setEditingValue] = useState("");
 
   const addWord = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -48,7 +50,46 @@ export function HomepageSettingsForm({
   const removeWord = (index: number, e: React.MouseEvent) => {
     e.preventDefault();
     setHighlightedWords(highlightedWords.filter((_, i) => i !== index));
+    if (editingIndex === index) {
+      setEditingIndex(null);
+    }
   };
+
+  const moveWord = (index: number, direction: "up" | "down", e: React.MouseEvent) => {
+    e.preventDefault();
+    if (direction === "up" && index === 0) return;
+    if (direction === "down" && index === highlightedWords.length - 1) return;
+
+    const newIndex = direction === "up" ? index - 1 : index + 1;
+    const newList = [...highlightedWords];
+    const temp = newList[index];
+    newList[index] = newList[newIndex];
+    newList[newIndex] = temp;
+    setHighlightedWords(newList);
+
+    if (editingIndex === index) {
+      setEditingIndex(newIndex);
+    } else if (editingIndex === newIndex) {
+      setEditingIndex(index);
+    }
+  };
+
+  const startEdit = (index: number, word: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    setEditingIndex(index);
+    setEditingValue(word);
+  };
+
+  const saveEdit = (index: number, e: React.MouseEvent | React.KeyboardEvent) => {
+    e.preventDefault();
+    if (editingValue.trim()) {
+      const newList = [...highlightedWords];
+      newList[index] = editingValue.trim();
+      setHighlightedWords(newList);
+    }
+    setEditingIndex(null);
+  };
+
 
 
   const handleCheckboxChange = (id: string, list: string[], setList: (val: string[]) => void) => {
@@ -151,7 +192,7 @@ export function HomepageSettingsForm({
 
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-[var(--text-secondary)]">Highlighted Heading Words (Typing Animation)</label>
-                  <div className="flex gap-2 mb-2">
+                  <div className="flex gap-2 mb-3">
                     <input
                       type="text"
                       value={newWord}
@@ -167,20 +208,51 @@ export function HomepageSettingsForm({
                     />
                     <Button onClick={addWord} type="button" className="h-[38px] px-4 rounded-xl bg-[var(--primary)] text-white hover:bg-[var(--primary)]/90 text-xs font-semibold cursor-pointer shrink-0">Add</Button>
                   </div>
-                  <div className="flex flex-wrap gap-2 mt-2">
+                  <div className="space-y-2 mt-2 max-w-md">
                     {highlightedWords.map((word, index) => (
-                      <div key={index} className="flex items-center gap-1.5 bg-[var(--secondary-bg)] border border-[var(--border-color)] px-3 py-1.5 rounded-lg text-xs font-semibold text-[var(--text-main)]">
-                        <span>{word}</span>
-                        <button type="button" onClick={(e) => removeWord(index, e)} className="text-[var(--text-muted)] hover:text-red-500 cursor-pointer">
-                          &times;
-                        </button>
+                      <div key={index} className="flex items-center justify-between bg-[var(--secondary-bg)] border border-[var(--border-color)] px-3 py-2 rounded-xl text-xs font-semibold text-[var(--text-main)]">
+                        {editingIndex === index ? (
+                          <input
+                            type="text"
+                            value={editingValue}
+                            onChange={(e) => setEditingValue(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') saveEdit(index, e);
+                            }}
+                            className="bg-[var(--background)] border border-[var(--border-color)] px-2 py-1 rounded text-xs text-[var(--text-main)] font-medium mr-2 flex-1"
+                            autoFocus
+                          />
+                        ) : (
+                          <span className="truncate max-w-[200px]">{word}</span>
+                        )}
+                        
+                        <div className="flex items-center gap-1 shrink-0">
+                          {editingIndex === index ? (
+                            <button type="button" onClick={(e) => saveEdit(index, e)} className="p-1 text-green-500 hover:bg-green-500/10 rounded transition-colors cursor-pointer" title="Save">
+                              <Check className="w-3.5 h-3.5" />
+                            </button>
+                          ) : (
+                            <button type="button" onClick={(e) => startEdit(index, word, e)} className="p-1 text-[var(--text-secondary)] hover:text-[var(--text-main)] hover:bg-gray-500/10 rounded transition-colors cursor-pointer" title="Edit">
+                              <Pencil className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                          <button type="button" onClick={(e) => moveWord(index, "up", e)} disabled={index === 0} className="p-1 text-[var(--text-secondary)] hover:text-[var(--text-main)] hover:bg-gray-500/10 rounded transition-colors cursor-pointer disabled:opacity-30 disabled:pointer-events-none" title="Move Up">
+                            <ArrowUp className="w-3.5 h-3.5" />
+                          </button>
+                          <button type="button" onClick={(e) => moveWord(index, "down", e)} disabled={index === highlightedWords.length - 1} className="p-1 text-[var(--text-secondary)] hover:text-[var(--text-main)] hover:bg-gray-500/10 rounded transition-colors cursor-pointer disabled:opacity-30 disabled:pointer-events-none" title="Move Down">
+                            <ArrowDown className="w-3.5 h-3.5" />
+                          </button>
+                          <button type="button" onClick={(e) => removeWord(index, e)} className="p-1 text-red-500 hover:bg-red-500/10 rounded transition-colors cursor-pointer" title="Delete">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
                     ))}
                     {highlightedWords.length === 0 && (
                       <p className="text-xs text-[var(--text-muted)] italic">No words added yet.</p>
                     )}
                   </div>
-                  <p className="text-[10px] text-[var(--text-muted)] mt-1">These words will cycle in the typing animation on the homepage hero section.</p>
+                  <p className="text-[10px] text-[var(--text-muted)] mt-2">These words will cycle dynamically in the typing animation on the homepage hero section. You can add, edit, reorder, or delete words above.</p>
                 </div>
 
                 <div className="space-y-1.5">

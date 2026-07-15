@@ -253,6 +253,20 @@ model Course {
   targetAudience   String[]
   certificateInfo  String?
   
+  // New CMS fields
+  subtitle          String?
+  bannerImage       String?
+  subcategory       String?
+  estimatedTime     String?
+  couponEnabled     Boolean  @default(false)
+  instructorSocials Json?    // { linkedin, twitter, github }
+  status            String   @default("DRAFT") // DRAFT, PUBLISHED, SCHEDULED, ARCHIVED, PRIVATE, FEATURED
+  quizzes           Json?    // Array of quizzes
+  resources         Json?    // Array of downloadable resources
+  certificateIssued Boolean  @default(false)
+  customCertificate String?
+  completionCert    Boolean  @default(false)
+  
   authorId         String?
   author           User?    @relation(fields: [authorId], references: [id])
   
@@ -283,6 +297,16 @@ model Lesson {
   sectionId String
   section   CourseSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
   order     Int           @default(0)
+  
+  // New CMS fields
+  videoUrl    String?
+  pdfUrl      String?
+  imageUrl    String?
+  attachments Json?
+  sourceCode  String?
+  externalLink String?
+  lessonType  String        @default("video") // video, pdf, image, text, resource
+  
   createdAt DateTime      @default(now())
 }
 

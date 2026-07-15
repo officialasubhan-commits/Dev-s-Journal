@@ -46,7 +46,7 @@ export default async function CoursesPage() {
       duration: c.duration,
       lessonsCount: lessonsCount,
       rating: Number(avgRating.toFixed(1)),
-      studentsCount: Math.floor(Math.random() * 500) + 100, // Fake students count for demo
+      studentsCount: c.studentsCount, // Real students count from DB
       language: c.language,
       lastUpdated: c.updatedAt.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
       isFree: c.isFree,

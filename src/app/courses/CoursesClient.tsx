@@ -329,11 +329,11 @@ export default function CoursesClient({ courses }: { courses: Course[] }) {
                               ) : (
                                 <>
                                   <span className="font-extrabold text-base text-[var(--text-main)]">
-                                    ${course.discountPrice || course.price}
+                                    ₹{course.discountPrice || course.price}
                                   </span>
                                   {course.discountPrice && (
                                     <span className="text-xs text-[var(--text-muted)] line-through">
-                                      ${course.price}
+                                      ₹{course.price}
                                     </span>
                                   )}
                                 </>

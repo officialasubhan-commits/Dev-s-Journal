@@ -207,7 +207,7 @@ export default function StudentDashboardPage() {
                           <div className="flex-1 overflow-hidden">
                             <h3 className="font-bold text-xs text-[var(--text-main)] truncate">{course.title}</h3>
                             <span className="text-[10px] font-semibold text-[var(--primary)]">
-                              {course.isFree ? "Free" : `$${course.discountPrice || course.price}`}
+                              {course.isFree ? "Free" : `₹${course.discountPrice || course.price}`}
                             </span>
                           </div>
                           <Button variant="default" size="sm" className="h-7 px-2 rounded-lg text-[9px] font-bold shrink-0 cursor-pointer" asChild>
@@ -246,7 +246,7 @@ export default function StudentDashboardPage() {
                             <td className="p-4 font-mono font-bold text-[var(--text-main)]">{ord.id}</td>
                             <td className="p-4 font-semibold text-[var(--text-main)]">{ord.courseTitle}</td>
                             <td className="p-4">{ord.date}</td>
-                            <td className="p-4 font-bold text-[var(--text-main)]">${ord.price}</td>
+                            <td className="p-4 font-bold text-[var(--text-main)]">₹{ord.price}</td>
                             <td className="p-4">
                               <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase bg-green-100 text-green-700">
                                 {ord.status}

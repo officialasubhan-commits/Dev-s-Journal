@@ -32,6 +32,25 @@ export function HomepageSettingsForm({
   const [selectedCertificates, setSelectedCertificates] = useState<string[]>(settings?.featuredCertificates || []);
   const [selectedCourses, setSelectedCourses] = useState<string[]>(settings?.featuredCourses || []);
 
+  const [highlightedWords, setHighlightedWords] = useState<string[]>(
+    settings?.heroHighlighted ? settings.heroHighlighted.split(",").map((s: string) => s.trim()).filter(Boolean) : []
+  );
+  const [newWord, setNewWord] = useState("");
+
+  const addWord = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (newWord.trim() && !highlightedWords.includes(newWord.trim())) {
+      setHighlightedWords([...highlightedWords, newWord.trim()]);
+      setNewWord("");
+    }
+  };
+
+  const removeWord = (index: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    setHighlightedWords(highlightedWords.filter((_, i) => i !== index));
+  };
+
+
   const handleCheckboxChange = (id: string, list: string[], setList: (val: string[]) => void) => {
     if (list.includes(id)) {
       setList(list.filter(item => item !== id));
@@ -53,6 +72,8 @@ export function HomepageSettingsForm({
     selectedPosts.forEach(id => data.append("featuredPosts", id));
     selectedCertificates.forEach(id => data.append("featuredCertificates", id));
     selectedCourses.forEach(id => data.append("featuredCourses", id));
+    
+    data.set("heroHighlighted", highlightedWords.join(","));
 
     try {
       const res = await saveHomepageSettings(data);
@@ -129,15 +150,37 @@ export function HomepageSettingsForm({
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-[var(--text-secondary)]" htmlFor="heroHighlighted">Highlighted Heading Word(s)</label>
-                  <input
-                    id="heroHighlighted"
-                    name="heroHighlighted"
-                    type="text"
-                    defaultValue={settings?.heroHighlighted || ""}
-                    placeholder="Must exactly match text inside title"
-                    className="w-full bg-[var(--background)] border border-[var(--border-color)] px-3.5 py-2.5 rounded-xl text-xs focus:outline-none focus:border-[var(--primary)] text-[var(--text-main)]"
-                  />
+                  <label className="text-xs font-semibold text-[var(--text-secondary)]">Highlighted Heading Words (Typing Animation)</label>
+                  <div className="flex gap-2 mb-2">
+                    <input
+                      type="text"
+                      value={newWord}
+                      onChange={(e) => setNewWord(e.target.value)}
+                      placeholder="Add a word..."
+                      className="w-full bg-[var(--background)] border border-[var(--border-color)] px-3.5 py-2.5 rounded-xl text-xs focus:outline-none focus:border-[var(--primary)] text-[var(--text-main)]"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          addWord(e as any);
+                        }
+                      }}
+                    />
+                    <Button onClick={addWord} type="button" className="h-[38px] px-4 rounded-xl bg-[var(--primary)] text-white hover:bg-[var(--primary)]/90 text-xs font-semibold cursor-pointer shrink-0">Add</Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {highlightedWords.map((word, index) => (
+                      <div key={index} className="flex items-center gap-1.5 bg-[var(--secondary-bg)] border border-[var(--border-color)] px-3 py-1.5 rounded-lg text-xs font-semibold text-[var(--text-main)]">
+                        <span>{word}</span>
+                        <button type="button" onClick={(e) => removeWord(index, e)} className="text-[var(--text-muted)] hover:text-red-500 cursor-pointer">
+                          &times;
+                        </button>
+                      </div>
+                    ))}
+                    {highlightedWords.length === 0 && (
+                      <p className="text-xs text-[var(--text-muted)] italic">No words added yet.</p>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-[var(--text-muted)] mt-1">These words will cycle in the typing animation on the homepage hero section.</p>
                 </div>
 
                 <div className="space-y-1.5">

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { SlideUp, StaggerContainer, FadeIn } from "@/components/ui/animations";
 import { WelcomePopup } from "@/components/WelcomePopup";
+import { TypingAnimation } from "@/components/home/TypingAnimation";
 
 export const dynamic = "force-dynamic";
 
@@ -53,24 +54,30 @@ export default async function Home() {
 
   const renderHeroTitle = () => {
     const title = settings?.heroTitle || "Designing simple, warm & premium digital experiences.";
-    const highlight = settings?.heroHighlighted || "warm & premium";
+    const highlightStr = settings?.heroHighlighted || "warm & premium";
     
-    if (!highlight) {
+    if (!highlightStr) {
       return title;
     }
     
-    const regex = new RegExp(`(${highlight})`, "gi");
+    const highlightWords = highlightStr.split(",").map((s: string) => s.trim()).filter(Boolean);
+    if (highlightWords.length === 0) return title;
+
+    const firstHighlight = highlightWords[0];
+    
+    const regex = new RegExp(`(${firstHighlight})`, "i");
     const parts = title.split(regex);
     
     if (parts.length === 1) {
+      // If the first highlight word isn't in the title at all, just return title
       return title;
     }
 
     return (
       <>
         {parts.map((part, i) => 
-          part.toLowerCase() === highlight.toLowerCase() ? (
-            <span key={i} className="text-[var(--primary)]">{part}</span>
+          part.toLowerCase() === firstHighlight.toLowerCase() ? (
+            <TypingAnimation key={i} words={highlightWords} className="text-[var(--primary)]" />
           ) : (
             part
           )

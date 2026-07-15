@@ -5,7 +5,7 @@ import { Course } from "@/lib/mockData";
 import { Button } from "@/components/ui/button";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { SlideUp, StaggerContainer } from "@/components/ui/animations";
-import { Search, Grid, List, Heart, Share2, Compass, AlertCircle, Clock, BookOpen, Star, PlayCircle } from "lucide-react";
+import { Search, Grid, List, Heart, Share2, Compass, AlertCircle, Clock, BookOpen, Star, PlayCircle, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 export default function CoursesClient({ courses }: { courses: Course[] }) {
@@ -229,14 +229,35 @@ export default function CoursesClient({ courses }: { courses: Course[] }) {
           <div className="md:col-span-3">
             {filteredCourses.length === 0 ? (
               <SlideUp>
-                <div className="bg-[var(--card)] border border-[var(--border-color)]/70 p-12 rounded-3xl text-center space-y-4 max-w-md mx-auto shadow-sm">
-                  <div className="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mx-auto">
-                    <AlertCircle className="w-6 h-6 text-[var(--primary)]" />
+                <div className="relative overflow-hidden bg-[var(--card)] border border-[var(--border-color)] p-12 rounded-3xl text-center space-y-6 max-w-2xl mx-auto shadow-sm">
+                  {/* Decorative background elements */}
+                  <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-[var(--primary)]/5 rounded-full blur-3xl pointer-events-none" />
+                  <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-64 h-64 bg-[var(--secondary)]/5 rounded-full blur-3xl pointer-events-none" />
+                  
+                  <div className="relative z-10 flex flex-col items-center">
+                    <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[var(--primary)]/20 to-[var(--secondary)]/20 border border-[var(--border-color)] flex items-center justify-center mx-auto mb-6 shadow-inner">
+                      <Sparkles className="w-10 h-10 text-[var(--primary)]" />
+                    </div>
+                    
+                    <h3 className="font-bold text-2xl md:text-3xl text-[var(--text-main)] font-heading tracking-tight mb-3">
+                      New Courses Are Brewing!
+                    </h3>
+                    
+                    <p className="text-base text-[var(--text-secondary)] leading-relaxed max-w-md mx-auto mb-8">
+                      We're currently crafting new, high-quality content. Subscribe to our newsletter to be the first to know when our next masterclass drops.
+                    </p>
+                    
+                    <div className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-md mx-auto">
+                      <input 
+                        type="email" 
+                        placeholder="Enter your email address"
+                        className="w-full bg-[var(--background)] border border-[var(--border-color)] px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-[var(--primary)] text-[var(--text-main)] flex-1"
+                      />
+                      <Button className="w-full sm:w-auto px-6 py-3 h-auto rounded-xl bg-[var(--primary)] text-white hover:opacity-90 font-bold shadow-sm flex items-center gap-2 cursor-pointer">
+                        Subscribe Now
+                      </Button>
+                    </div>
                   </div>
-                  <h3 className="font-bold text-lg text-[var(--text-main)]">No courses found</h3>
-                  <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
-                    We couldn't find any courses matching your search tags or selected sidebar parameters.
-                  </p>
                 </div>
               </SlideUp>
             ) : (

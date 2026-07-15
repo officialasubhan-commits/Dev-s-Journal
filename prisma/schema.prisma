@@ -336,16 +336,18 @@ model Book {
 }
 
 model Certification {
-  id     String   @id @default(cuid())
-  title  String
-  issuer String
-  date   DateTime
-  url    String?
-  image  String?
-  skills String[] @default([])
+  id        String   @id @default(cuid())
+  title     String
+  issuer    String
+  date      DateTime
+  url       String?
+  image     String?
+  pdfUrl    String?
+  skills    String[] @default([])
+  published Boolean  @default(true)
 
-  userId String?
-  user   User?   @relation(fields: [userId], references: [id])
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
 }

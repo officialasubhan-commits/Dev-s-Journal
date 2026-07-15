@@ -258,8 +258,6 @@ export async function saveGeneralSettings(formData: FormData) {
     const launchedAtInput = formData.get("launchedAt") as string;
     const launchedAt = launchedAtInput ? new Date(launchedAtInput) : new Date();
 
-    const siteTitle = formData.get("siteTitle") as string;
-    const siteDescription = formData.get("siteDescription") as string;
     const siteUrl = formData.get("siteUrl") as string;
     const defaultLanguage = (formData.get("defaultLanguage") as string) || "en";
     const authorName = formData.get("authorName") as string;
@@ -269,15 +267,11 @@ export async function saveGeneralSettings(formData: FormData) {
       prisma.brandSettings.upsert({
         where: { id: "singleton" },
         update: {
-          siteTitle,
-          siteDescription,
           siteUrl,
           defaultLanguage,
         },
         create: {
           id: "singleton",
-          siteTitle,
-          siteDescription,
           siteUrl,
           defaultLanguage,
         }
@@ -454,15 +448,24 @@ export async function saveAppearanceSettings(formData: FormData) {
   try {
     await assertAdmin();
     const defaultTheme = formData.get("defaultTheme") as string;
+    const brandColor = (formData.get("brandColor") as string) || "#F97316";
+    const accentColor = (formData.get("accentColor") as string) || "#FB7185";
+
+    const brandColors = {
+      primary: brandColor,
+      accent: accentColor
+    };
 
     await prisma.brandSettings.upsert({
       where: { id: "singleton" },
       update: {
         defaultTheme,
+        brandColors,
       },
       create: { 
         id: "singleton",
         defaultTheme,
+        brandColors,
       },
     });
 

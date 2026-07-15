@@ -87,6 +87,18 @@ export function GeneralSettingsForm({ settings }: { settings: SiteSettings }) {
               <input name="authorEmail" defaultValue={settings.authorEmail} type="email" required className={inputCls} />
             </div>
           </div>
+          <div>
+            <label className={labelCls}>Default Language</label>
+            <select name="defaultLanguage" defaultValue={settings.defaultLanguage} className={inputCls}>
+              <option value="en">English (US)</option>
+              <option value="en-gb">English (UK)</option>
+              <option value="es">Spanish</option>
+              <option value="fr">French</option>
+              <option value="de">German</option>
+              <option value="hi">Hindi</option>
+              <option value="ar">Arabic</option>
+            </select>
+          </div>
           <Button type="submit" disabled={isSaving} className={saveBtnCls}>
             <CheckCircle className="w-4 h-4" /> 
             {isSaving ? "Saving..." : "Save General Settings"}

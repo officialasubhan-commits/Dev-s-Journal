@@ -63,13 +63,41 @@ export function AppearanceSettingsForm({ settings }: { settings: SiteSettings })
       </CardHeader>
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit} className={sectionCls}>
-          <div>
-            <label className={labelCls}>Default Theme</label>
-            <select name="defaultTheme" defaultValue={settings.defaultTheme} className={inputCls}>
-              <option value="light">Light (Warm)</option>
-              <option value="dark">Dark</option>
-              <option value="system">System (Follows OS)</option>
-            </select>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div>
+              <label className={labelCls}>Default Theme</label>
+              <select name="defaultTheme" defaultValue={settings.defaultTheme} className={inputCls}>
+                <option value="light">Light (Warm)</option>
+                <option value="dark">Dark</option>
+                <option value="system">System (Follows OS)</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className={labelCls}>Brand Color (Primary)</label>
+              <div className="flex items-center gap-3">
+                <input 
+                  type="color" 
+                  name="brandColor" 
+                  defaultValue={(settings.brandColors as any)?.primary || "#F97316"} 
+                  className="w-12 h-12 p-1 rounded-md cursor-pointer border border-[var(--border-color)] bg-[var(--background)]"
+                />
+                <span className="text-sm text-[var(--text-secondary)] font-mono">{(settings.brandColors as any)?.primary || "#F97316"}</span>
+              </div>
+            </div>
+
+            <div>
+              <label className={labelCls}>Accent Color</label>
+              <div className="flex items-center gap-3">
+                <input 
+                  type="color" 
+                  name="accentColor" 
+                  defaultValue={(settings.brandColors as any)?.accent || "#FB7185"} 
+                  className="w-12 h-12 p-1 rounded-md cursor-pointer border border-[var(--border-color)] bg-[var(--background)]"
+                />
+                <span className="text-sm text-[var(--text-secondary)] font-mono">{(settings.brandColors as any)?.accent || "#FB7185"}</span>
+              </div>
+            </div>
           </div>
           <Button type="submit" disabled={isSaving} className={saveBtnCls}>
             <CheckCircle className="w-4 h-4" /> 

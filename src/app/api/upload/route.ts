@@ -1,11 +1,19 @@
 import { NextResponse } from 'next/server';
+import { getSiteSettings } from "@/app/admin/settings/actions";
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import crypto from 'crypto';
 import prisma from '@/lib/prisma';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
 
 export async function POST(request: Request) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session || (session.user as any)?.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized: Administrator access required" }, { status: 401 });
+    }
+
     const formData = await request.formData();
     const file = formData.get('file') as File;
     if (!file) {
@@ -18,10 +26,7 @@ export async function POST(request: Request) {
     // File Size Validation (dynamically query from settings, default to 5MB)
     let maxUploadSizeMb = 5;
     try {
-      const settings = await prisma.siteSettings.findUnique({
-        where: { id: "singleton" },
-        select: { maxUploadSizeMb: true }
-      });
+      const settings = await getSiteSettings();
       if (settings?.maxUploadSizeMb) {
         maxUploadSizeMb = settings.maxUploadSizeMb;
       }
@@ -99,7 +104,19 @@ export async function POST(request: Request) {
       }
 
       const cloudData = await cloudinaryResponse.json();
-      return NextResponse.json({ url: cloudData.secure_url || cloudData.url });
+      const url = cloudData.secure_url || cloudData.url;
+
+      // Save to Media Library
+      await prisma.mediaAsset.create({
+        data: {
+          url,
+          filename: file.name || 'image.webp',
+          fileSize: buffer.length,
+          mimeType: fileType || 'image/webp'
+        }
+      }).catch((err: any) => console.error("Failed to save media asset to DB:", err));
+
+      return NextResponse.json({ url });
     }
 
     // Development Environment Fallback: Local Filesystem Upload
@@ -127,8 +144,19 @@ export async function POST(request: Request) {
     const finalName = `${uniqueSuffix}-${originalName}`;
     const filepath = join(uploadsDir, finalName);
     await writeFile(filepath, buffer);
+    const url = `/uploads/${finalName}`;
 
-    return NextResponse.json({ url: `/uploads/${finalName}` });
+    // Save to Media Library
+    await prisma.mediaAsset.create({
+      data: {
+        url,
+        filename: originalName,
+        fileSize: buffer.length,
+        mimeType: fileType || 'image/webp'
+      }
+    }).catch((err: any) => console.error("Failed to save media asset to DB:", err));
+
+    return NextResponse.json({ url });
   } catch (error: any) {
     console.error('Upload Error:', error);
     return NextResponse.json({ error: `Upload failed: ${error?.message || error}` }, { status: 500 });

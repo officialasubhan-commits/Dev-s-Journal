@@ -78,7 +78,7 @@ export function BackupManagerClient({ initialBackups }: { initialBackups: Backup
         name: backupItem.name,
         date: new Date(backupItem.createdAt).toLocaleString(),
         summary: {
-          settings: data.siteSettings?.length || 0,
+          settings: data.brandSettings?.length || 0,
           posts: data.post?.length || 0,
           categories: data.category?.length || 0,
           comments: data.comment?.length || 0,

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { BookOpen, GraduationCap, Brain, Plus, Trash2, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { createCourse, deleteCourse, createBook, deleteBook, createSkill, deleteSkill } from "./actions";
+import { createCourseForm, deleteCourse, createBookForm, deleteBook, createSkillForm, deleteSkill } from "./actions";
 
 export default async function AdminLearningPage() {
   const [courses, books, skills] = await Promise.all([
@@ -25,7 +25,7 @@ export default async function AdminLearningPage() {
       <section className="space-y-4">
         <h2 className="text-xl font-bold font-heading flex items-center gap-2"><GraduationCap className="w-5 h-5 text-[var(--primary)]" /> Courses & Programs</h2>
         <div className="glass-card rounded-2xl overflow-hidden">
-          <form action={createCourse} className="p-4 border-b border-[var(--border-color)] bg-[var(--background)]/50 grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+          <form action={createCourseForm} className="p-4 border-b border-[var(--border-color)] bg-[var(--background)]/50 grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
             <div>
               <label className="text-xs font-medium text-[var(--text-muted)] block mb-1">Course Title</label>
               <input name="title" required placeholder="e.g. Next.js Advanced" className={`${inputCls} w-full`} />
@@ -77,7 +77,7 @@ export default async function AdminLearningPage() {
       <section className="space-y-4">
         <h2 className="text-xl font-bold font-heading flex items-center gap-2"><BookOpen className="w-5 h-5 text-[var(--accent)]" /> Reading List</h2>
         <div className="glass-card rounded-2xl overflow-hidden">
-          <form action={createBook} className="p-4 border-b border-[var(--border-color)] bg-[var(--background)]/50 grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+          <form action={createBookForm} className="p-4 border-b border-[var(--border-color)] bg-[var(--background)]/50 grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
             <div>
               <label className="text-xs font-medium text-[var(--text-muted)] block mb-1">Book Title</label>
               <input name="title" required placeholder="Book title" className={`${inputCls} w-full`} />
@@ -126,7 +126,7 @@ export default async function AdminLearningPage() {
       <section className="space-y-4">
         <h2 className="text-xl font-bold font-heading flex items-center gap-2"><Brain className="w-5 h-5 text-[var(--highlight)]" /> Skills Matrix</h2>
         <div className="glass-card rounded-2xl overflow-hidden">
-          <form action={createSkill} className="p-4 border-b border-[var(--border-color)] bg-[var(--background)]/50 grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+          <form action={createSkillForm} className="p-4 border-b border-[var(--border-color)] bg-[var(--background)]/50 grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
             <div>
               <label className="text-xs font-medium text-[var(--text-muted)] block mb-1">Skill Name</label>
               <input name="name" required placeholder="e.g. TypeScript" className={`${inputCls} w-full`} />

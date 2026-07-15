@@ -1,14 +1,18 @@
 "use client";
 
+import { getSiteSettings } from "@/app/admin/settings/actions";
+type SiteSettings = Awaited<ReturnType<typeof getSiteSettings>>;
 import { useState } from "react";
 import { saveSeoSettings } from "./actions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Search, AlertCircle } from "lucide-react";
-import { SiteSettings } from "@prisma/client";
+
+import { ImageUploadCropper } from "@/components/ui/ImageUploadCropper";
 
 export function SeoSettingsForm({ settings }: { settings: SiteSettings }) {
   const [isSaving, setIsSaving] = useState(false);
+  const [ogImagePreview, setOgImagePreview] = useState(settings.ogImage || "");
   const [toast, setToast] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -17,6 +21,8 @@ export function SeoSettingsForm({ settings }: { settings: SiteSettings }) {
     setToast(null);
 
     const formData = new FormData(e.currentTarget);
+    formData.set("ogImage", ogImagePreview);
+
     try {
       const res = await saveSeoSettings(formData);
       if (res?.error) {
@@ -76,9 +82,17 @@ export function SeoSettingsForm({ settings }: { settings: SiteSettings }) {
             <input name="seoKeywords" defaultValue={settings.seoKeywords} className={inputCls} placeholder="nextjs, portfolio, developer, journal" />
           </div>
           <div>
-            <label className={labelCls}>Open Graph Image URL</label>
-            <input name="ogImage" defaultValue={settings.ogImage} type="url" className={inputCls} placeholder="https://..." />
-            <p className="text-xs text-[var(--text-muted)] mt-1">Displayed when your links are shared on social media. Recommended: 1200×630px.</p>
+            <label className={labelCls}>Open Graph Image (Social Share Cover)</label>
+            <div className="mt-2 w-full max-w-md">
+              <ImageUploadCropper 
+                value={ogImagePreview} 
+                onChange={setOgImagePreview} 
+                label="Upload Social Share Image" 
+                aspect={1.91}
+              />
+            </div>
+            <input type="hidden" name="ogImage" value={ogImagePreview} />
+            <p className="text-xs text-[var(--text-muted)] mt-2">Displayed when your links are shared on social media. Recommended: 1200×630px.</p>
           </div>
           <Button type="submit" disabled={isSaving} className={saveBtnCls}>
             <CheckCircle className="w-4 h-4" /> 

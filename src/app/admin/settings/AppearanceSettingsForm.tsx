@@ -1,11 +1,13 @@
 "use client";
 
+import { getSiteSettings } from "@/app/admin/settings/actions";
+type SiteSettings = Awaited<ReturnType<typeof getSiteSettings>>;
 import { useState } from "react";
 import { saveAppearanceSettings } from "./actions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Palette, AlertCircle } from "lucide-react";
-import { SiteSettings } from "@prisma/client";
+
 
 export function AppearanceSettingsForm({ settings }: { settings: SiteSettings }) {
   const [isSaving, setIsSaving] = useState(false);

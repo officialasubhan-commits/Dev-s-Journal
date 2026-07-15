@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { FaGithub, FaLinkedin, FaDiscord, FaInstagram, FaYoutube, FaFacebook } from "react-icons/fa";
 import Link from "next/link";
 import { GraduationCap, Briefcase, User, Star, FileText, Terminal, BarChart2 } from "lucide-react";
+import { getSiteSettings } from "@/app/admin/settings/actions";
 
 export const metadata: Metadata = {
   title: "About Me",
@@ -14,9 +15,7 @@ export default async function AboutPage() {
     where: { role: "ADMIN" },
   });
 
-  const settings = await prisma.siteSettings.findUnique({
-    where: { id: "singleton" },
-  });
+  const settings = await getSiteSettings();
 
 
 

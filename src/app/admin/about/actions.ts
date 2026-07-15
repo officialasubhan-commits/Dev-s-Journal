@@ -4,8 +4,7 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
-
-
+import { getSiteSettings } from "@/app/admin/settings/actions";
 
 export type AboutFormData = {
   // User Model
@@ -26,7 +25,7 @@ export type AboutFormData = {
   image: string;
   customStats: any;
 
-  // SiteSettings Model
+  // Settings Models
   resumePdf: string;
   githubUrl: string;
   linkedinUrl: string;
@@ -47,9 +46,7 @@ export async function getAboutData() {
     where: { role: "ADMIN" },
   });
 
-  const settings = await prisma.siteSettings.findUnique({
-    where: { id: "singleton" },
-  });
+  const settings = await getSiteSettings();
 
   return { admin, settings };
 }
@@ -91,8 +88,8 @@ export async function updateAboutProfile(data: Partial<AboutFormData>) {
     data: userUpdates,
   });
 
-  const hasSettingsUpdate = 
-    data.resumePdf !== undefined ||
+  const hasAboutSettingsUpdate = data.resumePdf !== undefined;
+  const hasContactSettingsUpdate = 
     data.githubUrl !== undefined ||
     data.linkedinUrl !== undefined ||
     data.discordUsername !== undefined ||
@@ -100,30 +97,44 @@ export async function updateAboutProfile(data: Partial<AboutFormData>) {
     data.facebookUrl !== undefined ||
     data.youtubeUrl !== undefined;
 
-  if (hasSettingsUpdate) {
-    const settings = await prisma.siteSettings.findUnique({ where: { id: "singleton" } });
-    await prisma.siteSettings.upsert({
-      where: { id: "singleton" },
-      update: {
-        resumePdf: data.resumePdf !== undefined ? data.resumePdf : (settings?.resumePdf || ""),
-        githubUrl: data.githubUrl !== undefined ? data.githubUrl : (settings?.githubUrl || ""),
-        linkedinUrl: data.linkedinUrl !== undefined ? data.linkedinUrl : (settings?.linkedinUrl || ""),
-        discordUsername: data.discordUsername !== undefined ? data.discordUsername : (settings?.discordUsername || ""),
-        instagramUrl: data.instagramUrl !== undefined ? data.instagramUrl : (settings?.instagramUrl || ""),
-        facebookUrl: data.facebookUrl !== undefined ? data.facebookUrl : (settings?.facebookUrl || ""),
-        youtubeUrl: data.youtubeUrl !== undefined ? data.youtubeUrl : (settings?.youtubeUrl || ""),
-      },
-      create: {
-        id: "singleton",
-        resumePdf: data.resumePdf || "",
-        githubUrl: data.githubUrl || "",
-        linkedinUrl: data.linkedinUrl || "",
-        discordUsername: data.discordUsername || "",
-        instagramUrl: data.instagramUrl || "",
-        facebookUrl: data.facebookUrl || "",
-        youtubeUrl: data.youtubeUrl || "",
-      }
-    });
+  if (hasAboutSettingsUpdate || hasContactSettingsUpdate) {
+    const settings = await getSiteSettings();
+
+    if (hasAboutSettingsUpdate) {
+      await prisma.aboutSettings.upsert({
+        where: { id: "singleton" },
+        update: {
+          resumePdf: data.resumePdf !== undefined ? data.resumePdf : settings.resumePdf,
+        },
+        create: {
+          id: "singleton",
+          resumePdf: data.resumePdf !== undefined ? data.resumePdf : settings.resumePdf,
+        }
+      });
+    }
+
+    if (hasContactSettingsUpdate) {
+      await prisma.contactSettings.upsert({
+        where: { id: "singleton" },
+        update: {
+          githubUrl: data.githubUrl !== undefined ? data.githubUrl : settings.githubUrl,
+          linkedinUrl: data.linkedinUrl !== undefined ? data.linkedinUrl : settings.linkedinUrl,
+          discordUsername: data.discordUsername !== undefined ? data.discordUsername : settings.discordUsername,
+          instagramUrl: data.instagramUrl !== undefined ? data.instagramUrl : settings.instagramUrl,
+          facebookUrl: data.facebookUrl !== undefined ? data.facebookUrl : settings.facebookUrl,
+          youtubeUrl: data.youtubeUrl !== undefined ? data.youtubeUrl : settings.youtubeUrl,
+        },
+        create: {
+          id: "singleton",
+          githubUrl: data.githubUrl !== undefined ? data.githubUrl : settings.githubUrl,
+          linkedinUrl: data.linkedinUrl !== undefined ? data.linkedinUrl : settings.linkedinUrl,
+          discordUsername: data.discordUsername !== undefined ? data.discordUsername : settings.discordUsername,
+          instagramUrl: data.instagramUrl !== undefined ? data.instagramUrl : settings.instagramUrl,
+          facebookUrl: data.facebookUrl !== undefined ? data.facebookUrl : settings.facebookUrl,
+          youtubeUrl: data.youtubeUrl !== undefined ? data.youtubeUrl : settings.youtubeUrl,
+        }
+      });
+    }
   }
 
   // Instantly revalidate public pages and layout to display updates
@@ -131,6 +142,8 @@ export async function updateAboutProfile(data: Partial<AboutFormData>) {
   revalidatePath("/");
   revalidatePath("/admin/about");
 
+  const { triggerRealtimeUpdate } = await import("@/lib/pusher");
+  await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
+
   return { success: true };
 }
-

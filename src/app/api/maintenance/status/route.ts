@@ -1,17 +1,11 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { getSiteSettings } from "@/app/admin/settings/actions";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const settings = await prisma.siteSettings.findUnique({
-      where: { id: "singleton" },
-      select: {
-        maintenanceEnabled: true,
-        maintenanceMessage: true,
-      },
-    });
+    const settings = await getSiteSettings();
 
     return NextResponse.json({
       enabled: settings?.maintenanceEnabled ?? false,

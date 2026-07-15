@@ -4,22 +4,61 @@ import { createProject } from "../../actions";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { MediaUploader } from "@/components/admin/MediaUploader";
+import { Loader2 } from "lucide-react";
 
 export default function NewProjectPage() {
   const [coverImage, setCoverImage] = useState("");
   const [demoVideo, setDemoVideo] = useState("");
   const [images, setImages] = useState<string[]>([]);
+  const [error, setError] = useState("");
+  const [duplicateId, setDuplicateId] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleAddImage = (url: string) => setImages(prev => [...prev, url]);
   const handleRemoveImage = (url: string) => setImages(prev => prev.filter(i => i !== url));
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
+    const data = new FormData(e.currentTarget);
+    try {
+      const res = await createProject(data);
+      if (res?.error) {
+        if (res.error === "DUPLICATE_ENTRY") {
+          setError("DUPLICATE_ENTRY");
+          setDuplicateId(res.id || "");
+        } else {
+          setError(res.error);
+        }
+        setIsLoading(false);
+      }
+    } catch (err) {
+      console.log("Project created. Redirecting...");
+    }
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">New Project</h1>
       </div>
+
+      {error === "DUPLICATE_ENTRY" ? (
+        <div className="p-4 bg-[var(--primary)]/10 border border-[var(--primary)]/20 text-[var(--primary)] rounded-lg text-sm font-medium flex items-center justify-between">
+          <span>A project with this URL slug already exists. Would you like to edit the existing one instead?</span>
+          <a href={`/admin/projects/${duplicateId}`} className="underline font-bold hover:opacity-80">
+            Edit Existing Project
+          </a>
+        </div>
+      ) : error && (
+        <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-500 rounded-lg text-sm font-medium">
+          {error}
+        </div>
+      )}
       
-      <form action={createProject} className="space-y-8 max-w-5xl bg-[var(--card)] border border-[var(--border-color)] p-6 rounded-xl shadow-lg">
+      <form onSubmit={handleSubmit} className="space-y-8 max-w-5xl bg-[var(--card)] border border-[var(--border-color)] p-6 rounded-xl shadow-lg">
         
         {/* Media Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-b border-[var(--border-color)] pb-6">
@@ -118,8 +157,17 @@ export default function NewProjectPage() {
         </div>
         
         <div className="pt-4 flex justify-end space-x-4 border-t border-[var(--border-color)]">
-          <Button variant="outline" type="button" onClick={() => window.history.back()}>Cancel</Button>
-          <Button type="submit">Create Project</Button>
+          <Button variant="outline" type="button" onClick={() => window.history.back()} disabled={isLoading}>Cancel</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creating...
+              </>
+            ) : (
+              "Create Project"
+            )}
+          </Button>
         </div>
       </form>
     </div>

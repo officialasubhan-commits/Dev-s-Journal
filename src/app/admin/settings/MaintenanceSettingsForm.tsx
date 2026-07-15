@@ -1,11 +1,13 @@
 "use client";
 
+import { getSiteSettings } from "@/app/admin/settings/actions";
+type SiteSettings = Awaited<ReturnType<typeof getSiteSettings>>;
 import { useState } from "react";
 import { saveMaintenanceSettings } from "./actions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, ShieldCheck, AlertCircle } from "lucide-react";
-import { SiteSettings } from "@prisma/client";
+
 
 export function MaintenanceSettingsForm({ settings }: { settings: SiteSettings }) {
   const [isEnabled, setIsEnabled] = useState(settings.maintenanceEnabled);

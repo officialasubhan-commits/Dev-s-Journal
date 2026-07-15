@@ -2,26 +2,44 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaGithub, FaDiscord, FaLinkedin } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaTwitter, FaInstagram } from "react-icons/fa";
+import { useSiteSettings } from "@/components/providers/SiteSettingsProvider";
 
-export function Footer({ siteTitle = "Boss Journal" }: { siteTitle?: string }) {
+export function Footer({ siteTitle: propSiteTitle }: { siteTitle?: string }) {
   const pathname = usePathname() || "";
+  const { 
+    siteTitle: contextTitle, 
+    siteDescription,
+    githubUrl, 
+    linkedinUrl, 
+    twitterUrl, 
+    instagramUrl 
+  } = useSiteSettings();
+  
+  const siteTitle = propSiteTitle || contextTitle;
 
   // Hide footer on admin routes — admin has its own full-screen layout
   if (pathname?.startsWith("/admin")) {
     return null;
   }
 
+  const socialLinks = [
+    { href: githubUrl, icon: FaGithub, label: "GitHub" },
+    { href: linkedinUrl, icon: FaLinkedin, label: "LinkedIn" },
+    { href: twitterUrl, icon: FaTwitter, label: "Twitter" },
+    { href: instagramUrl, icon: FaInstagram, label: "Instagram" },
+  ].filter(link => !!link.href); // Only render configured socials
+
   return (
-    <footer className="mt-32 border-t border-[var(--border-color)] bg-[var(--background)] py-16">
+    <footer className="mt-32 border-t border-[var(--border-color)] bg-[var(--secondary-bg)] py-16">
       <div className="container max-w-5xl mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 pb-12 border-b border-[var(--border-color)]/60">
           
           {/* Brand Column */}
           <div className="space-y-4">
-            <span className="text-xl font-bold font-heading bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] bg-clip-text text-transparent">{siteTitle}</span>
+            <span className="text-lg font-bold font-heading text-[var(--text-main)]">{siteTitle}</span>
             <p className="text-sm text-[var(--text-secondary)] leading-relaxed max-w-xs">
-              A personal digital journal and development portfolio documenting learning, project craftsmanship, and progress.
+              {siteDescription || "A personal digital journal and development portfolio documenting learning, project craftsmanship, and progress."}
             </p>
           </div>
 
@@ -47,35 +65,27 @@ export function Footer({ siteTitle = "Boss Journal" }: { siteTitle?: string }) {
           {/* Socials & Community Column */}
           <div className="space-y-4">
             <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-main)]">Connect</h4>
-            <div className="flex space-x-4">
-              <Link 
-                href="https://github.com/officialasubhan-commits" 
-                target="_blank" 
-                rel="noreferrer" 
-                className="w-10 h-10 rounded-xl bg-[var(--secondary-bg)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--primary)] hover:border-[var(--primary)]/30 hover:scale-105 transition-all shadow-sm"
-              >
-                <FaGithub className="h-4.5 w-4.5" />
-                <span className="sr-only">GitHub</span>
-              </Link>
-              <Link 
-                href="https://discord.gg/qyCKmTJjR" 
-                target="_blank" 
-                rel="noreferrer" 
-                className="w-10 h-10 rounded-xl bg-[var(--secondary-bg)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--primary)] hover:border-[var(--primary)]/30 hover:scale-105 transition-all shadow-sm"
-              >
-                <FaDiscord className="h-4.5 w-4.5" />
-                <span className="sr-only">Discord</span>
-              </Link>
-              <Link 
-                href="https://www.linkedin.com/in/abdus-subhan-57509841a?utm_source=share_via&utm_content=profile&utm_medium=member_android" 
-                target="_blank" 
-                rel="noreferrer" 
-                className="w-10 h-10 rounded-xl bg-[var(--secondary-bg)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--primary)] hover:border-[var(--primary)]/30 hover:scale-105 transition-all shadow-sm"
-              >
-                <FaLinkedin className="h-4.5 w-4.5" />
-                <span className="sr-only">LinkedIn</span>
-              </Link>
-            </div>
+            {socialLinks.length > 0 ? (
+              <div className="flex space-x-3">
+                {socialLinks.map((social, index) => {
+                  const Icon = social.icon;
+                  return (
+                    <Link 
+                      key={index}
+                      href={social.href} 
+                      target="_blank" 
+                      rel="noreferrer" 
+                      className="w-9 h-9 rounded-xl bg-[var(--card)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--primary)] hover:border-[var(--primary)]/30 hover:scale-105 transition-all shadow-sm"
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span className="sr-only">{social.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-xs text-[var(--text-muted)]">No social links configured.</p>
+            )}
             <p className="text-xs text-[var(--text-muted)] leading-relaxed">
               Available for collaborations and technical discussions.
             </p>

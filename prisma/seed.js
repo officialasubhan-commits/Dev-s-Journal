@@ -56,7 +56,56 @@ async function main() {
     },
   });
 
-  console.log(`Admin user created successfully: ${adminUser.email}`);
+  // Seed default site settings singleton
+  await prisma.siteSettings.upsert({
+    where: { id: "singleton" },
+    update: {},
+    create: {
+      id: "singleton",
+      siteTitle: "Boss Journal",
+      siteTagline: "My personal portfolio, journal, and digital headquarters.",
+      siteDescription: "My personal portfolio, journal, and digital headquarters.",
+      siteLogo: "",
+      siteFavicon: "",
+      siteUrl: "http://localhost:3000",
+      authorName: "Abdus Subhan",
+      authorEmail: email,
+      contactEmail: email,
+      availabilityStatus: "Available",
+      contactHeading: "Get In Touch",
+      contactDescription: "Have a project in mind, want to collaborate, or just want to say hi? Send me a message!",
+      githubUrl: "",
+      linkedinUrl: "",
+      twitterUrl: "",
+      instagramUrl: "",
+      youtubeUrl: "",
+      discordUsername: "",
+      telegramUsername: "",
+      enableComments: true,
+      enableGallery: true,
+      enableLearning: true,
+      enableNotifications: true,
+      
+      // Homepage Customization
+      heroTitle: "Designing simple, warm & premium digital experiences.",
+      heroHighlighted: "warm & premium",
+      heroDescription: "I am a Software Engineer and UI/UX Designer. This is my digital space where I log my daily learnings, showcase craft projects, and write summaries.",
+      heroProfileImage: "",
+      heroBgDecor: "glow",
+      heroBtnPrimaryText: "Explore Projects",
+      heroBtnPrimaryLink: "/projects",
+      heroBtnSecondaryText: "Read Journal",
+      heroBtnSecondaryLink: "/journal",
+      authorTitle: "Software Engineer & UI/UX Designer",
+      authorBio: "Based in India. Focuses on Next.js 16, React 19, TypeScript, and modern clean interface details.",
+      featuredProjects: [],
+      featuredPosts: [],
+      featuredCertificates: [],
+      featuredCourses: []
+    }
+  });
+
+  console.log(`Admin user and site settings seeded successfully for: ${adminUser.email}`);
 }
 
 main()

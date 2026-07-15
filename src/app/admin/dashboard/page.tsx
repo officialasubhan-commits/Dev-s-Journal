@@ -12,6 +12,8 @@ import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
+import { getSiteSettings } from "@/app/admin/settings/actions";
+
 export default async function AdminDashboard() {
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -42,9 +44,9 @@ export default async function AdminDashboard() {
       where: { createdAt: { gte: sevenDaysAgo } },
       select: { createdAt: true }
     }),
-    prisma.siteSettings.findUnique({ where: { id: "singleton" } }),
+    getSiteSettings(),
     prisma.maintenanceLog.findMany(),
-    prisma.siteSettings.findFirst({ select: { updatedAt: true } }),
+    prisma.generalSettings.findFirst({ select: { updatedAt: true } }),
     prisma.post.findFirst({ orderBy: { updatedAt: 'desc' }, select: { updatedAt: true } }),
     prisma.project.findFirst({ orderBy: { updatedAt: 'desc' }, select: { updatedAt: true } }),
     prisma.galleryImage.findFirst({ orderBy: { createdAt: 'desc' }, select: { createdAt: true } }),

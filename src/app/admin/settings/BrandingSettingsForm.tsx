@@ -1,12 +1,14 @@
 "use client";
 
+import { getSiteSettings } from "@/app/admin/settings/actions";
+type SiteSettings = Awaited<ReturnType<typeof getSiteSettings>>;
 import { useState, useRef } from "react";
 import { saveBrandingSettings } from "./actions";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Image as ImageIcon, Upload } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ImageUploadCropper } from "@/components/ui/ImageUploadCropper";
-import { SiteSettings } from "@prisma/client";
+
 
 export function BrandingSettingsForm({ settings }: { settings: SiteSettings }) {
   const [logoPreview, setLogoPreview] = useState(settings.siteLogo || "");

@@ -24,40 +24,40 @@
 @layer base {
   /* Premium Warm Light Theme (default) */
   :root, [data-theme="light"] {
-    --background: #FFFBF5;
-    --secondary-bg: #FFF7ED;
+    --background: #FFF8F2;
+    --secondary-bg: #FFFDF9;
     --card: #FFFFFF;
-    --primary: #F59E0B;
-    --secondary: #D97706;
-    --accent: #FBBF24;
-    --highlight: #38BDF8;
-    --success: #22C55E;
-    --danger: #EF4444;
-    --error: #EF4444;
+    --primary: #E67E22;
+    --secondary: #C76D45;
+    --accent: #C76D45;
+    --highlight: #D4A017;
+    --success: #5B9B5F;
+    --danger: #D9534F;
+    --error: #D9534F;
     
-    --text-main: #1F2937;
-    --text-secondary: #6B7280;
-    --text-muted: #9CA3AF;
-    --border-color: #E5E7EB;
+    --text-main: #2C2C2C;
+    --text-secondary: #666666;
+    --text-muted: #9B9B9B;
+    --border-color: #F0E5D8;
   }
 
-  /* Premium Dark Theme */
+  /* Premium Warm Coffee Dark Theme */
   [data-theme="dark"] {
-    --background: #18181B;
-    --secondary-bg: #27272A;
-    --card: #27272A;
-    --primary: #F59E0B;
-    --secondary: #D97706;
-    --accent: #FBBF24;
-    --highlight: #38BDF8;
-    --success: #22C55E;
-    --danger: #EF4444;
-    --error: #EF4444;
+    --background: #181512;
+    --secondary-bg: #221E1A;
+    --card: #221E1A;
+    --primary: #E67E22;
+    --secondary: #C76D45;
+    --accent: #C76D45;
+    --highlight: #D4A017;
+    --success: #5B9B5F;
+    --danger: #D9534F;
+    --error: #D9534F;
     
-    --text-main: #F9FAFB;
-    --text-secondary: #D1D5DB;
-    --text-muted: #9CA3AF;
-    --border-color: #3F3F46;
+    --text-main: #FFF8F2;
+    --text-secondary: #DBC5B0;
+    --text-muted: #8B786A;
+    --border-color: #352E27;
   }
 
   body {
@@ -73,29 +73,30 @@
 
 @layer utilities {
   .glass {
-    @apply bg-white/60 backdrop-blur-xl border border-white/40 shadow-sm;
+    @apply bg-white/60 backdrop-blur-md border border-[var(--border-color)]/40 shadow-sm;
   }
   .glass-card {
-    @apply bg-white/80 backdrop-blur-xl border border-white/50 shadow-lg shadow-primary/5 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300;
+    @apply bg-white/70 backdrop-blur-md border border-[var(--border-color)]/60 shadow-sm hover:shadow-md transition-all duration-300;
     border-radius: var(--radius-lg);
   }
   .glow-primary {
-    box-shadow: 0 0 30px -5px rgba(249, 115, 22, 0.4);
+    /* Subtle warm border glow instead of excessive shadow */
+    box-shadow: 0 0 0 2px rgba(230, 126, 34, 0.1);
   }
   .text-glow {
-    text-shadow: 0 0 10px rgba(249, 115, 22, 0.3);
+    text-shadow: 0 0 8px rgba(230, 126, 34, 0.1);
   }
 }
 
 /* Dark theme glass overrides */
 [data-theme="dark"] .glass {
-  background: rgba(30, 28, 24, 0.8) !important;
-  border-color: rgba(45, 40, 32, 0.6) !important;
+  background: rgba(34, 30, 26, 0.6) !important;
+  border-color: rgba(53, 46, 39, 0.4) !important;
 }
 
 [data-theme="dark"] .glass-card {
-  background: rgba(30, 28, 24, 0.9) !important;
-  border-color: rgba(45, 40, 32, 0.8) !important;
+  background: rgba(34, 30, 26, 0.7) !important;
+  border-color: rgba(53, 46, 39, 0.6) !important;
 }
 
 /* Custom Scrollbar */

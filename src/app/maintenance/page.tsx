@@ -2,15 +2,14 @@ import prisma from "@/lib/prisma";
 import { ShieldAlert } from "lucide-react";
 import { Metadata } from "next";
 
+import { getSiteSettings } from "@/app/admin/settings/actions";
+
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   let siteTitle = "Boss Journal";
   try {
-    const settings = await prisma.siteSettings.findUnique({
-      where: { id: "singleton" },
-      select: { siteTitle: true },
-    });
+    const settings = await getSiteSettings();
     if (settings?.siteTitle) {
       siteTitle = settings.siteTitle;
     }
@@ -29,11 +28,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function MaintenancePage() {
-  let settings = null;
+  let settings: any = null;
   try {
-    settings = await prisma.siteSettings.findUnique({
-      where: { id: "singleton" },
-    });
+    settings = await getSiteSettings();
   } catch (error) {
     console.error("Failed to load site settings on maintenance page:", error);
   }

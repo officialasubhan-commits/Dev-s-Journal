@@ -11,10 +11,10 @@ export const metadata: Metadata = {
   description: "Get in touch with me.",
 };
 
+import { getSiteSettings } from "@/app/admin/settings/actions";
+
 export default async function ContactPage() {
-  const settings = await prisma.siteSettings.findUnique({
-    where: { id: "singleton" }
-  });
+  const settings = await getSiteSettings();
 
   const locationParts = [settings?.city, settings?.state, settings?.country].filter(Boolean);
   const locationText = settings?.fullAddress || (locationParts.length > 0 ? locationParts.join(", ") : "");

@@ -12,9 +12,9 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white shadow-lg hover:shadow-xl hover:shadow-[var(--primary)]/20 border border-white/10 glow-primary",
-        destructive: "bg-gradient-to-r from-[var(--danger)] to-rose-600 text-white shadow-lg hover:shadow-xl hover:shadow-[var(--danger)]/20",
-        outline: "border-2 border-[var(--primary)]/20 bg-transparent text-[var(--primary)] hover:border-[var(--primary)] hover:bg-[var(--primary)]/5",
+        default: "bg-[var(--primary)] text-white shadow-sm hover:bg-[var(--primary)]/90 border border-[var(--primary)]/10",
+        destructive: "bg-[var(--danger)] text-white shadow-sm hover:bg-[var(--danger)]/90",
+        outline: "border border-[var(--border-color)] bg-transparent text-[var(--text-main)] hover:bg-[var(--secondary-bg)] hover:border-[var(--primary)]/20",
         secondary: "bg-[var(--secondary-bg)] text-[var(--text-main)] hover:bg-[var(--border-color)] border border-[var(--border-color)] shadow-sm",
         ghost: "hover:bg-[var(--secondary-bg)] text-[var(--text-main)]",
         link: "text-[var(--primary)] underline-offset-4 hover:underline",

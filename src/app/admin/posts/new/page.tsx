@@ -12,6 +12,7 @@ export default function NewPostPage() {
   const router = useRouter();
   const [coverImage, setCoverImage] = useState("");
   const [error, setError] = useState("");
+  const [duplicateId, setDuplicateId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   // Controlled form state
@@ -39,7 +40,12 @@ export default function NewPostPage() {
     try {
       const res = await createPost(data);
       if (res?.error) {
-        setError(res.error);
+        if (res.error === "DUPLICATE_ENTRY") {
+          setError("DUPLICATE_ENTRY");
+          setDuplicateId(res.id || "");
+        } else {
+          setError(res.error);
+        }
         setIsLoading(false);
       }
     } catch (err: any) {
@@ -54,7 +60,14 @@ export default function NewPostPage() {
         <h1 className="text-3xl font-bold">New Post</h1>
       </div>
       
-      {error && (
+      {error === "DUPLICATE_ENTRY" ? (
+        <div className="p-4 bg-[var(--primary)]/10 border border-[var(--primary)]/20 text-[var(--primary)] rounded-lg text-sm font-medium flex items-center justify-between">
+          <span>A post with this URL slug already exists. Would you like to edit the existing one instead?</span>
+          <a href={`/admin/posts/${duplicateId}`} className="underline font-bold hover:opacity-80">
+            Edit Existing Post
+          </a>
+        </div>
+      ) : error && (
         <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-500 rounded-lg text-sm font-medium">
           {error}
         </div>

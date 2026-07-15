@@ -23,7 +23,7 @@ export default async function ContactSettingsPage() {
         </div>
       </div>
 
-      <ContactSettingsForm settings={settings} />
+      <ContactSettingsForm settings={settings as any} />
     </div>
   );
 }

@@ -5,8 +5,11 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { useSiteSettings } from "@/components/providers/SiteSettingsProvider";
+
 export function WelcomePopup() {
   const [showWelcome, setShowWelcome] = useState(false);
+  const { siteTitle } = useSiteSettings();
 
   useEffect(() => {
     const welcomeSeen = localStorage.getItem("welcome_notif_seen") === "true";
@@ -46,8 +49,8 @@ export function WelcomePopup() {
           className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-3rem)] bg-[var(--card)] border border-[var(--border-color)] shadow-2xl p-6 rounded-2xl flex flex-col gap-3 backdrop-blur-md"
         >
           <div className="flex justify-between items-start">
-            <h4 className="font-bold text-lg font-heading text-[var(--text-main)] flex items-center gap-1.5">
-              👋 Welcome to Boss Journal!
+            <h4 className="font-bold text-base font-heading text-[var(--text-main)] flex items-center gap-1.5">
+              👋 Welcome to {siteTitle}!
             </h4>
             <button 
               onClick={handleDismiss}

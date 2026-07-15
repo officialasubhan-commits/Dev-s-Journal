@@ -146,3 +146,13 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
+export async function assertAdmin() {
+  const { getServerSession } = await import("next-auth/next");
+  const session = await getServerSession(authOptions);
+  if (!session || (session.user as any)?.role !== "ADMIN") {
+    throw new Error("Unauthorized: Administrator role required.");
+  }
+  return session;
+}
+
+

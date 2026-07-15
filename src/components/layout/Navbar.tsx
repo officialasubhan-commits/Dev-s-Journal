@@ -9,16 +9,23 @@ import { motion } from "framer-motion";
 import { Menu, X, Home, BookHeart, Briefcase, Camera, GraduationCap, User, Mail, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 
+import { useSiteSettings } from "@/components/providers/SiteSettingsProvider";
+
 const navLinks = [
   { href: "/journal", label: "Journal", icon: BookHeart },
   { href: "/projects", label: "Projects", icon: Briefcase },
+  { href: "/courses", label: "Courses", icon: GraduationCap },
+  { href: "/certifications", label: "Certificates", icon: ShieldCheck },
   { href: "/gallery", label: "Gallery", icon: Camera },
-  { href: "/learning", label: "Learning", icon: GraduationCap },
   { href: "/about", label: "About", icon: User },
   { href: "/contact", label: "Contact", icon: Mail },
 ];
 
-export function Navbar({ siteTitle = "Boss Journal", siteLogo = "" }: { siteTitle?: string; siteLogo?: string }) {
+export function Navbar({ siteTitle: propSiteTitle, siteLogo: propSiteLogo }: { siteTitle?: string; siteLogo?: string }) {
+  const { siteTitle: contextTitle, siteLogo: contextLogo } = useSiteSettings();
+  const siteTitle = propSiteTitle || contextTitle;
+  const siteLogo = propSiteLogo || contextLogo;
+
   const { data: session, status } = useSession();
   const isAdmin = (session?.user as { role?: string })?.role === "ADMIN";
   const pathname = usePathname() || "";
@@ -33,7 +40,7 @@ export function Navbar({ siteTitle = "Boss Journal", siteLogo = "" }: { siteTitl
     <>
 
       <header className="sticky top-0 z-50 w-full flex justify-center pt-4 pb-2 px-4 transition-all duration-300">
-        <div className="w-full max-w-5xl glass border border-[var(--border-color)]/50 rounded-full h-16 flex items-center justify-between px-4 md:px-6 shadow-lg shadow-[var(--primary)]/5">
+        <div className="w-full max-w-5xl glass border border-[var(--border-color)]/30 rounded-full h-14 flex items-center justify-between px-4 md:px-6 shadow-sm">
           
           {/* Logo */}
           <div className="flex-1 flex justify-start shrink-0">
@@ -42,10 +49,10 @@ export function Navbar({ siteTitle = "Boss Journal", siteLogo = "" }: { siteTitl
                 <img 
                   src={siteLogo} 
                   alt={siteTitle} 
-                  className="w-[36px] h-[36px] md:w-[40px] md:h-[40px] rounded-full object-cover border border-[var(--border-color)] shadow-sm flex-shrink-0" 
+                  className="w-[30px] h-[30px] rounded-full object-cover border border-[var(--border-color)] flex-shrink-0" 
                 />
               ) : null}
-              <span className="text-xl font-bold font-heading bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] bg-clip-text text-transparent transition-all group-hover:opacity-80">
+              <span className="text-base font-bold font-heading text-[var(--text-main)] transition-all group-hover:text-[var(--primary)]">
                 {siteTitle}
               </span>
             </Link>

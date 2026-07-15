@@ -4,13 +4,13 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { broadcastNotification, sendAdminNotification } from "@/lib/notifications";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { assertAdmin } from "@/lib/auth";
+import { triggerRealtimeUpdate } from "@/lib/pusher";
 
 export async function createPost(formData: FormData) {
   try {
-    const session = await getServerSession(authOptions);
-    const authorId = session?.user?.id;
+    const session = await assertAdmin();
+    const authorId = session.user.id;
 
     const title = formData.get("title") as string;
     const slug = formData.get("slug") as string;
@@ -46,7 +46,7 @@ export async function createPost(formData: FormData) {
     const existing = await prisma.post.findUnique({ where: { slug } });
     if (existing) {
       console.warn(`[createPost] Duplicate slug violation: ${slug}`);
-      return { error: `A post with the slug "${slug}" already exists. Please choose a different slug.` };
+      return { error: "DUPLICATE_ENTRY", id: existing.id };
     }
 
     const newPost = await prisma.post.create({
@@ -77,7 +77,10 @@ export async function createPost(formData: FormData) {
         "📢 New Journal Published",
         `/journal/${slug}`
       );
+      await triggerRealtimeUpdate("devs-journal-sync", "notifications-updated");
     }
+
+    await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
 
     revalidatePath("/journal");
     revalidatePath("/journal/[slug]");
@@ -93,8 +96,8 @@ export async function createPost(formData: FormData) {
 }
 
 export async function createProject(formData: FormData) {
-  const session = await getServerSession(authOptions);
-  const authorId = session?.user?.id;
+  const session = await assertAdmin();
+  const authorId = session.user.id;
 
   const title = formData.get("title") as string;
   const slug = formData.get("slug") as string;
@@ -123,7 +126,14 @@ export async function createProject(formData: FormData) {
   const endDateStr = formData.get("endDate") as string | null;
   const endDate = endDateStr ? new Date(endDateStr) : null;
 
-  if (!title || !slug || !description) return;
+  if (!title || !slug || !description) return { error: "Missing required fields" };
+
+  // Check unique slug
+  const existing = await prisma.project.findUnique({ where: { slug } });
+  if (existing) {
+    console.warn(`[createProject] Duplicate slug violation: ${slug}`);
+    return { error: "DUPLICATE_ENTRY", id: existing.id };
+  }
 
   await prisma.project.create({
     data: {
@@ -155,7 +165,10 @@ export async function createProject(formData: FormData) {
       "🚀 New Project Released",
       `/projects/${slug}`
     );
+    await triggerRealtimeUpdate("devs-journal-sync", "notifications-updated");
   }
+
+  await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
 
   revalidatePath("/projects");
   revalidatePath("/projects/[slug]");
@@ -166,6 +179,7 @@ export async function createProject(formData: FormData) {
 
 export async function updatePost(id: string, formData: FormData) {
   try {
+    await assertAdmin();
     const title = formData.get("title") as string;
     const slug = formData.get("slug") as string;
     const content = formData.get("content") as string;
@@ -229,6 +243,8 @@ export async function updatePost(id: string, formData: FormData) {
 
     console.log("[updatePost] Post updated successfully:", id);
 
+    await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
+
     revalidatePath("/journal");
     revalidatePath("/journal/[slug]");
     revalidatePath(`/journal/${slug}`);
@@ -243,6 +259,7 @@ export async function updatePost(id: string, formData: FormData) {
 }
 
 export async function updateProject(id: string, formData: FormData) {
+  await assertAdmin();
   const title = formData.get("title") as string;
   const slug = formData.get("slug") as string;
   const description = formData.get("description") as string;
@@ -295,6 +312,8 @@ export async function updateProject(id: string, formData: FormData) {
     },
   });
 
+  await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
+
   revalidatePath("/projects");
   revalidatePath("/projects/[slug]");
   revalidatePath(`/projects/${slug}`);
@@ -305,6 +324,7 @@ export async function updateProject(id: string, formData: FormData) {
 
 export async function deletePost(id: string) {
   try {
+    await assertAdmin();
     const { autoBackup } = await import("./backups/actions");
     await autoBackup("Post Deletion");
   } catch (err) {
@@ -322,6 +342,7 @@ export async function deletePost(id: string) {
     });
     revalidatePath(`/journal/${post.slug}`);
   }
+  await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
   revalidatePath("/journal");
   revalidatePath("/");
   revalidatePath("/admin/posts");
@@ -329,6 +350,7 @@ export async function deletePost(id: string) {
 
 export async function deleteProject(id: string) {
   try {
+    await assertAdmin();
     const { autoBackup } = await import("./backups/actions");
     await autoBackup("Project Deletion");
   } catch (err) {
@@ -346,12 +368,14 @@ export async function deleteProject(id: string) {
     });
     revalidatePath(`/projects/${project.slug}`);
   }
+  await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
   revalidatePath("/projects");
   revalidatePath("/");
   revalidatePath("/admin/projects");
 }
 
 export async function broadcastAnnouncement(formData: FormData) {
+  await assertAdmin();
   const targetType = (formData.get("targetType") as "ALL" | "ROLE" | "USER") || "ALL";
   const targetRole = formData.get("targetRole") as string | undefined;
   const targetUserId = formData.get("targetUserId") as string | undefined;
@@ -378,6 +402,8 @@ export async function broadcastAnnouncement(formData: FormData) {
     return { success: false, error: result.error };
   }
 
+  await triggerRealtimeUpdate("devs-journal-sync", "notifications-updated");
+
   return { 
     success: true, 
     notifiedCount: result.notifiedCount, 
@@ -387,9 +413,11 @@ export async function broadcastAnnouncement(formData: FormData) {
 }
 
 export async function createLearningUpdate(title: string, message: string, url: string) {
+  await assertAdmin();
   if (!title || !message) return { success: false, error: "Title and message are required" };
 
   // E.g., when a new course or certificate is added, trigger this notification
   await broadcastNotification("LEARNING", message, title, url || undefined);
+  await triggerRealtimeUpdate("devs-journal-sync", "notifications-updated");
   return { success: true };
 }

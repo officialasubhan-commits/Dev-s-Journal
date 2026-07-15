@@ -24,21 +24,21 @@ export default async function SettingsPage() {
         <p className="text-[var(--text-secondary)] mt-1">Manage your website configuration. All changes are saved to the database immediately.</p>
       </div>
 
-      <BrandingSettingsForm settings={settings} />
+      <BrandingSettingsForm settings={settings as any} />
 
       <AdminSecurityForm currentEmail={currentEmail} />
 
-      <GeneralSettingsForm settings={settings} />
+      <GeneralSettingsForm settings={settings as any} />
 
-      <SeoSettingsForm settings={settings} />
+      <SeoSettingsForm settings={settings as any} />
 
-      <AppearanceSettingsForm settings={settings} />
+      <AppearanceSettingsForm settings={settings as any} />
 
-      <FeatureFlagsForm settings={settings} />
+      <FeatureFlagsForm settings={settings as any} />
 
-      <AnalyticsUploadSettingsForm settings={settings} />
+      <AnalyticsUploadSettingsForm settings={settings as any} />
 
-      <MaintenanceSettingsForm settings={settings} />
+      <MaintenanceSettingsForm settings={settings as any} />
     </div>
   );
 }

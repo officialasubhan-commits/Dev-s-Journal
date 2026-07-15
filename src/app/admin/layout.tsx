@@ -6,26 +6,32 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { 
   LayoutDashboard, FileText, Briefcase, Image as ImageIcon, Settings, LogOut, 
-  Sparkles, Users, User, MessageSquare, Mail, BookOpen, BarChart3, Menu, X, GraduationCap, Command as CommandIcon,
-  Bell, Database
+  Sparkles, Users, User, Mail, GraduationCap, Command as CommandIcon,
+  Bell, Database, Home, Layout, Search as SearchIcon, Menu, X, Award, FolderOpen
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { AdminCommandPalette } from "@/components/admin/CommandPalette";
 import { useSession } from "next-auth/react";
 
-const navLinks = [
+const contentLinks = [
+  { href: "/admin/homepage", label: "Homepage", icon: Home },
+  { href: "/admin/about", label: "About", icon: User },
+  { href: "/admin/contact", label: "Contact", icon: Mail },
+  { href: "/admin/footer", label: "Footer", icon: Layout },
+  { href: "/admin/seo", label: "SEO", icon: SearchIcon },
+  { href: "/admin/branding", label: "Branding", icon: Sparkles },
+  { href: "/admin/notifications-settings", label: "Notifications", icon: Bell },
+  { href: "/admin/gallery-settings", label: "Gallery", icon: ImageIcon },
+];
+
+const generalLinks = [
   { href: "/admin/dashboard", label: "Overview", icon: LayoutDashboard },
-  { href: "/admin/notifications", label: "Alert Center", icon: Bell },
-  { href: "/admin/posts", label: "Content Studio", icon: FileText },
+  { href: "/admin/courses", label: "Courses", icon: GraduationCap },
+  { href: "/admin/certifications", label: "Certificates", icon: Award },
   { href: "/admin/projects", label: "Projects", icon: Briefcase },
-  { href: "/admin/gallery", label: "Media Gallery", icon: ImageIcon },
-  { href: "/admin/learning", label: "Learning Hub", icon: GraduationCap },
-  { href: "/admin/about", label: "About Manager", icon: User },
-  { href: "/admin/users", label: "Users & Access", icon: Users },
-  { href: "/admin/messages", label: "Inbox", icon: Mail },
-  { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/admin/contact", label: "Contact Settings", icon: Mail },
-  { href: "/admin/backups", label: "Backup & Recovery", icon: Database },
+  { href: "/admin/posts", label: "Blogs", icon: FileText },
+  { href: "/admin/media", label: "Media Library", icon: FolderOpen },
+  { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
@@ -62,15 +68,35 @@ function SidebarContent({ pathname = "", onNavigate, onCommandPalette }: { pathn
       </div>
 
       <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-        <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Menu</div>
-        {navLinks.map(({ href, label, icon: Icon }) => {
+        <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Website Content</div>
+        {contentLinks.map(({ href, label, icon: Icon }) => {
           const isActive = pathname === href || pathname.startsWith(href + "/");
           return (
             <Link
               key={href}
               href={href}
               onClick={onNavigate}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm font-medium ${
+              className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-all text-xs font-medium ${
+                isActive
+                  ? "bg-[var(--background)] text-[var(--primary)] shadow-sm border border-[var(--border-color)]"
+                  : "text-[var(--text-secondary)] hover:bg-[var(--background)]/50 hover:text-[var(--text-main)] border border-transparent"
+              }`}
+            >
+              <Icon className={`w-4 h-4 ${isActive ? "text-[var(--primary)]" : ""}`} />
+              <span>{label}</span>
+            </Link>
+          );
+        })}
+
+        <div className="px-3 py-1 mt-4 text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Management</div>
+        {generalLinks.map(({ href, label, icon: Icon }) => {
+          const isActive = pathname === href || pathname.startsWith(href + "/");
+          return (
+            <Link
+              key={href}
+              href={href}
+              onClick={onNavigate}
+              className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-all text-xs font-medium ${
                 isActive
                   ? "bg-[var(--background)] text-[var(--primary)] shadow-sm border border-[var(--border-color)]"
                   : "text-[var(--text-secondary)] hover:bg-[var(--background)]/50 hover:text-[var(--text-main)] border border-transparent"
@@ -122,26 +148,7 @@ function SidebarContent({ pathname = "", onNavigate, onCommandPalette }: { pathn
   );
 }
 
-// Simple search icon component to avoid importing another one if not needed
-function SearchIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.3-4.3" />
-    </svg>
-  );
-}
+
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname() || "";

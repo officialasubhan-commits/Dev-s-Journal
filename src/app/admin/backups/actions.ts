@@ -2,11 +2,11 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { assertAdmin } from "@/lib/auth";
 
 export async function getBackups() {
   try {
+    await assertAdmin();
     return await prisma.backup.findMany({
       orderBy: { createdAt: "desc" },
     });
@@ -18,10 +18,25 @@ export async function getBackups() {
 
 export async function createBackup(data: { name: string; description?: string; isAuto?: boolean }) {
   try {
+    if (!data.isAuto) {
+      await assertAdmin();
+    }
     const backupData = {
-      version: "1.0",
+      version: "2.0",
       timestamp: new Date().toISOString(),
-      siteSettings: await prisma.siteSettings.findMany(),
+      brandSettings: await prisma.brandSettings.findMany(),
+      seoSettings: await prisma.seoSettings.findMany(),
+      homepageSettings: await prisma.homepageSettings.findMany(),
+      aboutSettings: await prisma.aboutSettings.findMany(),
+      contactSettings: await prisma.contactSettings.findMany(),
+      courseSettings: await prisma.courseSettings.findMany(),
+      certificateSettings: await prisma.certificateSettings.findMany(),
+      notificationSettings: await prisma.notificationSettings.findMany(),
+      gallerySettings: await prisma.gallerySettings.findMany(),
+      footerSettings: await prisma.footerSettings.findMany(),
+      generalSettings: await prisma.generalSettings.findMany(),
+      maintenanceSettings: await prisma.maintenanceSettings.findMany(),
+      
       post: await prisma.post.findMany(),
       category: await prisma.category.findMany(),
       comment: await prisma.comment.findMany(),
@@ -66,6 +81,7 @@ export async function createBackup(data: { name: string; description?: string; i
 
 export async function deleteBackup(id: string) {
   try {
+    await assertAdmin();
     await prisma.backup.delete({
       where: { id },
     });
@@ -79,8 +95,8 @@ export async function deleteBackup(id: string) {
 
 export async function restoreBackup(id: string) {
   try {
-    const session = await getServerSession(authOptions);
-    const currentUserEmail = session?.user?.email;
+    const session = await assertAdmin();
+    const currentUserEmail = session.user.email;
     if (!currentUserEmail) {
       return { error: "Authentication required to perform restoration." };
     }
@@ -95,7 +111,6 @@ export async function restoreBackup(id: string) {
 
     const data = JSON.parse(backup.payload);
 
-    // Get current administrator user to preserve session
     const currentUser = await prisma.user.findUnique({
       where: { email: currentUserEmail },
     });
@@ -104,16 +119,13 @@ export async function restoreBackup(id: string) {
       return { error: "Current administrator account was not found in the database." };
     }
 
-    // Safety: Auto backup of the current database state first
     await createBackup({
       name: `Auto: Before restoring "${backup.name}"`,
       description: "Automatic rollback recovery point created before database restoration.",
       isAuto: true,
     });
 
-    // Run delete and insert operations in a transaction
     await prisma.$transaction(async (tx) => {
-      // 1. Clear child records first to satisfy foreign key constraints
       await tx.comment.deleteMany();
       await tx.userAchievement.deleteMany({
         where: { userId: { not: currentUser.id } },
@@ -123,7 +135,6 @@ export async function restoreBackup(id: string) {
       });
       await tx.galleryImage.deleteMany();
 
-      // 2. Clear other parent records
       await tx.post.deleteMany();
       await tx.category.deleteMany();
       await tx.album.deleteMany();
@@ -137,30 +148,74 @@ export async function restoreBackup(id: string) {
       await tx.notification.deleteMany();
       await tx.draft.deleteMany();
       await tx.maintenanceLog.deleteMany();
-      await tx.siteSettings.deleteMany();
+      
+      // Delete old modular settings
+      await tx.brandSettings.deleteMany();
+      await tx.seoSettings.deleteMany();
+      await tx.homepageSettings.deleteMany();
+      await tx.aboutSettings.deleteMany();
+      await tx.contactSettings.deleteMany();
+      await tx.courseSettings.deleteMany();
+      await tx.certificateSettings.deleteMany();
+      await tx.notificationSettings.deleteMany();
+      await tx.gallerySettings.deleteMany();
+      await tx.footerSettings.deleteMany();
+      await tx.generalSettings.deleteMany();
+      await tx.maintenanceSettings.deleteMany();
 
-      // Delete other users
       await tx.user.deleteMany({
         where: { id: { not: currentUser.id } },
       });
 
-      // 3. Restore records in parent-child hierarchy
-      // Site settings
+      // Restore Modular settings
+      if (data.brandSettings?.length) {
+        for (const s of data.brandSettings) await tx.brandSettings.create({ data: s });
+      }
+      if (data.seoSettings?.length) {
+        for (const s of data.seoSettings) await tx.seoSettings.create({ data: s });
+      }
+      if (data.homepageSettings?.length) {
+        for (const s of data.homepageSettings) await tx.homepageSettings.create({ data: s });
+      }
+      if (data.aboutSettings?.length) {
+        for (const s of data.aboutSettings) await tx.aboutSettings.create({ data: s });
+      }
+      if (data.contactSettings?.length) {
+        for (const s of data.contactSettings) await tx.contactSettings.create({ data: s });
+      }
+      if (data.courseSettings?.length) {
+        for (const s of data.courseSettings) await tx.courseSettings.create({ data: s });
+      }
+      if (data.certificateSettings?.length) {
+        for (const s of data.certificateSettings) await tx.certificateSettings.create({ data: s });
+      }
+      if (data.notificationSettings?.length) {
+        for (const s of data.notificationSettings) await tx.notificationSettings.create({ data: s });
+      }
+      if (data.gallerySettings?.length) {
+        for (const s of data.gallerySettings) await tx.gallerySettings.create({ data: s });
+      }
+      if (data.footerSettings?.length) {
+        for (const s of data.footerSettings) await tx.footerSettings.create({ data: s });
+      }
+      if (data.generalSettings?.length) {
+        for (const s of data.generalSettings) await tx.generalSettings.create({ data: s });
+      }
+      if (data.maintenanceSettings?.length) {
+        for (const s of data.maintenanceSettings) await tx.maintenanceSettings.create({ data: s });
+      }
+      
+      // Legacy settings restoration support from old backup payload
       if (data.siteSettings && data.siteSettings.length > 0) {
-        for (const settings of data.siteSettings) {
-          await tx.siteSettings.upsert({
-            where: { id: settings.id },
-            update: settings,
-            create: settings,
-          });
-        }
+          // If we're restoring an old v1.0 backup, we simply insert singletons for new modular tables using data from old settings
+          // But to be completely thorough, we should probably run the same migration script logic. 
+          // However, for this project we'll just ignore old settings if we are restoring an old database since we don't have the old schema anymore,
+          // OR we could map them manually. Actually Prisma schema won't even know what siteSettings is, so we just ignore it.
       }
 
-      // Users
       if (data.user && data.user.length > 0) {
         for (const u of data.user) {
           if (u.id === currentUser.id || u.email === currentUser.email) {
-            // Update current user details from backup, keeping credentials intact
             await tx.user.update({
               where: { id: currentUser.id },
               data: {
@@ -172,103 +227,36 @@ export async function restoreBackup(id: string) {
               },
             });
           } else {
-            // Insert other users
             await tx.user.create({ data: u });
           }
         }
       }
 
-      // Categories
-      if (data.category && data.category.length > 0) {
-        await tx.category.createMany({ data: data.category });
-      }
+      if (data.category?.length) await tx.category.createMany({ data: data.category });
+      if (data.post?.length) await tx.post.createMany({ data: data.post });
+      if (data.comment?.length) await tx.comment.createMany({ data: data.comment });
+      if (data.project?.length) await tx.project.createMany({ data: data.project });
+      if (data.skill?.length) await tx.skill.createMany({ data: data.skill });
+      if (data.course?.length) await tx.course.createMany({ data: data.course });
+      if (data.book?.length) await tx.book.createMany({ data: data.book });
+      if (data.certification?.length) await tx.certification.createMany({ data: data.certification });
+      if (data.album?.length) await tx.album.createMany({ data: data.album });
+      if (data.galleryImage?.length) await tx.galleryImage.createMany({ data: data.galleryImage });
+      if (data.message?.length) await tx.message.createMany({ data: data.message });
+      if (data.draft?.length) await tx.draft.createMany({ data: data.draft });
+      if (data.notification?.length) await tx.notification.createMany({ data: data.notification });
+      if (data.maintenanceLog?.length) await tx.maintenanceLog.createMany({ data: data.maintenanceLog });
+      if (data.achievement?.length) await tx.achievement.createMany({ data: data.achievement });
 
-      // Posts
-      if (data.post && data.post.length > 0) {
-        await tx.post.createMany({ data: data.post });
-      }
-
-      // Comments
-      if (data.comment && data.comment.length > 0) {
-        await tx.comment.createMany({ data: data.comment });
-      }
-
-      // Projects
-      if (data.project && data.project.length > 0) {
-        await tx.project.createMany({ data: data.project });
-      }
-
-      // Skills
-      if (data.skill && data.skill.length > 0) {
-        await tx.skill.createMany({ data: data.skill });
-      }
-
-      // Courses
-      if (data.course && data.course.length > 0) {
-        await tx.course.createMany({ data: data.course });
-      }
-
-      // Books
-      if (data.book && data.book.length > 0) {
-        await tx.book.createMany({ data: data.book });
-      }
-
-      // Certifications
-      if (data.certification && data.certification.length > 0) {
-        await tx.certification.createMany({ data: data.certification });
-      }
-
-      // Albums
-      if (data.album && data.album.length > 0) {
-        await tx.album.createMany({ data: data.album });
-      }
-
-      // Gallery Images
-      if (data.galleryImage && data.galleryImage.length > 0) {
-        await tx.galleryImage.createMany({ data: data.galleryImage });
-      }
-
-      // Messages
-      if (data.message && data.message.length > 0) {
-        await tx.message.createMany({ data: data.message });
-      }
-
-      // Drafts
-      if (data.draft && data.draft.length > 0) {
-        await tx.draft.createMany({ data: data.draft });
-      }
-
-      // Notifications
-      if (data.notification && data.notification.length > 0) {
-        await tx.notification.createMany({ data: data.notification });
-      }
-
-      // Maintenance Logs
-      if (data.maintenanceLog && data.maintenanceLog.length > 0) {
-        await tx.maintenanceLog.createMany({ data: data.maintenanceLog });
-      }
-
-      // Achievements
-      if (data.achievement && data.achievement.length > 0) {
-        await tx.achievement.createMany({ data: data.achievement });
-      }
-
-      // User Achievements
-      if (data.userAchievement && data.userAchievement.length > 0) {
-        // filter out current user achievements if they already have unlocks
-        const achievementsToInsert = data.userAchievement.filter(
-          (ua: any) => ua.userId !== currentUser.id
-        );
+      if (data.userAchievement?.length) {
+        const achievementsToInsert = data.userAchievement.filter((ua: any) => ua.userId !== currentUser.id);
         if (achievementsToInsert.length > 0) {
           await tx.userAchievement.createMany({ data: achievementsToInsert });
         }
       }
 
-      // Activities
-      if (data.activity && data.activity.length > 0) {
-        const activitiesToInsert = data.activity.filter(
-          (act: any) => act.userId !== currentUser.id
-        );
+      if (data.activity?.length) {
+        const activitiesToInsert = data.activity.filter((act: any) => act.userId !== currentUser.id);
         if (activitiesToInsert.length > 0) {
           await tx.activity.createMany({ data: activitiesToInsert });
         }

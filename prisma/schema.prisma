@@ -364,73 +364,7 @@ model PasswordResetToken {
   createdAt DateTime @default(now())
 }
 
-// A single-row settings model for the entire site
-model SiteSettings {
-  id                    String  @id @default("singleton")
-  
-  // General
-  siteTitle             String  @default("Boss Journal")
-  siteTagline           String  @default("My personal portfolio, journal, and digital headquarters.")
-  siteDescription       String  @default("My personal portfolio, journal, and digital headquarters.")
-  siteLogo              String  @default("")
-  siteFavicon           String  @default("")
-  siteUrl               String  @default("http://localhost:3000")
-  authorName            String  @default("")
-  authorEmail           String  @default("")
-  
-  // Appearance
-  themePrimary          String  @default("#F97316")
-  themeAccent           String  @default("#FB7185")
-  defaultTheme          String  @default("light") // "light" | "dark" | "system"
-  
-  // SEO
-  seoTitle              String  @default("Boss Journal | Portfolio & Digital Home")
-  seoDescription        String  @default("My digital home, where I document my journey, learning, projects, and daily life.")
-  seoKeywords           String  @default("")
-  ogImage               String  @default("")
-  
-  // Social Links
-  githubUrl             String  @default("")
-  linkedinUrl           String  @default("")
-  twitterUrl            String  @default("")
-  instagramUrl          String  @default("")
-  facebookUrl           String  @default("")
-  youtubeUrl            String  @default("")
-  discordUsername       String  @default("")
-  telegramUsername      String  @default("")
-  
-  // Contact & Location
-  contactHeading        String  @default("Get In Touch")
-  contactDescription    String  @default("Have a project in mind, want to collaborate, or just want to say hi? Send me a message!")
-  availabilityStatus    String  @default("Available")
-  contactEmail          String  @default("")
-  phoneNumber           String  @default("")
-  whatsappNumber        String  @default("")
-  country               String  @default("")
-  state                 String  @default("")
-  city                  String  @default("")
-  fullAddress           String  @default("")
-  googleMapsUrl         String  @default("")
-  resumePdf             String  @default("")
-  
-  // Features (feature flags)
-  enableComments        Boolean @default(true)
-  enableGallery         Boolean @default(true)
-  enableLearning        Boolean @default(true)
-  enableNotifications   Boolean @default(true)
-  
-  // Maintenance
-  maintenanceEnabled    Boolean @default(false)
-  maintenanceMessage    String  @default("We'll be back soon!")
-  maintenanceUpdatedBy  String?
-  
-  // Analytics & Uploads
-  googleAnalyticsId     String  @default("")
-  maxUploadSizeMb       Int     @default(5)
-  launchedAt            DateTime @default(now())
-  
-  updatedAt             DateTime @updatedAt
-}
+// SiteSettings removed in favor of modular settings models.
 
 model MaintenanceLog {
   id          String    @id @default(cuid())
@@ -450,6 +384,28 @@ model PageView {
   @@index([createdAt])
 }
 
+model GeneralSettings {
+  id                  String   @id @default("singleton")
+  enableComments      Boolean  @default(true)
+  enableGallery       Boolean  @default(true)
+  enableLearning      Boolean  @default(true)
+  enableNotifications Boolean  @default(true)
+  googleAnalyticsId   String   @default("")
+  maxUploadSizeMb     Int      @default(5)
+  launchedAt          DateTime @default(now())
+  authorName          String   @default("")
+  authorEmail         String   @default("")
+  updatedAt           DateTime @updatedAt
+}
+
+model MaintenanceSettings {
+  id                   String   @id @default("singleton")
+  maintenanceEnabled   Boolean  @default(false)
+  maintenanceMessage   String   @default("We'll be back soon!")
+  maintenanceUpdatedBy String?
+  updatedAt            DateTime @updatedAt
+}
+
 model Backup {
   id          String   @id @default(cuid())
   name        String
@@ -460,4 +416,133 @@ model Backup {
   status      String
   payload     String   @db.Text
   isAuto      Boolean  @default(false)
+}
+
+model BrandSettings {
+  id              String   @id @default("singleton")
+  siteTitle       String   @default("Boss Journal")
+  siteTagline     String   @default("My personal portfolio, journal, and digital headquarters.")
+  siteDescription String   @default("My personal portfolio, journal, and digital headquarters.")
+  siteLogo        String   @default("")
+  siteFavicon     String   @default("")
+  siteUrl         String   @default("")
+  defaultTheme    String   @default("light")
+  defaultLanguage String   @default("en")
+  brandColors     Json     @default("{\"primary\": \"#F97316\", \"accent\": \"#FB7185\"}")
+  updatedAt       DateTime @updatedAt
+}
+
+model SeoSettings {
+  id             String   @id @default("singleton")
+  seoTitle       String   @default("Boss Journal | Portfolio & Digital Home")
+  seoDescription String   @default("My digital home, where I document my journey, learning, projects, and daily life.")
+  seoKeywords    String   @default("")
+  ogImage        String   @default("")
+  robots         String   @default("index, follow")
+  canonicalUrl   String   @default("")
+  twitterCards   String   @default("summary_large_image")
+  structuredData Json     @default("{}")
+  updatedAt      DateTime @updatedAt
+}
+
+model HomepageSettings {
+  id                   String   @id @default("singleton")
+  heroTitle            String   @default("Designing simple, warm & premium digital experiences.")
+  heroHighlighted      String   @default("warm & premium")
+  heroDescription      String   @default("I am a Software Engineer and UI/UX Designer. This is my digital space where I log my daily learnings, showcase craft projects, and write summaries.")
+  heroProfileImage     String   @default("")
+  heroBgDecor          String   @default("glow")
+  heroBtnPrimaryText   String   @default("Explore Projects")
+  heroBtnPrimaryLink   String   @default("/projects")
+  heroBtnSecondaryText String   @default("Read Journal")
+  heroBtnSecondaryLink String   @default("/journal")
+  authorTitle          String   @default("Software Engineer & UI/UX Designer")
+  authorBio            String   @default("Based in India. Focuses on Next.js 16, React 19, TypeScript, and modern clean interface details.")
+  featuredProjects     String[] @default([])
+  featuredPosts        String[] @default([])
+  featuredCertificates String[] @default([])
+  featuredCourses      String[] @default([])
+  updatedAt            DateTime @updatedAt
+}
+
+model AboutSettings {
+  id               String   @id @default("singleton")
+  aboutTitle       String   @default("About Me")
+  aboutDescription String   @default("")
+  aboutImage       String   @default("")
+  resumePdf        String   @default("")
+  timeline         Json     @default("[]")
+  updatedAt        DateTime @updatedAt
+}
+
+model ContactSettings {
+  id                 String   @id @default("singleton")
+  contactHeading     String   @default("Get In Touch")
+  contactDescription String   @default("Have a project in mind, want to collaborate, or just want to say hi? Send me a message!")
+  availabilityStatus String   @default("Available")
+  contactEmail       String   @default("")
+  phoneNumber        String   @default("")
+  whatsappNumber     String   @default("")
+  country            String   @default("")
+  state              String   @default("")
+  city               String   @default("")
+  fullAddress        String   @default("")
+  googleMapsUrl      String   @default("")
+  githubUrl          String   @default("")
+  linkedinUrl        String   @default("")
+  twitterUrl         String   @default("")
+  instagramUrl       String   @default("")
+  facebookUrl        String   @default("")
+  youtubeUrl         String   @default("")
+  discordUsername    String   @default("")
+  telegramUsername   String   @default("")
+  updatedAt          DateTime @updatedAt
+}
+
+model CourseSettings {
+  id                      String   @id @default("singleton")
+  homepageFeaturedCourses String[] @default([])
+  defaultInstructor       String   @default("")
+  defaultCurrency         String   @default("USD")
+  defaultLanguage         String   @default("English")
+  updatedAt               DateTime @updatedAt
+}
+
+model CertificateSettings {
+  id                           String   @id @default("singleton")
+  homepageFeaturedCertificates String[] @default([])
+  enableVerification           Boolean  @default(true)
+  updatedAt                    DateTime @updatedAt
+}
+
+model NotificationSettings {
+  id                  String   @id @default("singleton")
+  welcomeNotification String   @default("Welcome to your Admin Dashboard!")
+  announcementBanner  String   @default("")
+  bannerEnabled       Boolean  @default(false)
+  updatedAt           DateTime @updatedAt
+}
+
+model GallerySettings {
+  id             String   @id @default("singleton")
+  featuredImages String[] @default([])
+  galleryBanner  String   @default("")
+  updatedAt      DateTime @updatedAt
+}
+
+model FooterSettings {
+  id          String   @id @default("singleton")
+  copyright   String   @default("© All rights reserved.")
+  footerLinks Json     @default("[]")
+  footerLogo  String   @default("")
+  updatedAt   DateTime @updatedAt
+}
+
+model MediaAsset {
+  id        String   @id @default(cuid())
+  url       String   @unique
+  filename  String
+  fileSize  Int
+  mimeType  String
+  createdAt DateTime @default(now())
 }

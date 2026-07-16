@@ -8,7 +8,15 @@ import { deletePost } from "../actions";
 
 export default async function AdminPostsPage() {
   const posts = await prisma.post.findMany({
-    orderBy: { createdAt: 'desc' }
+    orderBy: { createdAt: 'desc' },
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      published: true,
+      createdAt: true,
+      mood: true
+    }
   });
 
   return (

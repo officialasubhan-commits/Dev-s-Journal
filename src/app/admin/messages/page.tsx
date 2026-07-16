@@ -14,6 +14,15 @@ export default async function AdminMessagesPage({ searchParams }: { searchParams
   const messages = await prisma.message.findMany({
     where: whereClause,
     orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      subject: true,
+      message: true,
+      read: true,
+      createdAt: true
+    }
   });
 
   const [unreadCount, totalCount] = await Promise.all([

@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function createCourse(data: {
   title: string;
@@ -25,6 +25,8 @@ export async function createCourse(data: {
         status: "DRAFT"
       },
     });
+    revalidateTag("courses-list", "max");
+    revalidateTag("homepage-data", "max");
     revalidatePath("/admin/courses");
     return { success: true, id: course.id };
   } catch (error) {
@@ -43,6 +45,8 @@ export async function updateCourse(id: string, data: any) {
       data: updateData,
     });
     
+    revalidateTag("courses-list", "max");
+    revalidateTag("homepage-data", "max");
     revalidatePath("/admin/courses");
     revalidatePath(`/admin/courses/${id}/edit`);
     revalidatePath("/courses");
@@ -59,6 +63,8 @@ export async function deleteCourse(id: string) {
     await prisma.course.delete({
       where: { id },
     });
+    revalidateTag("courses-list", "max");
+    revalidateTag("homepage-data", "max");
     revalidatePath("/admin/courses");
     revalidatePath("/courses");
     return { success: true };
@@ -78,6 +84,7 @@ export async function createSection(courseId: string, title: string, order: numb
         order
       }
     });
+    revalidateTag("courses-list", "max");
     revalidatePath(`/admin/courses/${courseId}/edit`);
     return { success: true, section };
   } catch (error) {
@@ -95,6 +102,7 @@ export async function updateSection(sectionId: string, title: string, order?: nu
         ...(order !== undefined ? { order } : {})
       }
     });
+    revalidateTag("courses-list", "max");
     revalidatePath(`/admin/courses/${section.courseId}/edit`);
     return { success: true, section };
   } catch (error) {
@@ -108,6 +116,7 @@ export async function deleteSection(sectionId: string) {
     const section = await prisma.courseSection.delete({
       where: { id: sectionId }
     });
+    revalidateTag("courses-list", "max");
     revalidatePath(`/admin/courses/${section.courseId}/edit`);
     return { success: true };
   } catch (error) {
@@ -135,6 +144,7 @@ export async function createLesson(sectionId: string, title: string, duration: s
       select: { courseId: true }
     });
     
+    revalidateTag("courses-list", "max");
     if (section) {
       revalidatePath(`/admin/courses/${section.courseId}/edit`);
     }
@@ -158,6 +168,7 @@ export async function updateLesson(lessonId: string, data: any) {
       select: { courseId: true }
     });
     
+    revalidateTag("courses-list", "max");
     if (section) {
       revalidatePath(`/admin/courses/${section.courseId}/edit`);
     }
@@ -180,6 +191,7 @@ export async function deleteLesson(lessonId: string) {
       select: { courseId: true }
     });
     
+    revalidateTag("courses-list", "max");
     if (section) {
       revalidatePath(`/admin/courses/${section.courseId}/edit`);
     }
@@ -213,6 +225,7 @@ export async function reorderCurriculum(
       ])
     );
     
+    revalidateTag("courses-list", "max");
     revalidatePath(`/admin/courses/${courseId}/edit`);
     return { success: true };
   } catch (error) {

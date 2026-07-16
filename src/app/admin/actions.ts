@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { broadcastNotification, sendAdminNotification } from "@/lib/notifications";
 import { assertAdmin } from "@/lib/auth";
@@ -80,6 +80,10 @@ export async function createPost(formData: FormData) {
       await triggerRealtimeUpdate("devs-journal-sync", "notifications-updated");
     }
 
+    revalidateTag("homepage-data", "max");
+    revalidateTag("about-page-data", "max");
+    revalidateTag("posts-list", "max");
+    revalidateTag("projects-list", "max");
     await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
 
     revalidatePath("/journal");
@@ -168,7 +172,11 @@ export async function createProject(formData: FormData) {
     await triggerRealtimeUpdate("devs-journal-sync", "notifications-updated");
   }
 
-  await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
+  revalidateTag("homepage-data", "max");
+    revalidateTag("about-page-data", "max");
+    revalidateTag("posts-list", "max");
+    revalidateTag("projects-list", "max");
+    await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
 
   revalidatePath("/projects");
   revalidatePath("/projects/[slug]");
@@ -243,6 +251,10 @@ export async function updatePost(id: string, formData: FormData) {
 
     console.log("[updatePost] Post updated successfully:", id);
 
+    revalidateTag("homepage-data", "max");
+    revalidateTag("about-page-data", "max");
+    revalidateTag("posts-list", "max");
+    revalidateTag("projects-list", "max");
     await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
 
     revalidatePath("/journal");
@@ -312,7 +324,11 @@ export async function updateProject(id: string, formData: FormData) {
     },
   });
 
-  await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
+  revalidateTag("homepage-data", "max");
+    revalidateTag("about-page-data", "max");
+    revalidateTag("posts-list", "max");
+    revalidateTag("projects-list", "max");
+    await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
 
   revalidatePath("/projects");
   revalidatePath("/projects/[slug]");
@@ -342,7 +358,11 @@ export async function deletePost(id: string) {
     });
     revalidatePath(`/journal/${post.slug}`);
   }
-  await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
+  revalidateTag("homepage-data", "max");
+    revalidateTag("about-page-data", "max");
+    revalidateTag("posts-list", "max");
+    revalidateTag("projects-list", "max");
+    await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
   revalidatePath("/journal");
   revalidatePath("/");
   revalidatePath("/admin/posts");
@@ -368,7 +388,11 @@ export async function deleteProject(id: string) {
     });
     revalidatePath(`/projects/${project.slug}`);
   }
-  await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
+  revalidateTag("homepage-data", "max");
+    revalidateTag("about-page-data", "max");
+    revalidateTag("posts-list", "max");
+    revalidateTag("projects-list", "max");
+    await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
   revalidatePath("/projects");
   revalidatePath("/");
   revalidatePath("/admin/projects");

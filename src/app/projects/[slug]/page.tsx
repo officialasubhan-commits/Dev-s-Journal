@@ -5,10 +5,24 @@ import { ExternalLink, Calendar } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { cache } from "react";
+import { unstable_cache } from "next/cache";
+
+const getProjectBySlug = cache((slug: string) => unstable_cache(
+  async () => {
+    return await prisma.project.findUnique({
+      where: { slug }
+    });
+  },
+  [`project-${slug}`],
+  {
+    tags: [`project-${slug}`, "projects-list"]
+  }
+)());
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const project = await prisma.project.findUnique({ where: { slug } });
+  const project = await getProjectBySlug(slug);
   if (!project) return { title: "Project Not Found" };
   return {
     title: project.title,
@@ -21,11 +35,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   
   if (!slug) return <UnavailableContent type="Project" />;
 
-  const project = await prisma.project.findUnique({
-    where: { slug, published: true },
-  });
+  const project = await getProjectBySlug(slug);
 
-  if (!project) return <UnavailableContent type="Project" />;
+  if (!project || !project.published) return <UnavailableContent type="Project" />;
 
   return (
     <div className="container mx-auto px-4 py-16 md:py-24">

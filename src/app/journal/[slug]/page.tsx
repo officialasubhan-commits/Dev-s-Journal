@@ -2,10 +2,24 @@ import prisma from "@/lib/prisma";
 import { UnavailableContent } from "@/components/ui/UnavailableContent";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { Clock, Tag, Calendar } from "lucide-react";
+import { cache } from "react";
+import { unstable_cache } from "next/cache";
+
+const getPostBySlug = cache((slug: string) => unstable_cache(
+  async () => {
+    return await prisma.post.findUnique({
+      where: { slug }
+    });
+  },
+  [`post-${slug}`],
+  {
+    tags: [`post-${slug}`, "posts-list"]
+  }
+)());
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = await prisma.post.findUnique({ where: { slug } });
+  const post = await getPostBySlug(slug);
   if (!post) return { title: "Post Not Found" };
   return {
     title: post.seoTitle || post.title,
@@ -19,11 +33,9 @@ export default async function JournalPostPage({ params }: { params: Promise<{ sl
 
   if (!slug) return <UnavailableContent type="Journal Post" />;
 
-  const post = await prisma.post.findUnique({
-    where: { slug, published: true },
-  });
+  const post = await getPostBySlug(slug);
 
-  if (!post) return <UnavailableContent type="Journal Post" />;
+  if (!post || !post.published) return <UnavailableContent type="Journal Post" />;
 
   return (
     <div className="container mx-auto px-4 py-16 md:py-24">

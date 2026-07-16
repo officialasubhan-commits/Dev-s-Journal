@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import prisma from "@/lib/prisma";
 import { FaGithub, FaLinkedin, FaDiscord, FaInstagram, FaYoutube, FaFacebook } from "react-icons/fa";
 import Link from "next/link";
 import { GraduationCap, Briefcase, User, Star, FileText, Terminal, BarChart2 } from "lucide-react";
 import { getSiteSettings } from "@/app/admin/settings/actions";
+import { getCachedAboutPageData } from "@/lib/cache";
 
 export const metadata: Metadata = {
   title: "About Me",
@@ -11,17 +11,9 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  const admin = await prisma.user.findFirst({
-    where: { role: "ADMIN" },
-  });
+  const { admin, postsCount, projectsCount, photosCount } = await getCachedAboutPageData();
 
   const settings = await getSiteSettings();
-
-
-
-  const postsCount = await prisma.post.count({ where: { published: true } });
-  const projectsCount = await prisma.project.count({ where: { published: true } });
-  const photosCount = await prisma.galleryImage.count();
 
   const name = admin?.displayName || admin?.name || "Developer";
   const bio = admin?.biography || "Hello! I'm a passionate developer building scalable, user-centric applications. This digital home is my space to document my journey, share my learnings, and showcase the projects I've built. My philosophy is simple: never stop learning.";

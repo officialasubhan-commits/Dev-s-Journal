@@ -1,5 +1,4 @@
 import React from "react";
-import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { ArrowRight, Code, BookOpen, Camera, Globe, Target, Terminal, Calendar, Clock, Sparkles } from "lucide-react";
 import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
@@ -9,17 +8,11 @@ import { SlideUp, StaggerContainer, FadeIn } from "@/components/ui/animations";
 import { WelcomePopup } from "@/components/WelcomePopup";
 import { TypingAnimationWrapper } from "../components/home/TypingAnimationWrapper";
 
-export const dynamic = "force-dynamic";
-
-import { getSiteSettings } from "@/app/admin/settings/actions";
+import { getHomepageData } from "@/lib/services/homepage";
 
 export default async function Home() {
-  const settings = await getSiteSettings();
-
-  const projectIds = settings?.featuredProjects || [];
-  const postIds = settings?.featuredPosts || [];
-
-  const [
+  const {
+    settings,
     featuredProjects,
     latestPosts,
     learningProgress,
@@ -28,30 +21,7 @@ export default async function Home() {
     totalProjects,
     totalCourses,
     totalGallery
-  ] = await Promise.all([
-    prisma.project.findMany({
-      where: projectIds.length > 0 ? { id: { in: projectIds } } : { published: true },
-      orderBy: { createdAt: "desc" },
-      take: 2
-    }),
-    prisma.post.findMany({
-      where: postIds.length > 0 ? { id: { in: postIds } } : { published: true },
-      orderBy: { createdAt: "desc" },
-      take: 3
-    }),
-    prisma.userLearning.findMany({
-      orderBy: { progress: "desc" },
-      take: 3
-    }),
-    prisma.galleryImage.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 4
-    }),
-    prisma.post.count({ where: { published: true } }),
-    prisma.project.count({ where: { published: true } }),
-    prisma.userLearning.count(),
-    prisma.galleryImage.count()
-  ]);
+  } = await getHomepageData();
 
   const renderHeroTitle = () => {
     // Static heading as required; never animated.
@@ -113,6 +83,7 @@ export default async function Home() {
                   alt={settings?.authorName || "Profile Avatar"}
                   fill
                   className="object-cover group-hover:scale-[1.01] transition-transform duration-500"
+                  priority
                 />
               </div>
 

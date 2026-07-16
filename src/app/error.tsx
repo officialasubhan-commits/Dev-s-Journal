@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AlertCircle, RotateCcw, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,9 +12,25 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const [autoRetry, setAutoRetry] = useState(true);
+  const [countdown, setCountdown] = useState(5);
+
   useEffect(() => {
     console.error("Application runtime error captured by root boundary:", error);
   }, [error]);
+
+  useEffect(() => {
+    if (!autoRetry) return;
+    if (countdown <= 0) {
+      reset();
+      setCountdown(5);
+      return;
+    }
+    const timer = setTimeout(() => {
+      setCountdown((prev) => prev - 1);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [countdown, autoRetry, reset]);
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center p-4">
@@ -32,6 +48,11 @@ export default function Error({
           <p className="text-sm text-[var(--text-secondary)] max-w-sm mx-auto leading-relaxed font-sans">
             An internal server error occurred. The technical details have been logged. Please try again.
           </p>
+          {autoRetry && (
+            <p className="text-xs text-[var(--primary)] font-semibold mt-2 animate-pulse">
+              Retrying automatically in {countdown}s...
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
@@ -46,6 +67,18 @@ export default function Error({
               <Home className="w-4 h-4" /> Go Home
             </Link>
           </Button>
+        </div>
+
+        <div className="flex items-center justify-center gap-2 text-xs text-[var(--text-muted)] border-t border-[var(--border-color)]/40 pt-4">
+          <label className="flex items-center gap-2 cursor-pointer select-none">
+            <input 
+              type="checkbox" 
+              checked={autoRetry} 
+              onChange={(e) => setAutoRetry(e.target.checked)}
+              className="accent-[var(--primary)] rounded border-[var(--border-color)]"
+            />
+            <span>Enable automatic retry recovery</span>
+          </label>
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { getSiteSettings } from "@/app/admin/settings/actions";
 
 export type AboutFormData = {
@@ -138,6 +138,9 @@ export async function updateAboutProfile(data: Partial<AboutFormData>) {
   }
 
   // Instantly revalidate public pages and layout to display updates
+  revalidateTag("about-page-data", "max");
+  revalidateTag("site-settings", "max");
+  revalidateTag("homepage-data", "max");
   revalidatePath("/about");
   revalidatePath("/");
   revalidatePath("/admin/about");

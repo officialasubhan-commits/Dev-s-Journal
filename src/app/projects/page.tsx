@@ -5,11 +5,9 @@ import { FaGithub } from "react-icons/fa";
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/client/CardComponents";
 import { SlideUp, StaggerContainer } from "@/components/ui/animations";
+import { SafeImage } from "@/components/ui/SafeImage";
 
-import prisma from "@/lib/prisma";
-// Removed dynamic Card imports; using client CardComponents
-// Removed dynamic CardTitle import; using client CardComponents
-// Removed dynamic CardContent import; using client CardComponents
+import { getCachedProjectsList } from "@/lib/cache";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -17,10 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ProjectsPage() {
-  const projects = await prisma.project.findMany({
-    where: { published: true },
-    orderBy: { createdAt: 'desc' }
-  });
+  const projects = await getCachedProjectsList();
 
   return (
     <div className="container mx-auto px-4 py-16 md:py-24 max-w-6xl">
@@ -49,9 +44,10 @@ export default async function ProjectsPage() {
                 <Card className="flex flex-col h-full group overflow-hidden border-2 border-transparent hover:border-[var(--primary)]/20">
                   <div className="h-52 bg-[var(--secondary-bg)] w-full flex items-center justify-center relative overflow-hidden">
                     {project.coverImage ? (
-                      <img 
+                      <SafeImage 
                         src={project.coverImage} 
                         alt={project.title} 
+                        fill
                         className="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-500" 
                       />
                     ) : (

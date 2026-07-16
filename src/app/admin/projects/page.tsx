@@ -8,7 +8,15 @@ import { deleteProject } from "../actions";
 
 export default async function AdminProjectsPage() {
   const projects = await prisma.project.findMany({
-    orderBy: { createdAt: 'desc' }
+    orderBy: { createdAt: 'desc' },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      published: true,
+      createdAt: true,
+      technologies: true
+    }
   });
 
   return (

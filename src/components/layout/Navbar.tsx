@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -23,7 +24,7 @@ const navLinks = [
 
 export function Navbar({ siteTitle: propSiteTitle, siteLogo: propSiteLogo }: { siteTitle?: string; siteLogo?: string }) {
   const { siteTitle: contextTitle, siteLogo: contextLogo } = useSiteSettings();
-  const siteTitle = propSiteTitle || contextTitle;
+  const siteTitle = propSiteTitle || contextTitle || "Boss Journal";
   const siteLogo = propSiteLogo || contextLogo;
 
   const { data: session, status } = useSession();
@@ -46,10 +47,12 @@ export function Navbar({ siteTitle: propSiteTitle, siteLogo: propSiteLogo }: { s
           <div className="flex-1 flex justify-start shrink-0">
             <Link href="/" className="flex items-center space-x-2 relative group">
               {siteLogo ? (
-                <img 
+                <Image 
                   src={siteLogo} 
                   alt={siteTitle} 
-                  className="w-[30px] h-[30px] rounded-full object-cover border border-[var(--border-color)] flex-shrink-0" 
+                  width={30}
+                  height={30}
+                  className="rounded-full object-cover border border-[var(--border-color)] flex-shrink-0" 
                 />
               ) : null}
               <span className="text-base font-bold font-heading text-[var(--text-main)] transition-all group-hover:text-[var(--primary)]">

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Clock, Tag, BookHeart } from "lucide-react";
-import prisma from "@/lib/prisma";
 import { SlideUp, StaggerContainer } from "@/components/ui/animations";
+import { getCachedPostsList } from "@/lib/cache";
 
 export const metadata: Metadata = {
   title: "Daily Journal",
@@ -10,10 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default async function JournalPage() {
-  const posts = await prisma.post.findMany({
-    where: { published: true },
-    orderBy: { createdAt: 'desc' }
-  });
+  const posts = await getCachedPostsList();
 
   return (
     <div className="container mx-auto px-4 py-16 md:py-24 max-w-4xl">

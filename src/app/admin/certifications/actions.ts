@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function createCertificate(data: {
   title: string;
@@ -20,6 +20,8 @@ export async function createCertificate(data: {
         published: data.published ?? true
       },
     });
+    revalidateTag("certifications-list", "max");
+    revalidateTag("homepage-data", "max");
     revalidatePath("/admin/certifications");
     return { success: true, id: cert.id };
   } catch (error) {
@@ -43,6 +45,8 @@ export async function updateCertificate(id: string, data: Partial<{
       where: { id },
       data,
     });
+    revalidateTag("certifications-list", "max");
+    revalidateTag("homepage-data", "max");
     revalidatePath("/admin/certifications");
     return { success: true, id: cert.id };
   } catch (error) {
@@ -56,6 +60,8 @@ export async function deleteCertificate(id: string) {
     await prisma.certification.delete({
       where: { id },
     });
+    revalidateTag("certifications-list", "max");
+    revalidateTag("homepage-data", "max");
     revalidatePath("/admin/certifications");
     return { success: true };
   } catch (error) {
@@ -70,6 +76,8 @@ export async function toggleCertificatePublish(id: string, published: boolean) {
       where: { id },
       data: { published },
     });
+    revalidateTag("certifications-list", "max");
+    revalidateTag("homepage-data", "max");
     revalidatePath("/admin/certifications");
     return { success: true };
   } catch (error) {

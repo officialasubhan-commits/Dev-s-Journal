@@ -15,7 +15,20 @@ export default async function AdminCommentsPage({ searchParams }: { searchParams
   const comments = await prisma.comment.findMany({
     where: whereClause,
     orderBy: { createdAt: "desc" },
-    include: { post: { select: { title: true, slug: true } } }
+    select: {
+      id: true,
+      authorName: true,
+      authorEmail: true,
+      approved: true,
+      content: true,
+      createdAt: true,
+      post: {
+        select: {
+          title: true,
+          slug: true
+        }
+      }
+    }
   });
 
   const [pendingCount, approvedCount] = await Promise.all([

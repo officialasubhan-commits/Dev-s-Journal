@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 
 interface TypingAnimationProps {
   words: string[];
@@ -45,8 +45,8 @@ export function TypingAnimation({
   const [isDeleting, setIsDeleting] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
-  // Parse configurations with fallback defaults
-  const resolved = {
+  // Memoize configuration with fallback defaults to avoid re‑creation on each render
+  const resolved = useMemo(() => ({
     textColor: config?.textColor || "#F97316",
     cursorColor: config?.cursorColor || "#F97316",
     cursorWidth: config?.cursorWidth || "3px",
@@ -66,7 +66,12 @@ export function TypingAnimation({
     fontFamily: config?.fontFamily || "inherit",
     lineHeight: config?.lineHeight || "normal",
     wordSpacing: config?.wordSpacing || "normal"
-  };
+  }), [
+    config,
+    typingSpeed,
+    deletingSpeed,
+    pauseTime
+  ]);
 
   useEffect(() => {
     setMounted(true);
@@ -80,53 +85,56 @@ export function TypingAnimation({
     return () => mediaQuery.removeEventListener("change", handler);
   }, []);
 
+  // Use a ref to hold the active timeout so we can clear it reliably across renders
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
-    if (!mounted || prefersReducedMotion || !words || words.length === 0 || !resolved.animationEnabled) {
-      if (words && words.length > 0) {
-        setCurrentText(words[0]);
-      }
+    if (!mounted || prefersReducedMotion || !words?.length || !resolved.animationEnabled) {
+      // Show first word instantly on mount or if animation is disabled
+      if (words?.length) setCurrentText(words[0]);
       return;
     }
 
     const currentWord = words[currentWordIndex];
-    let timer: NodeJS.Timeout;
 
     if (isDeleting) {
-      timer = setTimeout(() => {
+      timerRef.current = setTimeout(() => {
         setCurrentText((prev) => prev.slice(0, -1));
       }, resolved.deleteSpeed);
     } else {
-      timer = setTimeout(() => {
+      timerRef.current = setTimeout(() => {
         setCurrentText((prev) => currentWord.slice(0, prev.length + 1));
       }, resolved.typingSpeed);
     }
 
-    // If fully typed, pause then start deleting
+    // When the word is fully typed, pause before deleting (only if there is more than 1 word)
     if (!isDeleting && currentText === currentWord) {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        setIsDeleting(true);
-      }, resolved.delayBetweenWords);
+      if (timerRef.current) clearTimeout(timerRef.current);
+      if (words.length > 1) {
+        timerRef.current = setTimeout(() => setIsDeleting(true), resolved.delayBetweenWords);
+      }
     }
 
-    // If fully erased, go to next word
+    // When the word is fully erased, move to the next word
     if (isDeleting && currentText === "") {
-      clearTimeout(timer);
+      if (timerRef.current) clearTimeout(timerRef.current);
       setIsDeleting(false);
       setCurrentWordIndex((prev) => (prev + 1) % words.length);
     }
 
-    return () => clearTimeout(timer);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, [
-    mounted, 
-    currentText, 
-    isDeleting, 
-    currentWordIndex, 
-    words, 
+    mounted,
+    currentText,
+    isDeleting,
+    currentWordIndex,
+    words,
     prefersReducedMotion,
-    resolved.typingSpeed, 
-    resolved.deleteSpeed, 
-    resolved.delayBetweenWords, 
+    resolved.typingSpeed,
+    resolved.deleteSpeed,
+    resolved.delayBetweenWords,
     resolved.animationEnabled
   ]);
 

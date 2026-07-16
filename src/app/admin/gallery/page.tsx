@@ -17,6 +17,12 @@ export default async function AdminGalleryPage() {
   const images = await prisma.galleryImage.findMany({
     orderBy: { createdAt: "desc" },
     take: 50, // Limit for performance on admin
+    select: {
+      id: true,
+      url: true,
+      caption: true,
+      createdAt: true
+    }
   });
 
   return (

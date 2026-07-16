@@ -1,17 +1,8 @@
-import prisma from "@/lib/prisma";
 import CertificationsClient from "./CertificationsClient";
-
-export const dynamic = "force-dynamic";
+import { getCertifications } from "@/lib/services/certifications";
 
 export default async function CertificationsPage() {
-  const dbCerts = await prisma.certification.findMany({
-    where: {
-      published: true
-    },
-    orderBy: {
-      date: 'desc'
-    }
-  });
+  const dbCerts = await getCertifications();
 
   const certs = dbCerts.map(c => ({
     id: c.id,

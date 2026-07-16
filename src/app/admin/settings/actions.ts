@@ -1,9 +1,11 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { assertAdmin } from "@/lib/auth";
 import { triggerRealtimeUpdate } from "@/lib/pusher";
+import { getCachedSettings } from "@/lib/cache";
+import { cache } from "react";
 
 export async function initializeSettings() {
   try {
@@ -74,6 +76,7 @@ export async function initializeSettings() {
         create: { id: "singleton" }
       })
     ]);
+    revalidateTag("site-settings", "max");
   } catch (error: any) {
     // Ignore the P2002 error (Unique constraint failed) caused by concurrent SSG rendering
     if (error.code !== 'P2002') {
@@ -85,10 +88,10 @@ export async function initializeSettings() {
 /**
  * Fetches the site settings singleton, creating it with defaults if it doesn't exist.
  */
-export async function getSiteSettings() {
-  await initializeSettings();
+export const getSiteSettings = cache(async () => {
+  const cached = await getCachedSettings();
 
-  const [
+  const {
     brand,
     seo,
     homepage,
@@ -101,20 +104,7 @@ export async function getSiteSettings() {
     footer,
     general,
     maintenance
-  ] = await Promise.all([
-    prisma.brandSettings.findUnique({ where: { id: "singleton" } }),
-    prisma.seoSettings.findUnique({ where: { id: "singleton" } }),
-    prisma.homepageSettings.findUnique({ where: { id: "singleton" } }),
-    prisma.aboutSettings.findUnique({ where: { id: "singleton" } }),
-    prisma.contactSettings.findUnique({ where: { id: "singleton" } }),
-    prisma.courseSettings.findUnique({ where: { id: "singleton" } }),
-    prisma.certificateSettings.findUnique({ where: { id: "singleton" } }),
-    prisma.notificationSettings.findUnique({ where: { id: "singleton" } }),
-    prisma.gallerySettings.findUnique({ where: { id: "singleton" } }),
-    prisma.footerSettings.findUnique({ where: { id: "singleton" } }),
-    prisma.generalSettings.findUnique({ where: { id: "singleton" } }),
-    prisma.maintenanceSettings.findUnique({ where: { id: "singleton" } })
-  ]);
+  } = cached;
 
   return {
     id: "singleton",
@@ -234,7 +224,7 @@ export async function getSiteSettings() {
     footerLinks: footer?.footerLinks || [],
     footerLogo: footer?.footerLogo || "",
   };
-}
+});
 
 export async function saveBrandingSettings(formData: FormData) {
   try {
@@ -266,6 +256,8 @@ export async function saveBrandingSettings(formData: FormData) {
 
     revalidatePath("/admin/settings");
     revalidatePath("/", "layout");
+    revalidateTag("site-settings", "max");
+    revalidateTag("homepage-data", "max");
     await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
     return { success: "Branding settings saved successfully!" };
   } catch (error: any) {
@@ -316,6 +308,8 @@ export async function saveGeneralSettings(formData: FormData) {
 
     revalidatePath("/admin/settings");
     revalidatePath("/");
+    revalidateTag("site-settings", "max");
+    revalidateTag("homepage-data", "max");
     await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
     return { success: "General settings saved successfully!" };
   } catch (error: any) {
@@ -414,6 +408,8 @@ export async function saveContactSettings(formData: FormData) {
     revalidatePath("/contact");
     revalidatePath("/about");
     revalidatePath("/", "layout");
+    revalidateTag("site-settings", "max");
+    revalidateTag("homepage-data", "max");
     await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
     return { success: "Contact settings saved successfully!" };
   } catch (error: any) {
@@ -458,6 +454,8 @@ export async function saveSeoSettings(formData: FormData) {
 
     revalidatePath("/admin/settings");
     revalidatePath("/", "layout");
+    revalidateTag("site-settings", "max");
+    revalidateTag("homepage-data", "max");
     await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
     return { success: "SEO settings saved successfully!" };
   } catch (error: any) {
@@ -493,6 +491,8 @@ export async function saveAppearanceSettings(formData: FormData) {
 
     revalidatePath("/admin/settings");
     revalidatePath("/", "layout");
+    revalidateTag("site-settings", "max");
+    revalidateTag("homepage-data", "max");
     await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
     return { success: "Appearance settings saved successfully!" };
   } catch (error: any) {
@@ -522,6 +522,8 @@ export async function saveFeatureFlags(formData: FormData) {
     });
     revalidatePath("/admin/settings");
     revalidatePath("/", "layout");
+    revalidateTag("site-settings", "max");
+    revalidateTag("homepage-data", "max");
     await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
     return { success: "Feature flags saved successfully!" };
   } catch (error: any) {
@@ -581,6 +583,8 @@ export async function saveMaintenanceSettings(formData: FormData) {
 
     revalidatePath("/admin/settings");
     revalidatePath("/", "layout");
+    revalidateTag("site-settings", "max");
+    revalidateTag("homepage-data", "max");
     await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
     return { success: "Maintenance settings saved successfully!" };
   } catch (error: any) {
@@ -630,6 +634,8 @@ export async function saveSocialSettings(formData: FormData) {
     revalidatePath("/admin/contact");
     revalidatePath("/contact");
     revalidatePath("/", "layout");
+    revalidateTag("site-settings", "max");
+    revalidateTag("homepage-data", "max");
     await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
     return { success: "Social settings saved successfully!" };
   } catch (error: any) {
@@ -658,6 +664,8 @@ export async function saveAnalyticsUploadSettings(formData: FormData) {
     });
     revalidatePath("/admin/settings");
     revalidatePath("/", "layout");
+    revalidateTag("site-settings", "max");
+    revalidateTag("homepage-data", "max");
     await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
     return { success: "Analytics and Upload settings saved successfully!" };
   } catch (error: any) {
@@ -741,6 +749,8 @@ export async function saveHomepageSettings(formData: FormData) {
     revalidatePath("/admin/homepage");
     revalidatePath("/");
     revalidatePath("/", "layout");
+    revalidateTag("site-settings", "max");
+    revalidateTag("homepage-data", "max");
     await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
     return { success: "Homepage customization parameters updated successfully!" };
   } catch (error: any) {
@@ -777,6 +787,8 @@ export async function saveAboutSettings(formData: FormData) {
     revalidatePath("/admin/about");
     revalidatePath("/about");
     revalidatePath("/", "layout");
+    revalidateTag("site-settings", "max");
+    revalidateTag("homepage-data", "max");
     await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
     return { success: "About settings saved successfully!" };
   } catch (error: any) {
@@ -806,6 +818,8 @@ export async function saveFooterSettings(formData: FormData) {
 
     revalidatePath("/");
     revalidatePath("/", "layout");
+    revalidateTag("site-settings", "max");
+    revalidateTag("homepage-data", "max");
     await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
     return { success: "Footer settings saved successfully!" };
   } catch (error: any) {
@@ -838,6 +852,8 @@ export async function saveNotificationSettings(formData: FormData) {
 
     revalidatePath("/");
     revalidatePath("/", "layout");
+    revalidateTag("site-settings", "max");
+    revalidateTag("homepage-data", "max");
     await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
     return { success: "Notification settings saved successfully!" };
   } catch (error: any) {
@@ -865,6 +881,8 @@ export async function saveGallerySettings(formData: FormData) {
     revalidatePath("/admin/gallery-settings");
     revalidatePath("/gallery");
     revalidatePath("/", "layout");
+    revalidateTag("site-settings", "max");
+    revalidateTag("homepage-data", "max");
     await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
     return { success: "Gallery settings saved successfully!" };
 } catch (error: any) {
@@ -898,6 +916,8 @@ export async function saveCourseSettings(formData: FormData) {
     revalidatePath("/admin/settings");
     revalidatePath("/courses");
     revalidatePath("/", "layout");
+    revalidateTag("site-settings", "max");
+    revalidateTag("homepage-data", "max");
     await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
     return { success: "Course settings saved successfully!" };
   } catch (error: any) {
@@ -925,6 +945,8 @@ export async function saveCertificateSettings(formData: FormData) {
     revalidatePath("/admin/settings");
     revalidatePath("/certifications");
     revalidatePath("/", "layout");
+    revalidateTag("site-settings", "max");
+    revalidateTag("homepage-data", "max");
     await triggerRealtimeUpdate("devs-journal-sync", "content-updated");
     return { success: "Certificate settings saved successfully!" };
   } catch (error: any) {

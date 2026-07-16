@@ -7,8 +7,7 @@ const nextConfig = {
     return [
       {
         source: '/courses/:path*',
-        destination: '/academy/:path*', // permanent redirect
-        permanent: true,
+        destination: '/academy/:path*', // internal rewrite (no redirect)
       },
     ];
   },
